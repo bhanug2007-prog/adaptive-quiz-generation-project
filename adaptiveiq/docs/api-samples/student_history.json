@@ -1,0 +1,45 @@
+{
+  "method": "GET",
+  "path": "/api/student/history",
+  "status": 200,
+  "body": [
+    {
+      "session_id": 2,
+      "quiz_id": 2,
+      "quiz_title": "Practice: SQL joins",
+      "kind": "practice",
+      "course_title": null,
+      "topics": [
+        "SQL joins"
+      ],
+      "attempt_no": 1,
+      "status": "submitted",
+      "started_at": "2026-10-22T14:27:17.075185Z",
+      "submitted_at": "2026-10-22T14:27:17.137086Z",
+      "percentage": 0.0,
+      "correct": 0,
+      "incorrect": 1,
+      "unanswered": 4,
+      "feedback_available": true
+    },
+    {
+      "session_id": 1,
+      "quiz_id": 1,
+      "quiz_title": "Scheduling quiz 1",
+      "kind": "assessment",
+      "course_title": "Operating Systems",
+      "topics": [
+        "CPU Scheduling"
+      ],
+      "attempt_no": 1,
+      "status": "submitted",
+      "started_at": "2026-10-22T14:27:16.541768Z",
+      "submitted_at": "2026-10-22T14:27:16.680330Z",
+      "percentage": 40.0,
+      "correct": 2,
+      "incorrect": 2,
+      "unanswered": 1,
+      "feedback_available": true
+    }
+  ]
+}

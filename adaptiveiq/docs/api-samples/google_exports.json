@@ -1,0 +1,6 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/quizzes/1/google-form/exports",
+  "status": 200,
+  "body": []
+}

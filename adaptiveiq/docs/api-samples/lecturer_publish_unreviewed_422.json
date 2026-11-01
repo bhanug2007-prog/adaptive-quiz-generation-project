@@ -1,0 +1,8 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/quizzes/1/publish",
+  "status": 422,
+  "body": {
+    "detail": "Approve or remove question(s) 1, 2, 3, 4, 5 first."
+  }
+}

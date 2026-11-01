@@ -1,0 +1,49 @@
+{
+  "method": "GET",
+  "path": "/api/student/trends",
+  "status": 200,
+  "body": {
+    "scores": [
+      {
+        "at": "2026-10-22T14:27:16.680330+00:00",
+        "percentage": 40.0,
+        "kind": "assessment",
+        "title": "Scheduling quiz 1"
+      },
+      {
+        "at": "2026-10-22T14:27:17.137086+00:00",
+        "percentage": 0.0,
+        "kind": "practice",
+        "title": "Practice: SQL joins"
+      }
+    ],
+    "scores_enough": false,
+    "weekly_activity": [
+      {
+        "week": "2026-10-19",
+        "practice": 5,
+        "assessment": 5
+      }
+    ],
+    "first_vs_later": {
+      "first_attempt": {
+        "correct": 2,
+        "answered": 5,
+        "accuracy": 0.4
+      },
+      "later_attempts": {
+        "correct": 0,
+        "answered": 0,
+        "accuracy": null
+      },
+      "enough_data": false
+    },
+    "repeated_mistakes": [],
+    "revision": {
+      "scheduled": 8,
+      "reviewed": 0,
+      "retired": 0,
+      "due_now": 0
+    }
+  }
+}

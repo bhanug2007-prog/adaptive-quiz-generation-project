@@ -1,0 +1,8 @@
+{
+  "method": "GET",
+  "path": "/api/integrations/google/connect",
+  "status": 503,
+  "body": {
+    "detail": "Google Forms export is not set up on this server (no OAuth client)."
+  }
+}

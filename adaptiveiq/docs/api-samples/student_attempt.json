@@ -1,0 +1,197 @@
+{
+  "method": "GET",
+  "path": "/api/student/attempts/1",
+  "status": 200,
+  "body": {
+    "session_id": 1,
+    "quiz_id": 1,
+    "quiz_title": "Scheduling quiz 1",
+    "kind": "assessment",
+    "instructions": null,
+    "attempt_no": 1,
+    "status": "in_progress",
+    "started_at": "2026-10-22T14:27:16.541768Z",
+    "deadline_at": "2026-10-22T14:47:16.541768Z",
+    "server_now": "2026-10-22T14:27:16.670454Z",
+    "confidence_enabled": false,
+    "can_check_answers": false,
+    "questions": [
+      {
+        "question_id": 3,
+        "number": 1,
+        "text": "Which scheduler is non-preemptive by default?",
+        "topic": "CPU Scheduling",
+        "difficulty": "hard",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 11,
+            "label": "A",
+            "text": "Option gamma 5"
+          },
+          {
+            "id": 9,
+            "label": "B",
+            "text": "Option alpha 5"
+          },
+          {
+            "id": 10,
+            "label": "C",
+            "text": "Option beta 5"
+          },
+          {
+            "id": 12,
+            "label": "D",
+            "text": "Option delta 5"
+          }
+        ]
+      },
+      {
+        "question_id": 2,
+        "number": 2,
+        "text": "Which metric does shortest job first minimise?",
+        "topic": "CPU Scheduling",
+        "difficulty": "medium",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 5,
+            "label": "A",
+            "text": "Option alpha 4"
+          },
+          {
+            "id": 8,
+            "label": "B",
+            "text": "Option delta 4"
+          },
+          {
+            "id": 6,
+            "label": "C",
+            "text": "Option beta 4"
+          },
+          {
+            "id": 7,
+            "label": "D",
+            "text": "Option gamma 4"
+          }
+        ]
+      },
+      {
+        "question_id": 5,
+        "number": 3,
+        "text": "Which algorithm suits time-sharing systems?",
+        "topic": "CPU Scheduling",
+        "difficulty": "medium",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 18,
+            "label": "A",
+            "text": "Option beta 9"
+          },
+          {
+            "id": 17,
+            "label": "B",
+            "text": "Option alpha 9"
+          },
+          {
+            "id": 20,
+            "label": "C",
+            "text": "Option delta 9"
+          },
+          {
+            "id": 19,
+            "label": "D",
+            "text": "Option gamma 9"
+          }
+        ]
+      },
+      {
+        "question_id": 4,
+        "number": 4,
+        "text": "Which queue structure suits multilevel feedback?",
+        "topic": "CPU Scheduling",
+        "difficulty": "easy",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 15,
+            "label": "A",
+            "text": "Option gamma 7"
+          },
+          {
+            "id": 14,
+            "label": "B",
+            "text": "Option beta 7"
+          },
+          {
+            "id": 16,
+            "label": "C",
+            "text": "Option delta 7"
+          },
+          {
+            "id": 13,
+            "label": "D",
+            "text": "Option alpha 7"
+          }
+        ]
+      },
+      {
+        "question_id": 1,
+        "number": 5,
+        "text": "Which policy needs the burst length in advance?",
+        "topic": "CPU Scheduling",
+        "difficulty": "easy",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 4,
+            "label": "A",
+            "text": "Option delta 2"
+          },
+          {
+            "id": 1,
+            "label": "B",
+            "text": "Option alpha 2"
+          },
+          {
+            "id": 2,
+            "label": "C",
+            "text": "Option beta 2"
+          },
+          {
+            "id": 3,
+            "label": "D",
+            "text": "Option gamma 2"
+          }
+        ]
+      }
+    ],
+    "answers": {
+      "3": {
+        "option_id": 10,
+        "confidence": 1,
+        "checked": false,
+        "time_spent_s": 20.0
+      },
+      "2": {
+        "option_id": 5,
+        "confidence": 2,
+        "checked": false,
+        "time_spent_s": 20.0
+      },
+      "5": {
+        "option_id": 18,
+        "confidence": 3,
+        "checked": false,
+        "time_spent_s": 20.0
+      },
+      "4": {
+        "option_id": 13,
+        "confidence": 1,
+        "checked": false,
+        "time_spent_s": 20.0
+      }
+    }
+  }
+}

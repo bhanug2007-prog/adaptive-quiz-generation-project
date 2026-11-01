@@ -1,0 +1,7 @@
+model,valid_%,self_check_pass_%,sec_per_mcq
+Qwen2.5-1.5B-Instruct,100.0,76.7,7.2
+Qwen2.5-3B-Instruct,100.0,96.7,8.9
+Qwen2.5-7B-Instruct,100.0,100.0,19.4
+avatar
+Ask In Chat
+Ask In Chat

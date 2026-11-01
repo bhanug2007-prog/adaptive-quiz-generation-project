@@ -1,0 +1,16 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/courses/1/roster",
+  "status": 200,
+  "body": [
+    {
+      "student_id": 2,
+      "full_name": "Sample Student",
+      "email": "student@example.edu",
+      "roll_number": "24BDS000",
+      "status": "active",
+      "enrolled_via": "join_code",
+      "enrolled_at": "2026-10-22T14:27:13.473005Z"
+    }
+  ]
+}

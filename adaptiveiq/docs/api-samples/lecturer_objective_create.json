@@ -1,0 +1,10 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/topics/1/objectives",
+  "status": 201,
+  "body": {
+    "id": 1,
+    "code": null,
+    "text": "Compare FCFS, SJF and priority scheduling"
+  }
+}

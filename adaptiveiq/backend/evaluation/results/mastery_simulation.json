@@ -1,0 +1,614 @@
+{
+  "note": "SYNTHETIC students (Rasch model). Not real data.",
+  "students_per_seed": 2000,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "algorithm": "mastery-beta-v3",
+  "scenarios": {
+    "stable": {
+      "3": {
+        "beta_mae": {
+          "mean": 0.1433,
+          "sd": 0.0033
+        },
+        "baseline_mae": {
+          "mean": 0.2199,
+          "sd": 0.0051
+        },
+        "beta_label_acc": null,
+        "baseline_label_acc": null,
+        "interval_coverage": {
+          "mean": 0.8364,
+          "sd": 0.0123
+        },
+        "share_labelled": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": null,
+        "baseline_overclaim": null,
+        "trend_improving": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "trend_declining": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "5": {
+        "beta_mae": {
+          "mean": 0.1262,
+          "sd": 0.0027
+        },
+        "baseline_mae": {
+          "mean": 0.1679,
+          "sd": 0.0037
+        },
+        "beta_label_acc": {
+          "mean": 0.5701,
+          "sd": 0.0121
+        },
+        "baseline_label_acc": {
+          "mean": 0.561,
+          "sd": 0.0118
+        },
+        "interval_coverage": {
+          "mean": 0.8358,
+          "sd": 0.0083
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.1728,
+          "sd": 0.0066
+        },
+        "baseline_overclaim": {
+          "mean": 0.2541,
+          "sd": 0.003
+        },
+        "trend_improving": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "trend_declining": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "10": {
+        "beta_mae": {
+          "mean": 0.1019,
+          "sd": 0.0015
+        },
+        "baseline_mae": {
+          "mean": 0.1188,
+          "sd": 0.002
+        },
+        "beta_label_acc": {
+          "mean": 0.6303,
+          "sd": 0.0099
+        },
+        "baseline_label_acc": {
+          "mean": 0.6086,
+          "sd": 0.0045
+        },
+        "interval_coverage": {
+          "mean": 0.8377,
+          "sd": 0.0127
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.1317,
+          "sd": 0.0071
+        },
+        "baseline_overclaim": {
+          "mean": 0.2546,
+          "sd": 0.0044
+        },
+        "trend_improving": {
+          "mean": 0.0046,
+          "sd": 0.0013
+        },
+        "trend_declining": {
+          "mean": 0.0039,
+          "sd": 0.0016
+        }
+      },
+      "20": {
+        "beta_mae": {
+          "mean": 0.0788,
+          "sd": 0.0014
+        },
+        "baseline_mae": {
+          "mean": 0.0849,
+          "sd": 0.0018
+        },
+        "beta_label_acc": {
+          "mean": 0.6874,
+          "sd": 0.0068
+        },
+        "baseline_label_acc": {
+          "mean": 0.7,
+          "sd": 0.0061
+        },
+        "interval_coverage": {
+          "mean": 0.8595,
+          "sd": 0.0116
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.102,
+          "sd": 0.0057
+        },
+        "baseline_overclaim": {
+          "mean": 0.1611,
+          "sd": 0.0041
+        },
+        "trend_improving": {
+          "mean": 0.0114,
+          "sd": 0.0011
+        },
+        "trend_declining": {
+          "mean": 0.011,
+          "sd": 0.0015
+        }
+      },
+      "30": {
+        "beta_mae": {
+          "mean": 0.0684,
+          "sd": 0.0003
+        },
+        "baseline_mae": {
+          "mean": 0.0708,
+          "sd": 0.0006
+        },
+        "beta_label_acc": {
+          "mean": 0.7213,
+          "sd": 0.0063
+        },
+        "baseline_label_acc": {
+          "mean": 0.7471,
+          "sd": 0.0091
+        },
+        "interval_coverage": {
+          "mean": 0.8692,
+          "sd": 0.0043
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.0831,
+          "sd": 0.0045
+        },
+        "baseline_overclaim": {
+          "mean": 0.1147,
+          "sd": 0.0047
+        },
+        "trend_improving": {
+          "mean": 0.0108,
+          "sd": 0.002
+        },
+        "trend_declining": {
+          "mean": 0.0128,
+          "sd": 0.0012
+        }
+      }
+    },
+    "skewed": {
+      "3": {
+        "beta_mae": {
+          "mean": 0.1458,
+          "sd": 0.0011
+        },
+        "baseline_mae": {
+          "mean": 0.23,
+          "sd": 0.0007
+        },
+        "beta_label_acc": null,
+        "baseline_label_acc": null,
+        "interval_coverage": {
+          "mean": 0.8262,
+          "sd": 0.0039
+        },
+        "share_labelled": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": null,
+        "baseline_overclaim": null,
+        "trend_improving": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "trend_declining": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "5": {
+        "beta_mae": {
+          "mean": 0.1303,
+          "sd": 0.0011
+        },
+        "baseline_mae": {
+          "mean": 0.1835,
+          "sd": 0.0021
+        },
+        "beta_label_acc": {
+          "mean": 0.538,
+          "sd": 0.016
+        },
+        "baseline_label_acc": {
+          "mean": 0.4648,
+          "sd": 0.0084
+        },
+        "interval_coverage": {
+          "mean": 0.8211,
+          "sd": 0.0027
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.2486,
+          "sd": 0.0096
+        },
+        "baseline_overclaim": {
+          "mean": 0.4471,
+          "sd": 0.0075
+        },
+        "trend_improving": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "trend_declining": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "10": {
+        "beta_mae": {
+          "mean": 0.1071,
+          "sd": 0.0013
+        },
+        "baseline_mae": {
+          "mean": 0.1426,
+          "sd": 0.0017
+        },
+        "beta_label_acc": {
+          "mean": 0.5879,
+          "sd": 0.0121
+        },
+        "baseline_label_acc": {
+          "mean": 0.4417,
+          "sd": 0.0078
+        },
+        "interval_coverage": {
+          "mean": 0.8215,
+          "sd": 0.0036
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.2311,
+          "sd": 0.0065
+        },
+        "baseline_overclaim": {
+          "mean": 0.5205,
+          "sd": 0.0082
+        },
+        "trend_improving": {
+          "mean": 0.0033,
+          "sd": 0.0012
+        },
+        "trend_declining": {
+          "mean": 0.0039,
+          "sd": 0.0014
+        }
+      },
+      "20": {
+        "beta_mae": {
+          "mean": 0.0863,
+          "sd": 0.0008
+        },
+        "baseline_mae": {
+          "mean": 0.1186,
+          "sd": 0.0013
+        },
+        "beta_label_acc": {
+          "mean": 0.654,
+          "sd": 0.0137
+        },
+        "baseline_label_acc": {
+          "mean": 0.4948,
+          "sd": 0.0132
+        },
+        "interval_coverage": {
+          "mean": 0.8216,
+          "sd": 0.007
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.2083,
+          "sd": 0.0079
+        },
+        "baseline_overclaim": {
+          "mean": 0.4822,
+          "sd": 0.0138
+        },
+        "trend_improving": {
+          "mean": 0.0087,
+          "sd": 0.0032
+        },
+        "trend_declining": {
+          "mean": 0.0136,
+          "sd": 0.0027
+        }
+      },
+      "30": {
+        "beta_mae": {
+          "mean": 0.0766,
+          "sd": 0.001
+        },
+        "baseline_mae": {
+          "mean": 0.1092,
+          "sd": 0.0018
+        },
+        "beta_label_acc": {
+          "mean": 0.6852,
+          "sd": 0.0125
+        },
+        "baseline_label_acc": {
+          "mean": 0.5298,
+          "sd": 0.0079
+        },
+        "interval_coverage": {
+          "mean": 0.8242,
+          "sd": 0.0092
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.196,
+          "sd": 0.0111
+        },
+        "baseline_overclaim": {
+          "mean": 0.4561,
+          "sd": 0.0076
+        },
+        "trend_improving": {
+          "mean": 0.0058,
+          "sd": 0.0008
+        },
+        "trend_declining": {
+          "mean": 0.0145,
+          "sd": 0.0024
+        }
+      }
+    },
+    "improving": {
+      "3": {
+        "beta_mae": {
+          "mean": 0.1438,
+          "sd": 0.0012
+        },
+        "baseline_mae": {
+          "mean": 0.2187,
+          "sd": 0.002
+        },
+        "beta_label_acc": null,
+        "baseline_label_acc": null,
+        "interval_coverage": {
+          "mean": 0.8317,
+          "sd": 0.007
+        },
+        "share_labelled": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": null,
+        "baseline_overclaim": null,
+        "trend_improving": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "trend_declining": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "5": {
+        "beta_mae": {
+          "mean": 0.1292,
+          "sd": 0.0022
+        },
+        "baseline_mae": {
+          "mean": 0.1694,
+          "sd": 0.0023
+        },
+        "beta_label_acc": {
+          "mean": 0.5193,
+          "sd": 0.0113
+        },
+        "baseline_label_acc": {
+          "mean": 0.5278,
+          "sd": 0.0091
+        },
+        "interval_coverage": {
+          "mean": 0.8241,
+          "sd": 0.0086
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.1446,
+          "sd": 0.0075
+        },
+        "baseline_overclaim": {
+          "mean": 0.239,
+          "sd": 0.0034
+        },
+        "trend_improving": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "trend_declining": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "10": {
+        "beta_mae": {
+          "mean": 0.1117,
+          "sd": 0.0027
+        },
+        "baseline_mae": {
+          "mean": 0.1283,
+          "sd": 0.0031
+        },
+        "beta_label_acc": {
+          "mean": 0.5043,
+          "sd": 0.0128
+        },
+        "baseline_label_acc": {
+          "mean": 0.5715,
+          "sd": 0.0065
+        },
+        "interval_coverage": {
+          "mean": 0.8003,
+          "sd": 0.0074
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.0771,
+          "sd": 0.0083
+        },
+        "baseline_overclaim": {
+          "mean": 0.1844,
+          "sd": 0.009
+        },
+        "trend_improving": {
+          "mean": 0.0063,
+          "sd": 0.0013
+        },
+        "trend_declining": {
+          "mean": 0.0028,
+          "sd": 0.0008
+        }
+      },
+      "20": {
+        "beta_mae": {
+          "mean": 0.1186,
+          "sd": 0.002
+        },
+        "baseline_mae": {
+          "mean": 0.1314,
+          "sd": 0.0021
+        },
+        "beta_label_acc": {
+          "mean": 0.3591,
+          "sd": 0.016
+        },
+        "baseline_label_acc": {
+          "mean": 0.5041,
+          "sd": 0.0122
+        },
+        "interval_coverage": {
+          "mean": 0.6592,
+          "sd": 0.011
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.0172,
+          "sd": 0.0019
+        },
+        "baseline_overclaim": {
+          "mean": 0.0364,
+          "sd": 0.0016
+        },
+        "trend_improving": {
+          "mean": 0.0224,
+          "sd": 0.0016
+        },
+        "trend_declining": {
+          "mean": 0.0041,
+          "sd": 0.002
+        }
+      },
+      "30": {
+        "beta_mae": {
+          "mean": 0.1387,
+          "sd": 0.0014
+        },
+        "baseline_mae": {
+          "mean": 0.161,
+          "sd": 0.0016
+        },
+        "beta_label_acc": {
+          "mean": 0.2163,
+          "sd": 0.0094
+        },
+        "baseline_label_acc": {
+          "mean": 0.3702,
+          "sd": 0.0078
+        },
+        "interval_coverage": {
+          "mean": 0.4554,
+          "sd": 0.0112
+        },
+        "share_labelled": {
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "beta_overclaim": {
+          "mean": 0.0018,
+          "sd": 0.0014
+        },
+        "baseline_overclaim": {
+          "mean": 0.003,
+          "sd": 0.0012
+        },
+        "trend_improving": {
+          "mean": 0.0258,
+          "sd": 0.0079
+        },
+        "trend_declining": {
+          "mean": 0.0019,
+          "sd": 0.0016
+        }
+      }
+    }
+  }
+}

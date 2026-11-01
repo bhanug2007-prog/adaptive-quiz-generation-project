@@ -1,0 +1,218 @@
+/* Shared helpers used by many pages. Page-specific styles live next to their section below. */
+.link {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.span-all {
+  grid-column: 1 / -1;
+}
+
+.input-affix {
+  position: relative;
+}
+
+.input-affix .input {
+  padding-right: 2.75rem;
+}
+
+.input-affix__btn {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-3);
+}
+
+.input-affix__btn:hover {
+  color: var(--text);
+  background: var(--hover);
+}
+
+/* ---------- Public layout ---------- */
+.public {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.public > main {
+  flex: 1;
+}
+
+.public__nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--nav-h);
+  background: rgba(8, 9, 11, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.public__nav-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.public__links {
+  display: flex;
+  gap: var(--space-5);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.public__links a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 900px) {
+  .public__links {
+    display: none;
+  }
+}
+
+.public__foot {
+  border-top: 1px solid var(--border);
+  padding: var(--space-7) 0;
+  margin-top: var(--space-8);
+}
+
+.public__foot-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.public__foot-links {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.public__foot-links a:hover {
+  color: var(--text);
+}
+
+/* ---------- Email verification banner ---------- */
+.verify-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: var(--radius);
+  background: var(--warning-soft);
+  font-size: var(--fs-sm);
+}
+
+.verify-banner > svg {
+  flex: none;
+  color: var(--warning);
+}
+
+.verify-banner p {
+  flex: 1;
+  min-width: 0;
+}
+
+.verify-banner__msg {
+  color: var(--text-2);
+}
+
+@media (max-width: 640px) {
+  .verify-banner {
+    flex-wrap: wrap;
+  }
+}
+
+.public__menu-btn {
+  display: none !important;
+}
+
+.public__drawer {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: var(--space-3) 0 var(--space-4);
+}
+
+.public__drawer .container {
+  display: grid;
+  gap: 2px;
+}
+
+.public__drawer a {
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+}
+
+.public__drawer a:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+@media (max-width: 900px) {
+  .public__menu-btn {
+    display: inline-flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .public__signin {
+    display: none !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .public__drawer {
+    display: none;
+  }
+}
+
+.public__foot-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, auto));
+  gap: var(--space-6);
+  font-size: var(--fs-sm);
+}
+
+.public__foot-cols div {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+
+.public__foot-cols a {
+  color: var(--text-2);
+}
+
+.public__foot-cols a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .public__foot-cols {
+    grid-template-columns: 1fr 1fr;
+  }
+}

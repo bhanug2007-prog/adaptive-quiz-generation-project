@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/student/attempts/2/answers/7/check",
+  "status": 200,
+  "body": {
+    "question_id": 7,
+    "correct_option_id": 26,
+    "is_correct": false,
+    "explanation": "Beta 10 is correct because of reason 10."
+  }
+}

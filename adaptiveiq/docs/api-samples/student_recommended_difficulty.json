@@ -1,0 +1,9 @@
+{
+  "method": "GET",
+  "path": "/api/student/practice/recommended-difficulty",
+  "status": 200,
+  "body": {
+    "difficulty": "easy",
+    "reason": "Estimated mastery 46% is below 50%, so difficulty goes down one level to rebuild the basics."
+  }
+}

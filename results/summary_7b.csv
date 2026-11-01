@@ -1,0 +1,4 @@
+model,valid_%,passed_numeric_%,passed_verify_%,difficulty_match_%,answer_A/B/C/D_%
+7B few-shot (pilot 30),100.0,100.0,83.3,,
+7B fine-tuned (pilot 30),100.0,100.0,100.0,,
+7B fine-tuned (all 90),100.0,100.0,94.4,53.3,22/24/22/31

@@ -1,0 +1,172 @@
+{
+  "method": "POST",
+  "path": "/api/student/quizzes/2/start",
+  "status": 200,
+  "body": {
+    "session_id": 2,
+    "quiz_id": 2,
+    "quiz_title": "Practice: SQL joins",
+    "kind": "practice",
+    "instructions": null,
+    "attempt_no": 1,
+    "status": "in_progress",
+    "started_at": "2026-10-22T14:27:17.075185Z",
+    "deadline_at": null,
+    "server_now": "2026-10-22T14:27:17.091326Z",
+    "confidence_enabled": true,
+    "can_check_answers": true,
+    "questions": [
+      {
+        "question_id": 7,
+        "number": 1,
+        "text": "Which scheduler can starve long jobs in case 10?",
+        "topic": "SQL joins",
+        "difficulty": "easy",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 25,
+            "label": "A",
+            "text": "Option alpha 10"
+          },
+          {
+            "id": 26,
+            "label": "B",
+            "text": "Option beta 10"
+          },
+          {
+            "id": 27,
+            "label": "C",
+            "text": "Option gamma 10"
+          },
+          {
+            "id": 28,
+            "label": "D",
+            "text": "Option delta 10"
+          }
+        ]
+      },
+      {
+        "question_id": 8,
+        "number": 2,
+        "text": "Which policy needs the burst length in advance in case 12?",
+        "topic": "SQL joins",
+        "difficulty": "medium",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 29,
+            "label": "A",
+            "text": "Option alpha 12"
+          },
+          {
+            "id": 30,
+            "label": "B",
+            "text": "Option beta 12"
+          },
+          {
+            "id": 31,
+            "label": "C",
+            "text": "Option gamma 12"
+          },
+          {
+            "id": 32,
+            "label": "D",
+            "text": "Option delta 12"
+          }
+        ]
+      },
+      {
+        "question_id": 9,
+        "number": 3,
+        "text": "Which metric does shortest job first minimise in case 14?",
+        "topic": "SQL joins",
+        "difficulty": "hard",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 33,
+            "label": "A",
+            "text": "Option alpha 14"
+          },
+          {
+            "id": 34,
+            "label": "B",
+            "text": "Option beta 14"
+          },
+          {
+            "id": 35,
+            "label": "C",
+            "text": "Option gamma 14"
+          },
+          {
+            "id": 36,
+            "label": "D",
+            "text": "Option delta 14"
+          }
+        ]
+      },
+      {
+        "question_id": 10,
+        "number": 4,
+        "text": "Which scheduler is non-preemptive by default in case 15?",
+        "topic": "SQL joins",
+        "difficulty": "easy",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 37,
+            "label": "A",
+            "text": "Option alpha 15"
+          },
+          {
+            "id": 38,
+            "label": "B",
+            "text": "Option beta 15"
+          },
+          {
+            "id": 39,
+            "label": "C",
+            "text": "Option gamma 15"
+          },
+          {
+            "id": 40,
+            "label": "D",
+            "text": "Option delta 15"
+          }
+        ]
+      },
+      {
+        "question_id": 11,
+        "number": 5,
+        "text": "Which queue structure suits multilevel feedback in case 17?",
+        "topic": "SQL joins",
+        "difficulty": "medium",
+        "marks": 1.0,
+        "options": [
+          {
+            "id": 41,
+            "label": "A",
+            "text": "Option alpha 17"
+          },
+          {
+            "id": 42,
+            "label": "B",
+            "text": "Option beta 17"
+          },
+          {
+            "id": 43,
+            "label": "C",
+            "text": "Option gamma 17"
+          },
+          {
+            "id": 44,
+            "label": "D",
+            "text": "Option delta 17"
+          }
+        ]
+      }
+    ],
+    "answers": {}
+  }
+}

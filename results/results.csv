@@ -1,0 +1,4 @@
+model,format_valid_%,rougeL_question,bleu_full,avg_q_words_easy,avg_q_words_medium,avg_q_words_hard,difficulty_match_%,grounding
+flan-t5-base (zero-shot),0.0,0.0,2.25,,,,0.0,0.0
+flan-t5-base (fine-tuned),7.8,0.1581,18.85,8.0,9.5,16.4,58.1,0.772
+reference (dataset),,,,9.6,12.3,19.1,66.0,0.624

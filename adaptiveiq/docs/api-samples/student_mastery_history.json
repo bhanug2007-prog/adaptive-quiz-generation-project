@@ -1,0 +1,8 @@
+{
+  "method": "GET",
+  "path": "/api/student/mastery/history",
+  "status": 422,
+  "body": {
+    "detail": "topic_key: Field required"
+  }
+}

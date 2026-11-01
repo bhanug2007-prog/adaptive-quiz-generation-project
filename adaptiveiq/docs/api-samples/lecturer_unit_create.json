@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/subjects/1/units",
+  "status": 201,
+  "body": {
+    "id": 1,
+    "name": "Unit 2: Scheduling",
+    "position": 0,
+    "topics": []
+  }
+}

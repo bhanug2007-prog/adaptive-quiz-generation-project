@@ -1,0 +1,35 @@
+{
+  "method": "GET",
+  "path": "/api/health",
+  "status": 200,
+  "body": {
+    "status": "ok",
+    "database": "ok",
+    "database_engine": "sqlite",
+    "environment": "test",
+    "email": {
+      "verification_required": false,
+      "smtp_configured": false
+    },
+    "model": {
+      "state": "ok",
+      "detail": null,
+      "variant": "finetuned",
+      "name": "qwen7b-mcq",
+      "base_model": "Qwen/Qwen2.5-7B-Instruct",
+      "quantization": "GGUF Q4_K_M"
+    },
+    "generation_queue": 0,
+    "google_forms_configured": false,
+    "math_check": {
+      "enabled": true,
+      "sandbox": {
+        "static_check": true,
+        "restricted_builtins": true,
+        "separate_process": true,
+        "os_limits": true,
+        "no_network": true
+      }
+    }
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/quizzes/1/preview",
+  "status": 200,
+  "body": {
+    "title": "Scheduling quiz 1",
+    "instructions": null,
+    "time_limit_min": 20,
+    "max_marks": 5.0,
+    "confidence_enabled": false,
+    "questions": [
+      {
+        "question_id": 1,
+        "position": 1,
+        "marks": 1.0,
+        "text": "Which policy needs the burst length in advance?",
+        "difficulty": "easy",
+        "topic": "CPU Scheduling",
+        "options": [
+          {
+            "id": 1,
+            "label": "A",
+            "text": "Option alpha 2"
+          },
+          {
+            "id": 2,
+            "label": "B",
+            "text": "Option beta 2"
+          },
+          {
+            "id": 3,
+            "label": "C",
+            "text": "Option gamma 2"
+          },
+          {
+            "id": 4,
+            "label": "D",
+            "text": "Option delta 2"
+          }
+        ]
+      },
+      {
+        "question_id": 2,
+        "position": 2,
+        "marks": 1.0,
+        "text": "Which metric does shortest job first minimise?",
+        "difficulty": "medium",
+        "topic": "CPU Scheduling",
+        "options": [
+          {
+            "id": 5,
+            "label": "A",
+            "text": "Option alpha 4"
+          },
+          {
+            "id": 6,
+            "label": "B",
+            "text": "Option beta 4"
+          },
+          {
+            "id": 7,
+            "label": "C",
+            "text": "Option gamma 4"
+          },
+          {
+            "id": 8,
+            "label": "D",
+            "text": "Option delta 4"
+          }
+        ]
+      },
+      {
+        "question_id": 3,
+        "position": 3,
+        "marks": 1.0,
+        "text": "Which scheduler is non-preemptive by default?",
+        "difficulty": "hard",
+        "topic": "CPU Scheduling",
+        "options": [
+          {
+            "id": 9,
+            "label": "A",
+            "text": "Option alpha 5"
+          },
+          {
+            "id": 10,
+            "label": "B",
+            "text": "Option beta 5"
+          },
+          {
+            "id": 11,
+            "label": "C",
+            "text": "Option gamma 5"
+          },
+          {
+            "id": 12,
+            "label": "D",
+            "text": "Option delta 5"
+          }
+        ]
+      },
+      {
+        "question_id": 4,
+        "position": 4,
+        "marks": 1.0,
+        "text": "Which queue structure suits multilevel feedback?",
+        "difficulty": "easy",
+        "topic": "CPU Scheduling",
+        "options": [
+          {
+            "id": 13,
+            "label": "A",
+            "text": "Option alpha 7"
+          },
+          {
+            "id": 14,
+            "label": "B",
+            "text": "Option beta 7"
+          },
+          {
+            "id": 15,
+            "label": "C",
+            "text": "Option gamma 7"
+          },
+          {
+            "id": 16,
+            "label": "D",
+            "text": "Option delta 7"
+          }
+        ]
+      },
+      {
+        "question_id": 5,
+        "position": 5,
+        "marks": 1.0,
+        "text": "Which algorithm suits time-sharing systems?",
+        "difficulty": "medium",
+        "topic": "CPU Scheduling",
+        "options": [
+          {
+            "id": 17,
+            "label": "A",
+            "text": "Option alpha 9"
+          },
+          {
+            "id": 18,
+            "label": "B",
+            "text": "Option beta 9"
+          },
+          {
+            "id": 19,
+            "label": "C",
+            "text": "Option gamma 9"
+          },
+          {
+            "id": 20,
+            "label": "D",
+            "text": "Option delta 9"
+          }
+        ]
+      }
+    ]
+  }
+}

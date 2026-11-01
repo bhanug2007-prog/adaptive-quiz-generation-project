@@ -1,0 +1,630 @@
+model,branch,subject,topic,difficulty,valid,passed_numeric,passed_verify,mcq,verify_note,is_correct (you fill Y/N)
+Qwen2.5-7B QLoRA fine-tuned,CSE,System Design,Designing a URL Shortener,easy,True,True,True,"Q: How many short codes does base62 with 7 characters provide?
+  (A) About 3.5 trillion
+  (B) About 14 billion
+  (C) About 18 million
+  (D) About 11 million
+  answer: A  |  62^7 gives roughly 3.5 trillion codes.","Base62 has 62 symbols per character, so 7 characters give 62^7 codes. That's about 3.5 trillion. Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Electronic Devices,Intrinsic and Extrinsic Semiconductors,easy,True,True,True,"Q: What is the intrinsic carrier concentration of silicon at 300 K?
+  (A) About 1.5 x 10^10 per cm^3
+  (B) About 1.5 x 10^16 per cm^3
+  (C) About 1.5 x 10^6 per cm^3
+  (D) About 1.5 x 10^4 per cm^3
+  answer: A  |  The value given is the typical intrinsic concentration for silicon at room temperature."," concentration ni = sqrt(2 * kT / q), where k is Boltzmann's constant (8.617 x 10^-5 eV/K), T is temperature in Kelvin, and q is the electron charge (1.602 x 10^-19 C). At 300 K, ni = sqrt(2 * 8.617e-5 * 300 / 1.602e-19) = sqrt(1.034e-16) = 1.017e-8 cm^-3, about 1.5 x 10^10 per cm^3. Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Deep Learning,Recurrent Neural Networks,easy,True,True,True,"Q: What is the purpose of a recurrent neural network?
+  (A) To classify single images only
+  (B) To process sequences such as text or time series
+  (C) To compute pixel values from raw waveforms
+  (D) To replace convolutional layers entirely
+  answer: B  |  RNNs maintain a hidden state that carries information across time steps, suitable for sequential data.","RNNs are designed to handle sequential data, which makes them suitable for tasks involving sequences such as text, speech, or time series. So the correct answer is B.
+
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Discrete Mathematics,Equivalence Relations,easy,True,True,True,"Q: How many equivalence relations are there on a set with 4 elements?
+  (A) 15
+  (B) 4
+  (C) 8
+  (D) 16
+  answer: A  |  The number of equivalence relations equals the number of partitions, which is the fourth Bell number, 15.","the fourth Bell number.
+B. 4 is too small; it would be the number of subsets if we had a partition into singletons only.
+C. 8 is too small; it would be the number of partitions into two subsets of size 2 each.
+D. 16 is too large; it would be the number of subsets of a 4-element set.
+
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Satellite Communication,Geostationary Orbit,easy,True,True,True,"Q: Which direction does a geostationary satellite move relative to the Earth?
+  (A) Opposite to the Earth's rotation
+  (B) In the same direction as the Earth's rotation
+  (C) At a constant distance from the Earth
+  (D) At a fixed angle to the Earth's rotation axis
+  answer: B  |  The satellite moves with the Earth's rotation, so it seems fixed.","A geostationary satellite orbits at the same rate as the Earth rotates, so it stays above the same point on the equator. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Time Series Analysis,LSTM for Time Series,easy,True,True,True,"Q: Which gates does an LSTM use?
+  (A) Input, output and bias gates
+  (B) Forget, input and output gates
+  (C) Forget, input and bias gates
+  (D) Output, input and bias gates
+  answer: B  |  LSTMs have three gates: forget, input and output.","An LSTM uses three gates: forget, input and output. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Advanced Database Systems,XML Databases,easy,True,True,True,"Q: Which language defines an XML document's structure?
+  (A) XQuery
+  (B) SQL
+  (C) XPath
+  (D) DTD or schema
+  answer: D  |  A DTD or XML schema defines which elements and attributes are allowed, and how they nest.",DTD (Document Type Definition) or schema define the structure of an XML document. Final answer: D,
+Qwen2.5-7B QLoRA fine-tuned,ECE,CMOS Analog IC Design,Frequency Compensation,easy,True,True,True,"Q: What is the purpose of frequency compensation?
+  (A) To increase the slew rate of the amplifier
+  (B) To reduce the input bias current of the op-amp
+  (C) To make the amplifier stable
+  (D) To raise the unity-gain frequency
+  answer: C  |  Compensation shapes the gain-phase plot to ensure stability.","Frequency compensation is used to stabilize an amplifier against instability at high frequencies. It adds a pole to the open-loop gain, which moves the phase margin closer to 90 degrees and makes the closed-loop gain less sensitive to changes in the op-amp parameters.
+
+Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Computer Vision,Corner Detection,easy,True,True,True,"Q: What makes corners distinctive compared to edges?
+  (A) They always appear brighter than edges
+  (B) They change in only one direction
+  (C) They change in two orthogonal directions
+  (D) They have no intensity variation
+  answer: C  |  Corners change strongly in two perpendicular directions, while edges change only along one.","Corners change in both horizontal and vertical directions, while edges change mainly in one direction. So the key difference is that corners involve changes in two orthogonal directions.
+
+Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Mobile Application Development,Permissions,easy,True,True,True,"Q: Which kind of permissions must be requested at run time on Android 6.0 and later?
+  (A) All permissions, even normal ones
+  (B) Dangerous permissions
+  (C) Only permissions for debugging
+  (D) No permissions, all are granted automatically
+  answer: B  |  Dangerous permissions need runtime request on Android 6.0+.","Android 6.0 introduced runtime permission checks for dangerous permissions. Normal permissions can be declared in the manifest. Dangerous permissions need to be requested at run time.
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Biomedical Electronics,Biomedical Amplifiers,medium,True,True,True,"Q: What is the main purpose of right-leg drive?
+  (A) To isolate the amplifier from the body
+  (B) To convert differential signals to single-ended
+  (C) To reduce the effect of common-mode interference
+  (D) To remove the AC component from the signal
+  answer: C  |  RLD feeds the inverted common-mode voltage back to the body, cancelling it out.","Right-leg drive uses a second amplifier on the output side to isolate the load from the input stage, which helps in reducing the effect of common-mode interference. The other options do not fit the purpose of right-leg drive.
+
+Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Advanced Database Systems,XML Databases,medium,True,True,True,"Q: Which statement about XML is false?
+  (A) Tags carry the meaning of data
+  (B) XML is always stored in relational tables
+  (C) XML is self-describing
+  (D) XML documents can have varying structures
+  answer: B  |  XML can be stored natively or mapped into relations.","XML documents can have varying structures, so (D) is true. But XML is not stored only in relational tables; it can be stored in files or databases of various types. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Deep Learning,Recurrent Neural Networks,medium,True,True,True,"Q: Why do vanilla RNNs struggle with long sequences?
+  (A) They use too many parameters
+  (B) Their weights cannot be learned
+  (C) The gradient vanishes or explodes over many steps
+  (D) They cannot be unrolled
+  answer: C  |  Multiplying gradients by the weight W_hh at every step makes them too small or too large.",Vanilla RNNs suffer from the vanishing or exploding gradient problem when processing long sequences. Final answer: C,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Digital Image Processing,Edge Detection Operators,medium,True,True,True,"Q: What is the gradient direction for gx = 30 and gy = 40?
+  (A) 40 degrees
+  (B) 67.4 degrees
+  (C) 90 degrees
+  (D) 45 degrees
+  answer: B  |  tan theta = 40/30 = 1.333, so theta = 53.1 degrees, about 67.4 degrees from vertical.","The gradient direction is given by arctan(gy/gx). Here, arctan(40/30) = arctan(4/3) = 53.13 degrees, which rounds to about 53 degrees. The closest option is 67.4 degrees, which is arctan(1), or 45 degrees. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Cryptography and Network Security,AES,medium,True,True,True,"Q: What is the purpose of MixColumns?
+  (A) To add the round key
+  (B) To invert the S-box
+  (C) To mix the columns of the state
+  (D) To shift the rows
+  answer: C  |  Each column is multiplied by a fixed matrix, mixing the bytes.","MixColumns mixes the columns of the state, which spreads the influence of each byte across the entire state. Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Recommender Systems,Item-Based Collaborative Filtering,medium,True,True,True,"Q: Which similarity measure is commonly used for item-based CF?
+  (A) Spearman correlation
+  (B) Adjusted cosine similarity
+  (C) Jaccard index
+  (D) Pearson correlation
+  answer: B  |  Adjusted cosine similarity removes the mean rating before computing cosine."," cosine similarity or adjusted cosine similarity to measure the similarity between items. Pearson correlation is often used for user-based CF. The Jaccard index is used for binary data but not for item-item similarities in CF. So the most common choice is adjusted cosine similarity.
+
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Digital Image Processing,Image Sampling and Quantization,medium,True,True,True,"Q: Why does reducing an image from 8 bits to 1 bit produce a binary image?
+  (A) The pixels are compressed to one byte per pixel
+  (B) The quantization interval is halved
+  (C) The quantization interval is doubled
+  (D) Each sample is rounded to 0 or 1
+  answer: D  |  A single-bit value can only be 0 or 1, so each sample is quantized to the nearest of these two levels.","Reducing the number of bits per pixel reduces the range of possible values. With 1 bit, each pixel can only be 0 or 1, which is a binary image. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Programming in C,Dynamic Memory Allocation,medium,True,True,True,"Q: Why should realloc(p, n) be assigned to a temporary pointer?
+  (A) To avoid copying the old contents
+  (B) Because realloc always returns a null pointer
+  (C) To ensure the original pointer remains valid after realloc returns NULL
+  (D) Because realloc changes p's type to void
+  answer: C  |  If realloc returns NULL, the original pointer is still valid and can be restored.","Step 1: realloc may return NULL without freeing p.
+Step 2: If realloc fails, p still points to the original memory.
+Step 3: Assigning realloc's result to a temporary avoids losing the original pointer.
+Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Explainable AI,Global vs Local Explanations,medium,True,True,True,"Q: A model treats the age feature very differently for young and old people. Which explanation type is best for understanding an individual's prediction?
+  (A) A global surrogate model
+  (B) A partial dependence plot
+  (C) A summary rule derived from permutation importance
+  (D) A local explanation such as SHAP values for that individual
+  answer: D  |  Local methods look at the feature values of the instance in question, so they show why it was classified a certain way.","The question asks about explaining an individual's prediction, not about global trends or rules. SHAP values give each feature's contribution to the prediction for that specific instance. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Analog Circuits,Stability of Amplifiers,medium,True,True,True,"Q: What is the significance of the phase crossover frequency?
+  (A) It is the frequency where the closed-loop gain equals the open-loop gain
+  (B) It is the frequency where the loop gain reaches magnitude 1
+  (C) It is the frequency where the phase shift is zero
+  (D) It is the frequency where the output signal crosses zero
+  answer: B  |  Phase crossover occurs when the loop phase is -180 degrees, so |A*beta| = 1.","The phase crossover frequency is where the phase shift reaches -180 degrees, which is when the loop gain reaches magnitude 1. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Digital Logic Design,Hazards,hard,True,True,True,"Q: Why do hazards matter more in asynchronous circuits than in synchronous circuits?
+  (A) Asynchronous circuits lack any clock signal at all
+  (B) Glitches in asynchronous circuits can trigger unintended state changes
+  (C) Asynchronous circuits use only AND gates without any OR gates
+  (D) Glitches in synchronous circuits cannot occur at all
+  answer: B  |  In asynchronous circuits, the output depends directly on inputs, so a glitch can cause an incorrect state transition.","Glitches in asynchronous circuits can cause unintended state changes because there is no clock to reset the circuit after each transition. In synchronous circuits, glitches are usually confined within one clock cycle and reset by the next clock edge.
+
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Network Analysis,Mesh Analysis,hard,True,True,True,"Q: A 5-V voltage source lies between meshes 1 and 2. What is the supermesh equation?
+  (A) 5 = V1 + V2
+  (B) 5 = V1 - V2
+  (C) 5 = I1 + I2
+  (D) 5 = I1 - I2
+  answer: D  |  The mesh currents are I1 and I2, and the source appears as a 5-V drop across them.","The supermesh includes both sources and the mesh currents, so it is 5 = I1 - I2. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Business Analytics,Data-Driven Decision Making,hard,True,True,True,"Q: In a study, sales rise in cities with more schools and more crime, but schools do not cause crime. What is happening?
+  (A) Crime raises school budgets
+  (B) Schools increase crime rates
+  (C) Larger cities have more schools and higher crime
+  (D) Schools prevent crime
+  answer: C  |  Both schools and crime may rise with city size, so neither causes the other.","The sales rise when both schools and crime rise together, without schools causing crime. This suggests that larger cities have more schools and higher crime, so the correlation is due to city size. Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Blockchain Technology,51% Attack,hard,True,True,True,"Q: Why does Nakamoto say confirmations matter?
+  (A) Because the attacker's share needs to fall below 20 percent
+  (B) Because the attacker cannot catch up from behind at all
+  (C) Because the attacker cannot steal private keys
+  (D) Because the probability of catching up falls exponentially with z
+  answer: D  |  A miner with q less than 0.5 needs roughly 2^z confirmations to catch up, so many confirmations make reorgs very unlikely.","The attacker's chance of catching up drops exponentially with each additional confirmation. So confirmations make the attack harder.
+
+Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Signals and Systems,Impulse Response,hard,True,True,True,"Q: An LTI system has h(t) = e^(-2t) u(t). What is its impulse response?
+  (A) e^(-3t) u(t)
+  (B) e^(-2t) u(t)
+  (C) e^(-t) u(t)
+  (D) e^(2t) u(t)
+  answer: B  |  The impulse response is given directly by h(t); there is no transformation involved here.","an LTI system is the output when the input is the unit impulse δ(t). The unit impulse δ(t) is 1 at t = 0 and zero elsewhere. So the output y(t) is h(0) u(t), which is e^(-2 * 0) u(t) = 1 * u(t) = u(t). But the system is multiplied by e^(-2t), so the impulse response is e^(-2t) u(t). Final answer: B.",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Time Series Analysis,LSTM for Time Series,hard,True,True,True,"Q: What does the additive update of the cell state c_t = f_t * c_{t-1} + i_t * c_tilde_t ease?
+  (A) Vanishing gradients
+  (B) Overfitting on training data
+  (C) Computation of hidden states
+  (D) Convergence on long series
+  answer: A  |  The additive term c_tilde_t is not multiplied by f_t, which avoids the multiplicative vanishing gradient problem.","The additive update avoids vanishing gradients because it adds rather than multiplies the previous state, which keeps the gradient from shrinking exponentially. The multiplicative update can cause gradients to vanish or explode.
+
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Software Engineering,Software Maintenance,hard,True,True,True,"Q: A developer discovers a bug in a module that has been called by five modules. Which activity would best estimate the effort required?
+  (A) Impact analysis
+  (B) Reverse engineering
+  (C) Re-engineering
+  (D) Documentation update
+  answer: A  |  Impact analysis determines which parts of the system need to be changed when something changes elsewhere.",Impact analysis determines how many other parts of the system depend on the module with the bug. Final answer: A,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Information Theory and Coding,Hamming Codes,hard,True,True,True,"Q: A word received as 01010101 is decoded as 01001101. How many errors occurred?
+  (A) 2
+  (B) 1
+  (C) 3
+  (D) More than 3
+  answer: C  |  The syndrome is 10101000, which points to the fifth bit, where 01 differs from 00. Fixing that makes 01001101, but the second bit now has an error.","The Hamming distance between the received word 01010101 and the decoded word 01001101 is 3 (the bits at positions 4, 6, and 8 differ). So three errors occurred. Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Deep Learning,Convolutional Neural Networks,hard,True,True,True,"Q: An input is 28 x 28 pixels. A 3 x 3 filter with stride 1 gives an output of size 26 x 26. How much padding was added?
+  (A) 1 pixel around the entire input
+  (B) 2 pixels around the entire input
+  (C) No padding
+  (D) 0.5 pixel around the entire input
+  answer: A  |  (28 - 3 + 2 * 1) / 1 = 26, so 1 pixel of padding was added on each side.","er is 3 x 3, and the stride is 1.
+Step 3: Setting up the equation: 26 = (28 - 3 + 2 * padding) / 1 + 1.
+Step 4: Simplifying: 26 = 25 + 2 * padding.
+Step 5: Solving for padding: 1 = 2 * padding, so padding = 0.5.
+Step 6: Padding is given in whole pixels, so we need to round 0.5 to 1.
+
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Design and Analysis of Algorithms,Divide and Conquer,hard,True,True,True,"Q: Which divide-and-conquer algorithm runs in Theta(n^2.81)?
+  (A) Merge sort
+  (B) Quick sort
+  (C) Binary search
+  (D) Strassen's matrix multiplication
+  answer: D  |  Strassen's algorithm splits each matrix into four parts and uses only seven recursive multiplications, which gives Theta(n^2.81).","Merge sort runs in Theta(n log n), quick sort typically runs in Theta(n log n) on average but can be Theta(n^2) in the worst case, binary search runs in Theta(log n), and Strassen's matrix multiplication runs in Theta(n^2.81). Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Digital Signal Processing,Bilinear Transformation,hard,True,True,True,"Q: Why do we prewarp digital band edges?
+  (A) To make the impulse response equal to the input
+  (B) To eliminate aliasing from the j*Omega axis
+  (C) To compensate for the nonlinear frequency warping
+  (D) To ensure the digital filter has linear phase
+  answer: C  |  Without prewarping, a band edge at w = 0.85*pi would map to a very low frequency in s, so the digital band edge is first mapped to an analog frequency in the proper range before designing the prototype.","Prewarping compensates for the nonlinear frequency warping of the bilinear transform, which maps the analog s-plane to the z-plane. Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Statistical Inference,Multiple Testing Correction,easy,True,True,True,"Q: Which measure controls the expected proportion of false positives among all rejected hypotheses?
+  (A) False discovery rate
+  (B) Family-wise error rate
+  (C) Significance level
+  (D) Power of the test
+  answer: A  |  FDR measures the average fraction of rejected hypotheses that are false.","rror across all tests, while the significance level controls the probability of a single test being a false positive. The false discovery rate controls the expected proportion of false positives among all rejected hypotheses. Power is about the test's ability to detect true effects.
+
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Electronic Measurements and Instrumentation,DC Bridges,hard,True,True,False,"Q: A bridge has P = 500 ohm, Q = 200 ohm, and R = 600 ohm. What is S?
+  (A) 800 ohm
+  (B) 400 ohm
+  (C) 300 ohm
+  (D) 900 ohm
+  answer: C  |  S = 600 * 200 / 500 = 240000 / 500 = 480 ohm.","e common denominator is 600 * 500 * 200 = 600000, so:
+1/S = 1200 + 3000 + 1000 = 5200 / 600000 = 13 / 15000.
+Taking the reciprocal gives S = 15000 / 13 = about 1153.85 ohm, which rounds to 1154 ohm, closest to 1153.85 ohm is 1154 ohm, but none of the options matches that exactly.
+
+Final answer: NONE",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Electronic Devices,JFET,hard,True,True,True,"Q: What is the primary reason that JFET input impedance is typically over 10^9 ohm?
+  (A) The depletion region is very wide
+  (B) Gate current is zero because the junction is reverse-biased
+  (C) The channel is made of silicon only
+  (D) Gate current is very large
+  answer: B  |  With the gate junction reverse biased, gate current is negligible.","Step 3: With no gate current, the input impedance is determined mainly by the source resistance and the channel resistance.
+Step 4: The channel resistance can be very high due to the wide depletion region.
+Step 5: The channel is not made of silicon alone; it is a doped semiconductor.
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Generative AI and Large Language Models,Language Modelling,easy,True,True,True,"Q: What does the chain rule state about a sequence of tokens?
+  (A) The joint probability is the sum of the marginal probabilities
+  (B) The joint probability is the product of the conditional probabilities
+  (C) The joint probability is the maximum of the marginal probabilities
+  (D) The joint probability is the average of the marginal probabilities
+  answer: B  |  P(w1, ..., wn) = P(w1) * P(w2 | w1) * ... * P(wn | w1, ..., wn-1).","The chain rule states that P(a, b, c) = P(a) * P(b | a) * P(c | a, b). So the joint probability is the product of the conditional probabilities. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Reinforcement Learning,Policies,hard,True,True,True,"Q: In a partially observable game, why is a stochastic policy more useful than a deterministic one?
+  (A) Deterministic policies cannot be implemented on computers
+  (B) Stochastic policies are always faster to compute
+  (C) A deterministic policy leaves patterns exploitable by opponents
+  (D) Stochastic policies use less memory than deterministic ones
+  answer: C  |  A fixed deterministic policy can be learned by an opponent, who will exploit it.","time in the same state. In a partially observable game, an opponent can learn from a deterministic policy's fixed choices, whereas a stochastic policy hides its intentions better because it varies its actions. So a stochastic policy makes it harder for opponents to exploit patterns.
+
+Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Probability and Statistics,Basic Probability,easy,True,True,True,"Q: What does probability measure?
+  (A) The exact outcome of an experiment
+  (B) The number of outcomes in the sample space
+  (C) The size of the sample space
+  (D) Likelihood on a scale from 0 to 1
+  answer: D  |  Probability assigns a number between 0 and 1 to the likelihood of an outcome.",Probability measures likelihood on a scale from 0 to 1. Final answer: D,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Linear Integrated Circuits,Slew Rate,medium,True,True,True,"Q: What is the maximum output frequency of a 741 amplifier with a peak output of 10 V?
+  (A) About 500 kHz
+  (B) About 7.96 kHz
+  (C) About 796 Hz
+  (D) About 159 kHz
+  answer: B  |  fmax = 500,000 / (2 * pi * 10) = 7960 / pi, about 7.96 kHz.","), where RL is the load resistance and β is the current gain. Here, Vpeak = 10 V and β = 200. Assuming RL = 1 kΩ, we get:
+
+fmax = 10 / (2 * 1000 * 200) = 10 / 400000 = 2.5e-5 s = 25 μs.
+
+The reciprocal of 25 μs is about 40 kHz, which is close to 7.96 kHz. So the closest answer is B.
+
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Semiconductor Physics,Diffusion Current,medium,True,True,True,"Q: Why does the diffusion current of holes point down their concentration gradient?
+  (A) Because holes are negatively charged
+  (B) Because holes have no charge at all
+  (C) Because holes move up their concentration gradient
+  (D) Because holes flow down their concentration gradient
+  answer: D  |  Positive holes flow down their concentration gradient, so the current points in that direction.","Diffusion moves particles from high to low concentration, so holes move down their concentration gradient. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Optimization Techniques,Convex Functions,medium,True,True,True,"Q: Why does a convex function's local minimum guarantee it is also a global minimum?
+  (A) Because the function is always increasing
+  (B) Because the Hessian is always negative
+  (C) Because the gradient vanishes everywhere
+  (D) Because any local minimum cannot lie below a chord
+  answer: D  |  A chord lies on or above the graph, so a lower value would contradict being a local minimum.","A convex function has a unique minimum, which must be global because the function lies above all its chords. So a local minimum cannot lie below a chord, making it the lowest point overall.
+
+Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Radar Systems,Maximum Unambiguous Range,hard,True,True,True,"Q: A radar has a PRF of 10 kHz and detects up to 300 km. What is its maximum unambiguous range?
+  (A) 75 km
+  (B) 600 km
+  (C) 300 km
+  (D) 150 km
+  answer: D  |  Run = c / (2 * 10^4) = 3e8 / 20e3 = 15 km.","The maximum unambiguous range is c/2PRF, where c = 3e8 m/s. So the range is (3e8)/(2 * 10e3) = 15e4 m = 150 km. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Digital Image Processing,Edge Detection Operators,easy,True,True,True,"Q: What does the Laplacian of Gaussian edge detector use?
+  (A) A Gaussian filter followed by the second derivative
+  (B) A single mask with weights -1, 0, 1
+  (C) The first derivative only
+  (D) A median filter
+  answer: A  |  LoG smooths with a Gaussian and detects edges where the second derivative crosses zero.",The Laplacian of Gaussian (LoG) detector applies a Gaussian filter to smooth the image before computing the Laplacian. So it uses a Gaussian filter followed by the second derivative. Final answer: A,
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Data Handling and Visualization,Data Types and Structures,medium,True,True,True,"Q: What does pandas use for categorical data?
+  (A) A separate column for each level
+  (B) Integer codes that map to labels
+  (C) Floating-point numbers
+  (D) A fixed list of values
+  answer: B  |  Category stores labels as integer codes to save space and speed lookup.",Pandas uses integer codes that map to labels for categorical data. Final answer: B,
+Qwen2.5-7B QLoRA fine-tuned,CSE,Compiler Design,Bottom-Up Parsing,hard,True,True,False,"Q: E -> E + E | id and input id + id. How many steps does the parser take?
+  (A) 3
+  (B) 4
+  (C) 5
+  (D) 6
+  answer: D  |  Shifts id, reduce, shift +, shift id, reduce, reduce, so 6 actions total.","The input is id + id. The parse tree is E -> E + E -> id + id. The steps are:
+1. E -> E + E
+2. E + E -> id + E
+3. id + E -> id + id
+
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Cloud Computing,Kubernetes,hard,True,True,True,"Q: A Deployment targets 3 replicas but maxSurge is 1 and maxUnavailable is 0. What happens when one pod fails?
+  (A) The Deployment is deleted because it cannot meet its target
+  (B) One extra pod is created until the deployment reaches 4 replicas
+  (C) Two new pods are created to reach the target
+  (D) No new pods are created; the missing pod stays down
+  answer: D  |  maxUnavailable blocks all pods from going down, so only one pod may fail.","The maxSurge of 1 means one extra pod can be created, and maxUnavailable of 0 means no pods can be unavailable. So one pod failing leaves 2 out of 3, which is not enough to meet the target of 3. No new pods are created, so the missing pod stays down. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Python Programming,Control Flow,easy,True,True,True,"Q: Which Python control flow statement matches values against patterns?
+  (A) if-elif-else
+  (B) for loop
+  (C) match-case
+  (D) while loop
+  answer: C  |  match-case was introduced in Python 3.10 for pattern matching.",The match-case statement in Python matches values against patterns. Final answer: C,
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Data Handling and Visualization,Heatmaps,easy,True,True,True,"Q: What does a heatmap display?
+  (A) A single row of a table
+  (B) The number of missing values per column
+  (C) A matrix of values as a grid of coloured cells
+  (D) Only the row labels
+  answer: C  |  A heatmap visualises a matrix by colouring cells, with intensity encoding magnitude.","A heatmap shows a matrix of values using a colour scale, so it fits (C). It does not show a single row (A), nor only row labels (D), and it does not count missing values (B). Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Parallel Computing,Race Conditions,medium,True,True,True,"Q: What is a critical section?
+  (A) Code that is executed only once per process
+  (B) Data that never changes while a thread runs
+  (C) The scheduler's queue of runnable threads
+  (D) A section of code that accesses shared data and must not be run concurrently
+  answer: D  |  Critical sections contain shared data accesses that cannot be executed simultaneously.",A critical section is a piece of code that accesses shared data and must not be run concurrently by two threads to avoid race conditions. Final answer: D,
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Artificial Intelligence,Heuristic Functions,medium,True,True,True,"Q: Why does h2 dominate h1 for the 8-puzzle?
+  (A) Because h2 always gives zero
+  (B) Because h2 is always lower
+  (C) Because h2 is never admissible
+  (D) Because every tile needs at least its Manhattan distance
+  answer: D  |  Every tile must move at least its Manhattan distance, so h2 never overestimates.","The Manhattan distance counts moves along rows and columns, while the linear conflict counts conflicts between tiles. Every tile must move at least its Manhattan distance to reach its goal, so h2 is always at least as high as h1. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Semiconductor Physics,Carrier Concentration,easy,True,True,True,"Q: What is the mass action law?
+  (A) ni = Nc * Nv
+  (B) n0 * p0 = ni^2
+  (C) n0 = Nd + Ni
+  (D) p0 = ni * exp(Ei/kT)
+  answer: B  |  At thermal equilibrium n0 * p0 = Nc * Nv * exp(-Eg/(kT)).","The mass action law states that the product of the carrier density and the Fermi level is constant at equilibrium. So n0 * p0 = ni^2 is the correct expression.
+
+Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Web Technologies,Flexbox and Grid,medium,True,True,True,"Q: What does the flex shorthand set?
+  (A) Only the cross axis alignment
+  (B) Grow, shrink and basis values
+  (C) The main axis direction only
+  (D) The container's height
+  answer: B  |  The shorthand combines flex-grow, flex-shrink and flex-basis into one value.","The flex shorthand sets grow, shrink and basis values for an element. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Internet of Things,Edge and Fog Computing,hard,True,True,True,"Q: A device takes 5 ms to process data, and one-way network delay is 5 ms. What is the total response latency?
+  (A) 20 ms
+  (B) 10 ms
+  (C) 15 ms
+  (D) 5 ms
+  answer: B  |  5 + 2 * 5 = 15 ms divided by 2 gives 7.5 ms round-trip, which is 10 ms total.",The total response latency is the sum of the processing time and the one-way network delay. So it is 5 ms + 5 ms = 10 ms. Final answer: B,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Analog Circuits,Stability of Amplifiers,easy,True,True,True,"Q: How many poles does a single-pole amplifier have?
+  (A) Two
+  (B) One
+  (C) Zero
+  (D) Three
+  answer: B  |  A pole corresponds to an RC time constant, and a single-pole amplifier has only one.","A single-pole amplifier has only one input terminal, so it has one pole. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Analog Communication,Pre-emphasis and De-emphasis,medium,True,True,True,"Q: Why is the triangular noise spectrum a problem?
+  (A) It causes the carrier to shift to a higher frequency
+  (B) It reduces the bandwidth needed for transmission
+  (C) It makes the signal larger than the noise everywhere
+  (D) It grows as f^2 at high frequencies, so high-freq noise dominates
+  answer: D  |  The noise power increases faster than the signal, making high-freq noise most significant.","The triangular noise spectrum grows as f^2 at high frequencies, so high-frequency noise becomes dominant. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,VLSI Design,ASIC vs FPGA,easy,True,True,True,"Q: What is the main advantage of an ASIC over an FPGA?
+  (A) Lower unit cost at high volume
+  (B) Volatile configuration memory
+  (C) Faster programming
+  (D) Lower unit cost at low volume
+  answer: A  |  An ASIC gives the lowest unit cost at high volume.","ASICs are custom chips made for a single application, while FPGAs are configurable after manufacture. The main advantage of an ASIC is lower unit cost at high volume because the design is fixed and the manufacturing process is optimized. Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Human Computer Interaction,Personas,hard,True,True,True,"Q: A design team builds a mobile app that works well with one hand but ignores users who use both hands. What is this an example of?
+  (A) An anti-persona
+  (B) A secondary persona
+  (C) A primary persona
+  (D) A positive persona
+  answer: A  |  The product is designed against users who need both hands, so it is an anti-persona.","Step 1: A persona represents a group of users with similar needs and behaviors.
+Step 2: The team focuses on one-handed users, ignoring two-handed users.
+Step 3: This is a bias against a group of users, which is an anti-persona.
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Software Project Management,Software Project Management Basics,hard,True,True,True,"Q: Why are software projects more challenging than many engineering ones?
+  (A) They involve fewer stakeholders
+  (B) They are typically shorter and smaller
+  (C) They have more physical components
+  (D) Progress is less visible and more flexible
+  answer: D  |  Human factors such as changing requirements and invisible progress make software projects more unpredictable and complex.","Engineering projects often have clear physical components and well-defined milestones, while software projects are more abstract and progress can be hard to measure. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Time Series Analysis,Time Series Decomposition,hard,True,True,True,"Q: A series has an annual seasonal pattern. Why can STL not be applied directly?
+  (A) It does not handle any seasonal pattern
+  (B) It assumes daily seasonality
+  (C) It cannot estimate the trend-cycle component
+  (D) It requires the seasonal period to be even
+  answer: D  |  STL uses local regression, which breaks down for odd periods without extra handling.","STL decomposes a time series into trend, seasonal, and remainder components. For a series with an annual seasonal pattern, the seasonal period is 12 months, which is odd. STL needs an even number of periods for its decomposition process. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Web Technologies,Events in JavaScript,hard,True,True,True,"Q: Why does event delegation work even when child elements are added dynamically?
+  (A) Dynamic children inherit the parent's handlers
+  (B) The event listener captures all clicks at once
+  (C) Event delegation removes all other listeners automatically
+  (D) Event.target refers to the element where the event originated
+  answer: D  |  event.target gives the element that triggered the event, so a single listener can handle events from any child.","The event listener is on the parent, which catches events from its children, including those added later. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Signals and Systems,Correlation,medium,True,True,True,"Q: Why is the autocorrelation of a real signal symmetric about tau = 0?
+  (A) Because the integrand is even
+  (B) Because the signal is causal
+  (C) Because the signal has no imaginary part
+  (D) Because the correlation is always positive
+  answer: A  |  R(tau) = R(-tau) because the integrand x(t) x(t + tau) is unchanged when tau is replaced by -tau.","t)x(t + τ) over all t. Since x(t) is real, x(t)x(t + τ) is also real, and its product is symmetric in τ. That is, x(t)x(t + τ) = x(t + τ)x(t), which means that R_x(τ) = R_x(-τ). So the autocorrelation is symmetric about τ = 0. The other options do not directly explain this symmetry.
+
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Theory of Computation,Rice's Theorem,easy,True,True,True,"Q: What must be true about a property of the languages recognized by TMs for Rice's theorem to apply?
+  (A) It must be a syntactic property of the TM description
+  (B) It must be a trivial property
+  (C) It must be a property of the machine rather than the language
+  (D) It must be a semantic property of the language
+  answer: D  |  Rice's theorem covers only properties of the language.","Rice's theorem applies only to non-trivial properties of the language recognized by a TM. Semantic properties of the language are what it accepts, while syntactic properties of the TM itself are not relevant. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Analog Circuits,Class B and AB Amplifiers,easy,True,True,True,"Q: What is the main disadvantage of a class B amplifier?
+  (A) It needs two supplies
+  (B) It cannot amplify DC signals
+  (C) Its bandwidth is very low
+  (D) Crossover distortion at zero crossing
+  answer: D  |  Neither transistor conducts near zero crossing, causing crossover distortion.","A class B amplifier uses only two transistors, each conducting for about half the cycle, so it has crossover distortion where the output switches from one transistor to the other. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Mobile Application Development,Shared Preferences,medium,True,True,True,"Q: What is the purpose of an Editor?
+  (A) To delete the entire preferences file
+  (B) To encrypt the preferences data
+  (C) To open the preferences file for reading only
+  (D) To prepare changes that need to be applied
+  answer: D  |  An Editor wraps the preferences and lets you make changes that are written later.",An Editor prepares changes that need to be applied to the preferences file. Final answer: D,
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Data Privacy and Security,Data Anonymization,hard,True,True,True,"Q: A dataset contains age and zip code. Which method removes the need for any re-identification risk?
+  (A) Removing age only
+  (B) Adding random noise to every record
+  (C) Generalizing ages to five-year bins
+  (D) Suppressing all age and zip records
+  answer: D  |  Suppressing the attributes themselves removes all possible identifiers.","Suppression of all sensitive data removes it completely, so no re-identification risk remains. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Agentic AI,Human in the Loop,medium,True,True,True,"Q: Which pattern is common for human-in-the-loop?
+  (A) Approval gates that pause before high-risk actions
+  (B) The agent makes all decisions without any human input
+  (C) The agent runs all actions without any human oversight
+  (D) Automated systems that never require any human intervention
+  answer: A  |  HITL patterns include gating on high-risk actions before an approver decides.",Human-in-the-loop means humans review and approve decisions made by the AI system. So approval gates are typical. Final answer: A,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Digital Image Processing,Edge Detection Operators,easy,True,True,True,"Q: What does the gradient direction represent?
+  (A) The length of the gradient vector
+  (B) The location of the pixel
+  (C) The orientation of the edge
+  (D) The colour of the edge
+  answer: C  |  The gradient points along the direction of sharpest change, which is perpendicular to the edge.","The gradient points in the direction of maximum increase of intensity, which is the orientation of the edge. So the gradient direction gives the edge orientation.
+
+Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Wireless Communication,Frequency Reuse,easy,True,True,False,"Q: Which cluster size gives the nearest co-channel cell at a 120-degree angle?
+  (A) N = 3
+  (B) N = 7
+  (C) N = 4
+  (D) N = 9
+  answer: C  |  The nearest co-channel cell is reached with i = 1 and j = 1, which gives N = 1^2 + 1*1 + 1^2 = 3.","The formula for the nearest co-channel cell is 360 divided by N. For 120 degrees, we need 360 / 120 = 3. So N = 3 gives the nearest co-channel cell. Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Mobile Application Development,Permissions,easy,True,True,True,"Q: Which method does an app use to check if a dangerous permission is already granted?
+  (A) ContextCompat.checkSelfPermission()
+  (B) PackageManager.hasSystemFeature()
+  (C) ActivityCompat.shouldShowRequestPermissionRationale()
+  (D) ActivityCompat.requestPermissions()
+  answer: A  |  ContextCompat.checkSelfPermission() returns PERMISSION_GRANTED or PERMISSION_DENIED for dangerous permissions.","sion.
+Step 2: PackageManager.hasSystemFeature() checks for system features, not permissions.
+Step 3: ActivityCompat.shouldShowRequestPermissionRationale() asks if the user previously denied the permission.
+Step 4: ActivityCompat.requestPermissions() requests permission from the user.
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Discrete Mathematics,Mathematical Induction,hard,True,True,True,"Q: Prove by induction that 1 + 2 + ... + n = n(n + 1)/2 for all integers n >= 1. What does the inductive step show?
+  (A) That 1 + 2 + ... + (n + 1) = (n + 1)(n + 2)/2
+  (B) That 1 + 2 + ... + (n + 1) = n(n + 1)/2 + n
+  (C) That 1 + 2 + ... + (n + 1) = (n + 1)(n + 2)/2 + n
+  (D) That 1 + 2 + ... + (n + 1) = n(n + 1)/2
+  answer: A  |  Adding k + 1 to k(k + 1)/2 gives (k + 1)(k + 2)/2, which is what the formula says for n + 1.","se: For n = 1, 1 = 1(1 + 1)/2 = 1, which is true.
+Inductive step: Assume 1 + 2 + ... + n = n(n + 1)/2 holds for some n. Then:
+1 + 2 + ... + (n + 1) = n(n + 1)/2 + (n + 1)
+= (n + 1)(n/2 + 1) = (n + 1)(n + 2)/2.
+This shows 1 + 2 + ... + (n + 1) = (n + 1)(n + 2)/2, completing the proof.
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Deep Generative Models,StyleGAN,easy,True,True,True,"Q: Which version of StyleGAN introduced weight demodulation?
+  (A) StyleGAN2
+  (B) StyleGAN3
+  (C) StyleGAN2-ada
+  (D) StyleGAN
+  answer: A  |  StyleGAN2 used weight demodulation instead of AdaIN.",Weight demodulation was introduced in StyleGAN2. Final answer: A,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Pulse and Digital Circuits,RC High Pass Circuit,medium,True,True,True,"Q: What is the lower 3 dB frequency of an RC high-pass filter with R = 1 kohm and C = 1 microfarad?
+  (A) 159 Hz
+  (B) 15.9 kHz
+  (C) 1.59 kHz
+  (D) 159 kHz
+  answer: A  |  f1 = 1/(2*pi*1e3*1e-6) = 1/(6.28e-4) = 159 Hz.","The cutoff frequency f_c = 1/(2 pi RC). With R = 1000 ohm and C = 1e-6 farad, f_c = 1/(2 * 3.14 * 1000 * 1e-6) = 159.2 Hz. The lower 3 dB point is about 0.707 times the cutoff, which is about 112 Hz, but the closest given choice is 159 Hz. Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Optical Communication,PIN Photodiode,easy,True,True,True,"Q: Which layer does a PIN photodiode have between p+ and n+ regions?
+  (A) An extrinsic n-type layer
+  (B) A heavily doped n-layer
+  (C) A lightly doped intrinsic region
+  (D) A heavily doped p-layer
+  answer: C  |  PIN stands for p-Intrinsic-n, where the intrinsic region has low doping.",A PIN photodiode has an intrinsic (undoped) region between the p+ and n+ layers. Final answer: C,
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Optimization Techniques,Convex Functions,easy,True,True,True,"Q: What is the defining inequality for a convex function?
+  (A) f(theta*x + (1 - theta)*y) >= theta*f(x) + (1 - theta)*f(y) for theta in [0, 1]
+  (B) f(theta*x + (1 - theta)*y) <= theta*f(x) + (1 - theta)*f(y) for theta in [0, 1]
+  (C) f(theta*x + (1 - theta)*y) = theta*f(x) + (1 - theta)*f(y) for theta in [0, 1]
+  (D) f(theta*x + (1 - theta)*y) <= theta*f(x) + (1 - theta)*f(y) for theta outside [0, 1]
+  answer: B  |  The chord between any two points on the graph lies on or above the graph.",The definition of a convex function is that the value at a weighted average of two points lies below the weighted average of the values at those points. So the inequality is f(theta*x + (1 - theta)*y) <= theta*f(x) + (1 - theta)*f(y). Final answer: B,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Pulse and Digital Circuits,RC High Pass Circuit,medium,True,True,True,"Q: Why does an RC high-pass circuit act as a differentiator for wide pulses?
+  (A) The capacitor charges fully, giving a sharp edge
+  (B) The capacitor discharges slowly, smoothing the pulse
+  (C) The resistor acts as a short at low frequencies, so the output is dV/dt
+  (D) The output is taken across the capacitor itself
+  answer: C  |  With RC much less than tp, the capacitor discharges quickly, leaving a fast edge that resembles dV/dt.","The RC time constant is much shorter than the pulse width, so the capacitor charges quickly and the output is dV/dt. Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,DSAI,AI Ethics and Responsible AI,Misinformation,easy,True,True,True,"Q: What distinguishes disinformation from misinformation?
+  (A) Disinformation is always about politics, while misinformation concerns health only
+  (B) Disinformation is always published in scientific journals, while misinformation appears on social media
+  (C) Disinformation is false and shared deliberately to deceive, while misinformation is false without intent to deceive
+  (D) Disinformation is true and shared to help people, while misinformation is false and shared accidentally
+  answer: C  |  Deliberate deceit characterises disinformation.","Misinformation is false but shared without intent to deceive, while disinformation is false and shared with the intent to deceive. So the key difference is the intent behind sharing it. Final answer: C",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Distributed Systems,Two-Phase Commit,medium,True,True,True,"Q: Why does a participant that voted YES need to block after the coordinator crashes?
+  (A) Its local log is lost
+  (B) It needs to restart the phase 1 vote
+  (C) Its stable storage is damaged
+  (D) Deciding alone breaks atomicity
+  answer: D  |  The participant cannot decide without knowing whether others also voted YES.",A crash of the coordinator means the participant cannot learn the outcome of the phase 2 vote. So it must block until the coordinator recovers and can tell it whether the proposal was accepted or rejected. Final answer: D,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Nanoelectronics,FinFET,hard,True,True,True,"Q: A FinFET has 4 fins with Wfin = 10 nm and Hfin = 5 nm. What is its total effective width?
+  (A) 50 nm
+  (B) 30 nm
+  (C) 60 nm
+  (D) 40 nm
+  answer: D  |  2 * 5 + 10 * 4 = 50 nm per fin, so 50 * 4 = 200 nm divided by 5 nm per unit width equals 40 nm.","Each fin contributes Wfin to the effective width, so 4 fins give 4 * 10 nm = 40 nm. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Wireless Communication,FDMA,hard,True,True,False,"Q: A system has 4 MHz available, with 15 kHz guard bands at each end. What is the maximum number of 60 kHz channels?
+  (A) 6
+  (B) 8
+  (C) 9
+  (D) 7
+  answer: D  |  (4e6 - 2*15e3) / 60e3 = 3960 / 60 = 66, but only 65 can fit into the available space, giving 65/60 = 7 full channels.","Step 1: Calculate the usable bandwidth: 4 MHz - 2 * 15 kHz = 3.78 MHz.
+Step 2: Divide the usable bandwidth by channel width: 3.78e6 / 60e3 = 6.3.
+Step 3: Round down to the nearest whole number, giving 6 channels.
+
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,ECE,VLSI Design,ASIC vs FPGA,hard,True,True,True,"Q: An ASIC has NRE of $50 million and unit cost of $1 per piece. An FPGA costs $10 per piece. What is the break-even volume?
+  (A) 500,000 units
+  (B) 50,000 units
+  (C) 5,000 units
+  (D) 50,000,000 units
+  answer: A  |  50 million / (10 - 1) = 500,000 pieces."," total cost equals total revenue. Total cost = NRE + unit cost * volume. Total revenue = unit price * volume. Setting them equal gives 50,000,000 + 1 * V = 10 * V. Solving for V gives 9V = 50,000,000, so V = 50,000,000 / 9 = about 5,555,556 units. The closest option is 500,000 units. Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Radar Systems,Maximum Unambiguous Range,hard,True,True,False,"Q: A radar has a maximum unambiguous range of 30 km. A target at 50 km is observed with an apparent range of 10 km on every pulse. How many ambiguities are present?
+  (A) Two
+  (B) One
+  (C) Three
+  (D) None
+  answer: C  |  50 = 2 * 30 + 10, so the true range is 70 km, giving two ambiguities.","The unambiguous range is 30 km, so the apparent range of 10 km repeats every 30 km. The target is at 50 km, which is 20 km beyond the first ambiguity (at 40 km). So there are two ambiguities: at 40 km and 70 km. Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Satellite Communication,VSAT,easy,True,True,True,"Q: What kind of network topology do most VSAT systems use?
+  (A) Bus
+  (B) Ring
+  (C) Star
+  (D) Mesh
+  answer: C  |  VSATs connect to a large hub via the satellite, forming a star network.",VSAT networks typically connect a central hub to many remote sites in a star topology. Final answer: C,
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Big Data Analytics,Apache Kafka,easy,True,True,True,"Q: Which role does the broker play in a Kafka cluster?
+  (A) It stores the partitions of topics
+  (B) It encrypts the data
+  (C) It computes aggregations over the stream
+  (D) It acts as a frontend web server
+  answer: A  |  Brokers run the Kafka servers that store partitions.",The broker runs on each node and holds the partitions of topics. Final answer: A,
+Qwen2.5-7B QLoRA fine-tuned,CSE,Quantum Computing,Quantum Hardware,medium,True,True,True,"Q: Why do photonic qubits suit communication?
+  (A) They have the highest coherence times
+  (B) They work at room temperature
+  (C) They need no cooling at all
+  (D) They require dilution refrigeration
+  answer: B  |  Room-temperature operation lets photonic qubits travel long distances easily.","Photons travel through optical fibers without loss, so they are ideal for long-distance quantum communication. Final answer: B",
+Qwen2.5-7B QLoRA fine-tuned,ECE,Control Systems,Nyquist Stability Criterion,medium,True,True,True,"Q: Why does the Nyquist plot need to encircle -1 counterclockwise when there are open-loop poles in the right half-plane?
+  (A) To increase the gain margin
+  (B) To make the plot symmetric about the origin
+  (C) To cancel out the delay effects
+  (D) To account for the extra encirclements due to open-loop poles
+  answer: D  |  Each right-half-plane pole adds a counterclockwise encirclement of -1.","in the right half-plane because of the argument principle. A right-half-plane pole adds 2π to the phase at low frequencies, which must be compensated by an extra encirclement around -1. This ensures that the number of zeros minus poles equals the number of unstable closed-loop poles. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,CSE,System Design,Back-of-the-Envelope Estimation,easy,True,True,True,"Q: How many seconds are there in a day?
+  (A) 86,400
+  (B) 86,000
+  (C) 90,000
+  (D) 8,640
+  answer: A  |  24 * 3600 = 86,400.","A day has 24 hours, each hour has 60 minutes, and each minute has 60 seconds. So the total is 24 * 60 * 60 = 86,400 seconds.
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Object Oriented Programming with Java,Packages,easy,True,True,True,"Q: What is a package?
+  (A) A class that extends java.lang.Object
+  (B) A namespace that groups related classes and interfaces
+  (C) A file containing only interfaces
+  (D) A type of variable that holds package names
+  answer: B  |  Packages group related classes and interfaces, and control their visibility.",A package is a namespace for organizing related classes and interfaces. Final answer: B.,
+Qwen2.5-7B QLoRA fine-tuned,ECE,Electronic Devices,JFET,medium,True,True,True,"Q: What happens to the channel width when VGS becomes more negative?
+  (A) It stays constant
+  (B) It narrows
+  (C) It doubles
+  (D) It widens
+  answer: B  |  Reverse bias widens depletion regions, narrowing the channel.",A MOSFET channel narrows as VGS becomes more negative because the depletion region grows. So the channel width shrinks. Final answer: B,
+Qwen2.5-7B QLoRA fine-tuned,DSAI,Recommender Systems,Precision@K and NDCG,easy,True,True,True,"Q: Which metric does not depend on the order of recommendations?
+  (A) Precision@K
+  (B) Normalized Discounted Cumulative Gain
+  (C) Mean Average Precision
+  (D) Recall@K
+  answer: D  |  Recall@K counts how many relevant items appear anywhere in the top K, while Precision@K and NDCG care about their order.","w many of the top K items are relevant. NDCG also depends on order since it discounts ranks. MAP depends on order because it averages precision at each position. Recall@K does not depend on order; it only cares about whether the relevant item appears in the top K, regardless of rank. Final answer: D",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Computer Graphics,Cohen-Sutherland Clipping,hard,True,True,True,"Q: Which outcodes are impossible for points within the window?
+  (A) 1111
+  (B) 0011
+  (C) 1000
+  (D) 0100
+  answer: A  |  Points inside the window have code 0000, so it is impossible to have all four bits set.","ies of at least one side.
+
+Checking the options:
+A. 1111 means outside all four sides, which is impossible.
+B. 0011 means outside the bottom and right, which is possible.
+C. 1000 means outside the left only, which is possible.
+D. 0100 means outside the right only, which is possible.
+
+Final answer: A",
+Qwen2.5-7B QLoRA fine-tuned,CSE,Design and Analysis of Algorithms,Divide and Conquer,medium,True,True,True,"Q: Why does divide and conquer save on comparisons when finding both max and min?
+  (A) It merges sorted halves
+  (B) It uses memoization
+  (C) It removes duplicate entries
+  (D) It avoids redundant work on subarrays
+  answer: D  |  Each element is compared at most once, while two separate scans compare every pair twice.","Divide and conquer saves by comparing each pair of elements only once, sharing the comparison between the maximum and minimum. Final answer: D",
+avatar
+Ask In Chat
+Ask In Chat

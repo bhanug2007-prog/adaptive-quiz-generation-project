@@ -1,0 +1,331 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/quizzes/1/publish",
+  "status": 200,
+  "body": {
+    "id": 1,
+    "kind": "assessment",
+    "title": "Scheduling quiz 1",
+    "instructions": null,
+    "status": "published",
+    "course_id": 1,
+    "course_title": "Operating Systems",
+    "subject_id": 1,
+    "subject_name": "Operating Systems",
+    "topics": [
+      "CPU Scheduling"
+    ],
+    "graded": true,
+    "max_marks": 5.0,
+    "question_count": 5,
+    "attempts_allowed": 2,
+    "opens_at": null,
+    "due_at": null,
+    "closes_at": null,
+    "time_limit_min": 20,
+    "shuffle_questions": true,
+    "shuffle_options": true,
+    "feedback_release": "immediate",
+    "feedback_released": false,
+    "late_policy": "none",
+    "late_penalty_pct": 0.0,
+    "contribution_pct": 10.0,
+    "confidence_enabled": false,
+    "target_duration_min": null,
+    "created_at": "2026-10-22T14:27:13.595202Z",
+    "published_at": "2026-10-22T14:27:16.442114Z",
+    "generation_run_id": 1,
+    "review_counts": {
+      "approved": 5
+    },
+    "items": [
+      {
+        "item_id": 1,
+        "position": 0,
+        "marks": 1.0,
+        "question": {
+          "id": 1,
+          "text": "Which policy needs the burst length in advance?",
+          "explanation": "Edited explanation.",
+          "difficulty": "easy",
+          "subject_label": "Operating Systems",
+          "unit_label": "Unit 2: Scheduling",
+          "topic_label": "CPU Scheduling",
+          "topic_id": 1,
+          "objective_id": null,
+          "course_id": 1,
+          "review_status": "approved",
+          "source_type": "generated_notes",
+          "source_excerpt": "Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes",
+          "validation": {
+            "math_verified": false,
+            "max_similarity": 0.0,
+            "math_status": "not_math"
+          },
+          "model": "Qwen/Qwen2.5-7B-Instruct (finetuned, GGUF Q4_K_M)",
+          "options": [
+            {
+              "id": 1,
+              "label": "A",
+              "text": "Option alpha 2",
+              "is_correct": false
+            },
+            {
+              "id": 2,
+              "label": "B",
+              "text": "Option beta 2",
+              "is_correct": true
+            },
+            {
+              "id": 3,
+              "label": "C",
+              "text": "Option gamma 2",
+              "is_correct": false
+            },
+            {
+              "id": 4,
+              "label": "D",
+              "text": "Option delta 2",
+              "is_correct": false
+            }
+          ],
+          "created_at": "2026-10-22T14:27:13.687089Z",
+          "updated_at": "2026-10-22T14:27:16.299804Z",
+          "used_in_quizzes": 1,
+          "answered_count": 0,
+          "locked": false
+        }
+      },
+      {
+        "item_id": 2,
+        "position": 1,
+        "marks": 1.0,
+        "question": {
+          "id": 2,
+          "text": "Which metric does shortest job first minimise?",
+          "explanation": "Beta 4 is correct because of reason 4.",
+          "difficulty": "medium",
+          "subject_label": "Operating Systems",
+          "unit_label": "Unit 2: Scheduling",
+          "topic_label": "CPU Scheduling",
+          "topic_id": 1,
+          "objective_id": null,
+          "course_id": 1,
+          "review_status": "approved",
+          "source_type": "generated_notes",
+          "source_excerpt": "Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes",
+          "validation": {
+            "math_verified": false,
+            "max_similarity": 0.0,
+            "math_status": "not_math"
+          },
+          "model": "Qwen/Qwen2.5-7B-Instruct (finetuned, GGUF Q4_K_M)",
+          "options": [
+            {
+              "id": 5,
+              "label": "A",
+              "text": "Option alpha 4",
+              "is_correct": false
+            },
+            {
+              "id": 6,
+              "label": "B",
+              "text": "Option beta 4",
+              "is_correct": true
+            },
+            {
+              "id": 7,
+              "label": "C",
+              "text": "Option gamma 4",
+              "is_correct": false
+            },
+            {
+              "id": 8,
+              "label": "D",
+              "text": "Option delta 4",
+              "is_correct": false
+            }
+          ],
+          "created_at": "2026-10-22T14:27:15.904171Z",
+          "updated_at": "2026-10-22T14:27:16.214742Z",
+          "used_in_quizzes": 1,
+          "answered_count": 0,
+          "locked": false
+        }
+      },
+      {
+        "item_id": 3,
+        "position": 2,
+        "marks": 1.0,
+        "question": {
+          "id": 3,
+          "text": "Which scheduler is non-preemptive by default?",
+          "explanation": "Beta 5 is correct because of reason 5.",
+          "difficulty": "hard",
+          "subject_label": "Operating Systems",
+          "unit_label": "Unit 2: Scheduling",
+          "topic_label": "CPU Scheduling",
+          "topic_id": 1,
+          "objective_id": null,
+          "course_id": 1,
+          "review_status": "approved",
+          "source_type": "generated_notes",
+          "source_excerpt": "Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes",
+          "validation": {
+            "math_verified": false,
+            "max_similarity": 0.0,
+            "math_status": "not_math"
+          },
+          "model": "Qwen/Qwen2.5-7B-Instruct (finetuned, GGUF Q4_K_M)",
+          "options": [
+            {
+              "id": 9,
+              "label": "A",
+              "text": "Option alpha 5",
+              "is_correct": false
+            },
+            {
+              "id": 10,
+              "label": "B",
+              "text": "Option beta 5",
+              "is_correct": true
+            },
+            {
+              "id": 11,
+              "label": "C",
+              "text": "Option gamma 5",
+              "is_correct": false
+            },
+            {
+              "id": 12,
+              "label": "D",
+              "text": "Option delta 5",
+              "is_correct": false
+            }
+          ],
+          "created_at": "2026-10-22T14:27:15.924844Z",
+          "updated_at": "2026-10-22T14:27:16.231219Z",
+          "used_in_quizzes": 1,
+          "answered_count": 0,
+          "locked": false
+        }
+      },
+      {
+        "item_id": 4,
+        "position": 3,
+        "marks": 1.0,
+        "question": {
+          "id": 4,
+          "text": "Which queue structure suits multilevel feedback?",
+          "explanation": "Beta 7 is correct because of reason 7.",
+          "difficulty": "easy",
+          "subject_label": "Operating Systems",
+          "unit_label": "Unit 2: Scheduling",
+          "topic_label": "CPU Scheduling",
+          "topic_id": 1,
+          "objective_id": null,
+          "course_id": 1,
+          "review_status": "approved",
+          "source_type": "generated_notes",
+          "source_excerpt": "Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes",
+          "validation": {
+            "math_verified": false,
+            "max_similarity": 0.0,
+            "math_status": "not_math"
+          },
+          "model": "Qwen/Qwen2.5-7B-Instruct (finetuned, GGUF Q4_K_M)",
+          "options": [
+            {
+              "id": 13,
+              "label": "A",
+              "text": "Option alpha 7",
+              "is_correct": false
+            },
+            {
+              "id": 14,
+              "label": "B",
+              "text": "Option beta 7",
+              "is_correct": true
+            },
+            {
+              "id": 15,
+              "label": "C",
+              "text": "Option gamma 7",
+              "is_correct": false
+            },
+            {
+              "id": 16,
+              "label": "D",
+              "text": "Option delta 7",
+              "is_correct": false
+            }
+          ],
+          "created_at": "2026-10-22T14:27:15.961347Z",
+          "updated_at": "2026-10-22T14:27:16.246271Z",
+          "used_in_quizzes": 1,
+          "answered_count": 0,
+          "locked": false
+        }
+      },
+      {
+        "item_id": 5,
+        "position": 4,
+        "marks": 1.0,
+        "question": {
+          "id": 5,
+          "text": "Which algorithm suits time-sharing systems?",
+          "explanation": "Beta 9 is correct because of reason 9.",
+          "difficulty": "medium",
+          "subject_label": "Operating Systems",
+          "unit_label": "Unit 2: Scheduling",
+          "topic_label": "CPU Scheduling",
+          "topic_id": 1,
+          "objective_id": null,
+          "course_id": 1,
+          "review_status": "approved",
+          "source_type": "generated_notes",
+          "source_excerpt": "Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes",
+          "validation": {
+            "math_verified": false,
+            "max_similarity": 0.075,
+            "math_status": "not_math"
+          },
+          "model": "Qwen/Qwen2.5-7B-Instruct (finetuned, GGUF Q4_K_M)",
+          "options": [
+            {
+              "id": 17,
+              "label": "A",
+              "text": "Option alpha 9",
+              "is_correct": false
+            },
+            {
+              "id": 18,
+              "label": "B",
+              "text": "Option beta 9",
+              "is_correct": true
+            },
+            {
+              "id": 19,
+              "label": "C",
+              "text": "Option gamma 9",
+              "is_correct": false
+            },
+            {
+              "id": 20,
+              "label": "D",
+              "text": "Option delta 9",
+              "is_correct": false
+            }
+          ],
+          "created_at": "2026-10-22T14:27:16.044934Z",
+          "updated_at": "2026-10-22T14:27:16.262418Z",
+          "used_in_quizzes": 1,
+          "answered_count": 0,
+          "locked": false
+        }
+      }
+    ],
+    "weight_cap_pct": 20.0,
+    "weight_used_elsewhere_pct": 0.0
+  }
+}

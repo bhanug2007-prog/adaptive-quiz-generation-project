@@ -1,0 +1,32 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/overview",
+  "status": 200,
+  "body": {
+    "period_days": 30,
+    "active_courses": 1,
+    "published_quizzes": 1,
+    "enrolled_students": 1,
+    "completion_rate": 1.0,
+    "expected_submissions": 1,
+    "recent_average": 40.0,
+    "recent_submissions": 1,
+    "pending_submissions": 0,
+    "largest_gaps": [],
+    "recent_activity": [
+      {
+        "at": "2026-10-22T14:27:16.680330+00:00",
+        "student": "Sample Student",
+        "quiz": "Scheduling quiz 1",
+        "course": "Operating Systems",
+        "percentage": 40.0
+      }
+    ],
+    "definitions": {
+      "completion_rate": "Submitted / (enrolled students x opened published quizzes).",
+      "recent_average": "Mean final % of latest attempts submitted in the last 30 days.",
+      "pending_submissions": "Students who have not submitted a quiz that is still open.",
+      "largest_gaps": "Topics with the lowest mean mastery among at least 3 students with enough evidence."
+    }
+  }
+}

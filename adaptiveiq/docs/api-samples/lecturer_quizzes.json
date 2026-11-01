@@ -1,0 +1,44 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/quizzes",
+  "status": 200,
+  "body": [
+    {
+      "id": 1,
+      "kind": "assessment",
+      "title": "Scheduling quiz 1",
+      "instructions": null,
+      "status": "published",
+      "course_id": 1,
+      "course_title": "Operating Systems",
+      "subject_id": 1,
+      "subject_name": "Operating Systems",
+      "topics": [
+        "CPU Scheduling"
+      ],
+      "graded": true,
+      "max_marks": 5.0,
+      "question_count": 5,
+      "attempts_allowed": 2,
+      "opens_at": null,
+      "due_at": null,
+      "closes_at": null,
+      "time_limit_min": 20,
+      "shuffle_questions": true,
+      "shuffle_options": true,
+      "feedback_release": "immediate",
+      "feedback_released": false,
+      "late_policy": "none",
+      "late_penalty_pct": 0.0,
+      "contribution_pct": 10.0,
+      "confidence_enabled": false,
+      "target_duration_min": null,
+      "created_at": "2026-10-22T14:27:13.595202Z",
+      "published_at": "2026-10-22T14:27:16.442114Z",
+      "generation_run_id": 1,
+      "review_counts": {
+        "approved": 5
+      }
+    }
+  ]
+}

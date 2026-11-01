@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "path": "/api/student/study-plan",
+  "status": 200,
+  "body": {
+    "weekly_hours": null,
+    "items": [
+      {
+        "topic_key": "p:dbms|sql joins",
+        "topic": "SQL joins",
+        "subject": "DBMS",
+        "topic_id": null,
+        "status": "weak",
+        "next_difficulty": "medium",
+        "weight": 3.0,
+        "why": "Estimated mastery is 19% across 5 questions.",
+        "hours": null
+      },
+      {
+        "topic_key": "t:1",
+        "topic": "CPU Scheduling",
+        "subject": "Operating Systems",
+        "topic_id": 1,
+        "status": "weak",
+        "next_difficulty": "easy",
+        "weight": 3.0,
+        "why": "Estimated mastery is 46% across 5 questions.",
+        "hours": null
+      }
+    ],
+    "note": "Add your weekly study hours in Profile to split time between topics."
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "method": "GET",
+  "path": "/api/student/question-status",
+  "status": 200,
+  "body": {
+    "skipped": [
+      {
+        "question_id": 8,
+        "text": "Which policy needs the burst length in advance in case 12?",
+        "topic": "SQL joins",
+        "quiz_title": "Practice: SQL joins",
+        "kind": "practice",
+        "session_id": 2,
+        "at": "2026-10-22T14:27:17.137086+00:00"
+      },
+      {
+        "question_id": 9,
+        "text": "Which metric does shortest job first minimise in case 14?",
+        "topic": "SQL joins",
+        "quiz_title": "Practice: SQL joins",
+        "kind": "practice",
+        "session_id": 2,
+        "at": "2026-10-22T14:27:17.137086+00:00"
+      },
+      {
+        "question_id": 10,
+        "text": "Which scheduler is non-preemptive by default in case 15?",
+        "topic": "SQL joins",
+        "quiz_title": "Practice: SQL joins",
+        "kind": "practice",
+        "session_id": 2,
+        "at": "2026-10-22T14:27:17.137086+00:00"
+      },
+      {
+        "question_id": 11,
+        "text": "Which queue structure suits multilevel feedback in case 17?",
+        "topic": "SQL joins",
+        "quiz_title": "Practice: SQL joins",
+        "kind": "practice",
+        "session_id": 2,
+        "at": "2026-10-22T14:27:17.137086+00:00"
+      },
+      {
+        "question_id": 1,
+        "text": "Which policy needs the burst length in advance?",
+        "topic": "CPU Scheduling",
+        "quiz_title": "Scheduling quiz 1",
+        "kind": "assessment",
+        "session_id": 1,
+        "at": "2026-10-22T14:27:16.680330+00:00"
+      }
+    ],
+    "incorrect": [
+      {
+        "question_id": 7,
+        "text": "Which scheduler can starve long jobs in case 10?",
+        "topic": "SQL joins",
+        "quiz_title": "Practice: SQL joins",
+        "kind": "practice",
+        "session_id": 2,
+        "at": "2026-10-22T14:27:17.137086+00:00"
+      },
+      {
+        "question_id": 2,
+        "text": "Which metric does shortest job first minimise?",
+        "topic": "CPU Scheduling",
+        "quiz_title": "Scheduling quiz 1",
+        "kind": "assessment",
+        "session_id": 1,
+        "at": "2026-10-22T14:27:16.680330+00:00"
+      },
+      {
+        "question_id": 4,
+        "text": "Which queue structure suits multilevel feedback?",
+        "topic": "CPU Scheduling",
+        "quiz_title": "Scheduling quiz 1",
+        "kind": "assessment",
+        "session_id": 1,
+        "at": "2026-10-22T14:27:16.680330+00:00"
+      }
+    ],
+    "never_attempted": []
+  }
+}

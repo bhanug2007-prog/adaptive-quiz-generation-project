@@ -1,0 +1,22 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/generate",
+  "status": 202,
+  "body": {
+    "run_id": 1,
+    "status": "queued",
+    "stage": "Waiting to start",
+    "ready": 0,
+    "total": 5,
+    "attempts": 0,
+    "rejected": {},
+    "rejected_reasons": {},
+    "error": null,
+    "quiz_id": 1,
+    "queue_position": 0,
+    "elapsed_s": 0.0,
+    "avg_question_s": null,
+    "grounded_on": null,
+    "difficulty_note": null
+  }
+}

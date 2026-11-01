@@ -1,0 +1,83 @@
+{
+  "method": "GET",
+  "path": "/api/student/revision",
+  "status": 200,
+  "body": {
+    "due": [],
+    "upcoming": [
+      {
+        "question_id": 2,
+        "text": "Which metric does shortest job first minimise?",
+        "topic": "CPU Scheduling",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:16.690858+00:00",
+        "due": false,
+        "reviews": 0
+      },
+      {
+        "question_id": 4,
+        "text": "Which queue structure suits multilevel feedback?",
+        "topic": "CPU Scheduling",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:16.690858+00:00",
+        "due": false,
+        "reviews": 0
+      },
+      {
+        "question_id": 1,
+        "text": "Which policy needs the burst length in advance?",
+        "topic": "CPU Scheduling",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:16.690858+00:00",
+        "due": false,
+        "reviews": 0
+      },
+      {
+        "question_id": 7,
+        "text": "Which scheduler can starve long jobs in case 10?",
+        "topic": "SQL joins",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:17.143467+00:00",
+        "due": false,
+        "reviews": 0
+      },
+      {
+        "question_id": 8,
+        "text": "Which policy needs the burst length in advance in case 12?",
+        "topic": "SQL joins",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:17.143467+00:00",
+        "due": false,
+        "reviews": 0
+      },
+      {
+        "question_id": 9,
+        "text": "Which metric does shortest job first minimise in case 14?",
+        "topic": "SQL joins",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:17.143467+00:00",
+        "due": false,
+        "reviews": 0
+      },
+      {
+        "question_id": 10,
+        "text": "Which scheduler is non-preemptive by default in case 15?",
+        "topic": "SQL joins",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:17.143467+00:00",
+        "due": false,
+        "reviews": 0
+      },
+      {
+        "question_id": 11,
+        "text": "Which queue structure suits multilevel feedback in case 17?",
+        "topic": "SQL joins",
+        "box": 1,
+        "due_at": "2026-10-23T14:27:17.143467+00:00",
+        "due": false,
+        "reviews": 0
+      }
+    ],
+    "method": "Leitner boxes: a missed question returns after 1 day, then 3, 7, 14 and 30 days after each correct answer."
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/courses/1",
+  "status": 200,
+  "body": {
+    "id": 1,
+    "code": "CS301",
+    "title": "Operating Systems",
+    "program": null,
+    "semester": null,
+    "academic_year": null,
+    "archived": false,
+    "created_at": "2026-10-22T14:27:13.312443Z",
+    "lecturer_name": "Sample Lecturer",
+    "join_code": "6UTRWNQQ",
+    "join_enabled": true,
+    "student_count": 0,
+    "quiz_count": 0,
+    "subjects": [
+      {
+        "id": 1,
+        "name": "Operating Systems",
+        "code": null,
+        "quiz_weight_cap_pct": 20.0,
+        "quiz_weight_used_pct": 0.0,
+        "grading_notes": null,
+        "units": [
+          {
+            "id": 1,
+            "name": "Unit 2: Scheduling",
+            "position": 0,
+            "topics": [
+              {
+                "id": 1,
+                "name": "CPU Scheduling",
+                "description": null,
+                "prerequisite_topic_id": null,
+                "objectives": [
+                  {
+                    "id": 1,
+                    "code": null,
+                    "text": "Compare FCFS, SJF and priority scheduling"
+                  }
+                ]
+              },
+              {
+                "id": 2,
+                "name": "Round Robin",
+                "description": null,
+                "prerequisite_topic_id": 1,
+                "objectives": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

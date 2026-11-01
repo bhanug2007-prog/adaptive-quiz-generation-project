@@ -1,0 +1,27 @@
+# Large files that live outside the repo
+models/
+llama/
+*.zip
+!btech_mcq_dataset_clean.zip
+*.gguf
+
+# Already on GitHub as btech_mcq_dataset_clean.zip
+btech_mcq_dataset_clean/
+
+# Old app and local backups
+quizforge/
+_backup_*/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+
+# Secrets and local data
+.env
+*.db

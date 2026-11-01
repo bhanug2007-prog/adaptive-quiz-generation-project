@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/units/1/topics",
+  "status": 201,
+  "body": {
+    "id": 2,
+    "name": "Round Robin",
+    "description": null,
+    "prerequisite_topic_id": 1,
+    "objectives": []
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "method": "GET",
+  "path": "/api/student/overview",
+  "status": 200,
+  "body": {
+    "name": "Sample Student",
+    "semester": 3,
+    "program": "B.Tech DSAI",
+    "courses": [
+      {
+        "id": 1,
+        "title": "Operating Systems",
+        "code": "CS301"
+      }
+    ],
+    "awaiting": [
+      {
+        "quiz_id": 1,
+        "title": "Scheduling quiz 1",
+        "due_at": null,
+        "state": "open",
+        "question_count": 5
+      }
+    ],
+    "awaiting_count": 1,
+    "recent_attempts": [
+      {
+        "session_id": 2,
+        "quiz_title": "Practice: SQL joins",
+        "kind": "practice",
+        "submitted_at": "2026-10-22T14:27:17.137086+00:00",
+        "percentage": 0.0
+      },
+      {
+        "session_id": 1,
+        "quiz_title": "Scheduling quiz 1",
+        "kind": "assessment",
+        "submitted_at": "2026-10-22T14:27:16.680330+00:00",
+        "percentage": 40.0
+      }
+    ],
+    "average_30d": {
+      "assessment": {
+        "average": 40.0,
+        "count": 1
+      },
+      "practice": {
+        "average": 0.0,
+        "count": 1
+      },
+      "period_days": 30
+    },
+    "mastery_counts": {
+      "needs_improvement": 2,
+      "not_attempted": 1
+    },
+    "topics_tracked": 3,
+    "top_topics": [
+      {
+        "topic_key": "p:dbms|sql joins",
+        "subject": "DBMS",
+        "topic": "SQL joins",
+        "topic_id": null,
+        "status": "weak",
+        "status_reason": "Estimated mastery is 19% across 5 questions.",
+        "label": "needs_improvement",
+        "label_text": "Needs improvement",
+        "score": 0.1905,
+        "lower": 0.0,
+        "upper": 0.3918,
+        "answers": 5,
+        "unique_questions": 5,
+        "correct": 0,
+        "incorrect": 1,
+        "skipped": 4,
+        "recent_accuracy": 0.0,
+        "historical_accuracy": null,
+        "next_difficulty": "medium",
+        "explanation": "Estimated mastery 19% (likely range 0\u201339%) from 5 answers on 5 questions: 0 correct, 1 wrong, 4 skipped. Recent answers and harder questions count more.",
+        "last_activity": "2026-10-22T14:27:17.137086+00:00",
+        "score_100": 19,
+        "evidence_level": "moderate",
+        "evidence_text": "Limited evidence",
+        "trend": "not_enough_data",
+        "trend_text": "Not enough data for a trend",
+        "trend_reason": "A trend needs at least 5 answered questions before the last 5, and the last 5 themselves.",
+        "next_action": "revise_concept",
+        "next_action_text": "Revise the concept, then practise with easier questions."
+      },
+      {
+        "topic_key": "t:1",
+        "subject": "Operating Systems",
+        "topic": "CPU Scheduling",
+        "topic_id": 1,
+        "status": "weak",
+        "status_reason": "Estimated mastery is 46% across 5 questions.",
+        "label": "needs_improvement",
+        "label_text": "Needs improvement",
+        "score": 0.4561,
+        "lower": 0.2322,
+        "upper": 0.6801,
+        "answers": 5,
+        "unique_questions": 5,
+        "correct": 2,
+        "incorrect": 2,
+        "skipped": 1,
+        "recent_accuracy": 0.5,
+        "historical_accuracy": null,
+        "next_difficulty": "easy",
+        "explanation": "Estimated mastery 46% (likely range 23\u201368%) from 5 answers on 5 questions: 2 correct, 2 wrong, 1 skipped. Recent answers and harder questions count more.",
+        "last_activity": "2026-10-22T14:27:16.680330+00:00",
+        "score_100": 46,
+        "evidence_level": "moderate",
+        "evidence_text": "Limited evidence",
+        "trend": "not_enough_data",
+        "trend_text": "Not enough data for a trend",
+        "trend_reason": "A trend needs at least 5 answered questions before the last 5, and the last 5 themselves.",
+        "next_action": "revise_concept",
+        "next_action_text": "Revise the concept, then practise with easier questions."
+      }
+    ],
+    "recommendation": {
+      "id": 2,
+      "kind": "practice_topic",
+      "topic": "SQL joins",
+      "reason": "Practise SQL joins because estimated mastery is 19% across 5 questions.",
+      "payload": {
+        "subject": "DBMS",
+        "topic": "SQL joins",
+        "difficulty": "medium",
+        "topic_id": null
+      }
+    },
+    "streak_days": 1,
+    "active_days_30d": 1,
+    "revision_due": 0,
+    "total_attempts": 2
+  }
+}

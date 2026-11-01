@@ -1,0 +1,280 @@
+{
+  "method": "POST",
+  "path": "/api/student/attempts/2/submit",
+  "status": 200,
+  "body": {
+    "session_id": 2,
+    "quiz_id": 2,
+    "quiz_title": "Practice: SQL joins",
+    "kind": "practice",
+    "attempt_no": 1,
+    "submitted_at": "2026-10-22T14:27:17.137086Z",
+    "submitted_by": "student",
+    "is_late": false,
+    "feedback_available": true,
+    "feedback_message": null,
+    "raw_score": 0.0,
+    "max_score": 5.0,
+    "percentage": 0.0,
+    "late_penalty_pct": 0.0,
+    "final_percentage": 0.0,
+    "contribution_pct": null,
+    "contribution_earned": null,
+    "correct": 0,
+    "incorrect": 1,
+    "unanswered": 4,
+    "duration_s": 0.1,
+    "active_time_s": null,
+    "items": [
+      {
+        "question_id": 7,
+        "number": 1,
+        "text": "Which scheduler can starve long jobs in case 10?",
+        "topic": "SQL joins",
+        "difficulty": "easy",
+        "marks": 1.0,
+        "outcome": "incorrect",
+        "confidence": null,
+        "options": [
+          {
+            "id": 25,
+            "label": "A",
+            "text": "Option alpha 10",
+            "is_correct": false,
+            "selected": true
+          },
+          {
+            "id": 26,
+            "label": "B",
+            "text": "Option beta 10",
+            "is_correct": true,
+            "selected": false
+          },
+          {
+            "id": 27,
+            "label": "C",
+            "text": "Option gamma 10",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 28,
+            "label": "D",
+            "text": "Option delta 10",
+            "is_correct": false,
+            "selected": false
+          }
+        ],
+        "explanation": "Beta 10 is correct because of reason 10.",
+        "math_verified": false,
+        "source_excerpt": null,
+        "time_spent_s": null
+      },
+      {
+        "question_id": 8,
+        "number": 2,
+        "text": "Which policy needs the burst length in advance in case 12?",
+        "topic": "SQL joins",
+        "difficulty": "medium",
+        "marks": 1.0,
+        "outcome": "skipped",
+        "confidence": null,
+        "options": [
+          {
+            "id": 29,
+            "label": "A",
+            "text": "Option alpha 12",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 30,
+            "label": "B",
+            "text": "Option beta 12",
+            "is_correct": true,
+            "selected": false
+          },
+          {
+            "id": 31,
+            "label": "C",
+            "text": "Option gamma 12",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 32,
+            "label": "D",
+            "text": "Option delta 12",
+            "is_correct": false,
+            "selected": false
+          }
+        ],
+        "explanation": "Beta 12 is correct because of reason 12.",
+        "math_verified": false,
+        "source_excerpt": null,
+        "time_spent_s": null
+      },
+      {
+        "question_id": 9,
+        "number": 3,
+        "text": "Which metric does shortest job first minimise in case 14?",
+        "topic": "SQL joins",
+        "difficulty": "hard",
+        "marks": 1.0,
+        "outcome": "skipped",
+        "confidence": null,
+        "options": [
+          {
+            "id": 33,
+            "label": "A",
+            "text": "Option alpha 14",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 34,
+            "label": "B",
+            "text": "Option beta 14",
+            "is_correct": true,
+            "selected": false
+          },
+          {
+            "id": 35,
+            "label": "C",
+            "text": "Option gamma 14",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 36,
+            "label": "D",
+            "text": "Option delta 14",
+            "is_correct": false,
+            "selected": false
+          }
+        ],
+        "explanation": "Beta 14 is correct because of reason 14.",
+        "math_verified": false,
+        "source_excerpt": null,
+        "time_spent_s": null
+      },
+      {
+        "question_id": 10,
+        "number": 4,
+        "text": "Which scheduler is non-preemptive by default in case 15?",
+        "topic": "SQL joins",
+        "difficulty": "easy",
+        "marks": 1.0,
+        "outcome": "skipped",
+        "confidence": null,
+        "options": [
+          {
+            "id": 37,
+            "label": "A",
+            "text": "Option alpha 15",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 38,
+            "label": "B",
+            "text": "Option beta 15",
+            "is_correct": true,
+            "selected": false
+          },
+          {
+            "id": 39,
+            "label": "C",
+            "text": "Option gamma 15",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 40,
+            "label": "D",
+            "text": "Option delta 15",
+            "is_correct": false,
+            "selected": false
+          }
+        ],
+        "explanation": "Beta 15 is correct because of reason 15.",
+        "math_verified": false,
+        "source_excerpt": null,
+        "time_spent_s": null
+      },
+      {
+        "question_id": 11,
+        "number": 5,
+        "text": "Which queue structure suits multilevel feedback in case 17?",
+        "topic": "SQL joins",
+        "difficulty": "medium",
+        "marks": 1.0,
+        "outcome": "skipped",
+        "confidence": null,
+        "options": [
+          {
+            "id": 41,
+            "label": "A",
+            "text": "Option alpha 17",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 42,
+            "label": "B",
+            "text": "Option beta 17",
+            "is_correct": true,
+            "selected": false
+          },
+          {
+            "id": 43,
+            "label": "C",
+            "text": "Option gamma 17",
+            "is_correct": false,
+            "selected": false
+          },
+          {
+            "id": 44,
+            "label": "D",
+            "text": "Option delta 17",
+            "is_correct": false,
+            "selected": false
+          }
+        ],
+        "explanation": "Beta 17 is correct because of reason 17.",
+        "math_verified": false,
+        "source_excerpt": null,
+        "time_spent_s": null
+      }
+    ],
+    "topics": [
+      {
+        "topic_key": "p:dbms|sql joins",
+        "topic": "SQL joins",
+        "correct": 0,
+        "incorrect": 1,
+        "skipped": 4,
+        "accuracy": 0.0,
+        "mastery_label": "needs_improvement",
+        "mastery_score": 0.1905,
+        "next_difficulty": "medium"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": 2,
+        "kind": "practice_topic",
+        "topic": "SQL joins",
+        "subject": "DBMS",
+        "reason": "Practise SQL joins because estimated mastery is 19% across 5 questions.",
+        "payload": {
+          "subject": "DBMS",
+          "topic": "SQL joins",
+          "difficulty": "medium",
+          "topic_id": null
+        }
+      }
+    ],
+    "can_retry": true
+  }
+}

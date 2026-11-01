@@ -1,0 +1,6 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/courses/1/insights",
+  "status": 200,
+  "body": []
+}

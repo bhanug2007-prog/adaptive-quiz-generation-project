@@ -1,0 +1,8 @@
+{
+  "method": "POST",
+  "path": "/api/auth/login",
+  "status": 401,
+  "body": {
+    "detail": "Email or password is not correct."
+  }
+}

@@ -1,0 +1,5 @@
+decoding,format_valid_%,rougeL,bleu,avg_q_words_easy,avg_q_words_medium,avg_q_words_hard,collapsed_options_%,answer_A/B/C/D_%,seconds
+beam,99.5,0.285,0.19,8.0,9.6,15.2,42.8,6/7/17/71,202.0
+beam_penalty,99.2,0.29,0.199,8.6,10.0,15.6,0.5,6/11/28/55,186.0
+sample_best_of_4,100.0,0.281,0.191,9.5,11.6,18.0,7.8,22/28/24/25,136.0
+reference (dataset),100.0,1.0,1.0,9.6,13.0,18.4,0.0,,

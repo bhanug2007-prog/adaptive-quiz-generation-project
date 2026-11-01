@@ -1,0 +1,14 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/courses/1/subjects",
+  "status": 201,
+  "body": {
+    "id": 1,
+    "name": "Operating Systems",
+    "code": null,
+    "quiz_weight_cap_pct": 20.0,
+    "quiz_weight_used_pct": 0.0,
+    "grading_notes": null,
+    "units": []
+  }
+}

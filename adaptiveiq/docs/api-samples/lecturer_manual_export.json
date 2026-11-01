@@ -1,0 +1,6 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/quizzes/1/export",
+  "status": 200,
+  "body": "Scheduling quiz 1\n\n1. Which policy needs the burst length in advance? (1 mark)\n   A) Option alpha 2\n   B) Option beta 2\n   C) Option gamma 2\n   D) Option delta 2\n   Answer: B) Option beta 2\n   Explanation: Edited explanation.\n\n2. Which metric does shortest job first minimise? (1 mark)\n   A) Option alpha 4\n   B) Option beta 4\n   C) Option gamma 4\n   D) Option delta 4\n   Answer: B) Option beta 4\n   Explanation: Beta 4 is correct because of reason 4.\n\n3. Which scheduler is non-preemptive by default? (1 mark)\n   A) Option alpha 5\n   B) Option beta 5\n   C) Option gamma 5\n   D) Option delta 5\n   Answer: B) Option beta 5\n   Explanation: Beta 5 is correct because of reason 5.\n\n4. Which queue structure suits multilevel feedback? (1 mark)\n   A) Option alpha 7\n   B) Option beta 7\n   C) Option gamma 7\n   D) Option delta 7\n   Answer: B) Option beta 7\n   Explanation: Beta 7 is correct because of reason 7.\n\n5. Which algorithm suits time-sharing systems? (1 mark)\n   A) Option alpha 9\n   B) Option beta 9\n   C) Option gamma 9\n   D) Option delta 9\n   Answer: B) Option beta 9\n   Explanation: Beta 9 is correct because of reason 9.\n"
+}

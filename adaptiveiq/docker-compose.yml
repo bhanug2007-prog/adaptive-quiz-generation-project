@@ -1,0 +1,40 @@
+# PostgreSQL + backend + frontend. The Qwen model server runs separately (llama-server on the host or a
+# GPU machine); point MODEL_BASE_URL at it. Copy backend/.env.example to backend/.env first and set
+# SECRET_KEY and LECTURER_INVITE_CODE. Then:  docker compose up --build   ->  http://localhost:8088
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: adaptiveiq
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-adaptiveiq-dev-password}
+      POSTGRES_DB: adaptiveiq
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U adaptiveiq -d adaptiveiq"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://adaptiveiq:${POSTGRES_PASSWORD:-adaptiveiq-dev-password}@db:5432/adaptiveiq
+      MODEL_BASE_URL: ${MODEL_BASE_URL:-http://host.docker.internal:8080}
+      FRONTEND_URL: http://localhost:8088
+      ALLOWED_ORIGINS: http://localhost:8088
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8088:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

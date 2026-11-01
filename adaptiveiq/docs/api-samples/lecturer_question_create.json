@@ -1,0 +1,55 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/questions",
+  "status": 201,
+  "body": {
+    "id": 6,
+    "text": "In Round Robin scheduling, what happens when a time quantum expires?",
+    "explanation": "RR pre-empts the running process and re-queues it.",
+    "difficulty": "easy",
+    "subject_label": "Operating Systems",
+    "unit_label": "Unit 2: Scheduling",
+    "topic_label": "Round Robin",
+    "topic_id": 2,
+    "objective_id": null,
+    "course_id": 1,
+    "review_status": "approved",
+    "source_type": "manual",
+    "source_excerpt": null,
+    "validation": {
+      "manual": true
+    },
+    "model": null,
+    "options": [
+      {
+        "id": 21,
+        "label": "A",
+        "text": "The process finishes",
+        "is_correct": false
+      },
+      {
+        "id": 22,
+        "label": "B",
+        "text": "The process is moved to the back of the ready queue",
+        "is_correct": true
+      },
+      {
+        "id": 23,
+        "label": "C",
+        "text": "The process is terminated",
+        "is_correct": false
+      },
+      {
+        "id": 24,
+        "label": "D",
+        "text": "The CPU is idle",
+        "is_correct": false
+      }
+    ],
+    "created_at": "2026-10-22T14:27:16.368775Z",
+    "updated_at": "2026-10-22T14:27:16.368782Z",
+    "used_in_quizzes": 0,
+    "answered_count": 0,
+    "locked": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "method": "GET",
+  "path": "/api/generation",
+  "status": 200,
+  "body": [
+    {
+      "run_id": 1,
+      "status": "done",
+      "stage": "Questions ready",
+      "ready": 5,
+      "total": 5,
+      "attempts": 9,
+      "rejected": {
+        "format": 2,
+        "math_wrong_key": 2
+      },
+      "rejected_reasons": {
+        "format": "broken format, missing fields or repeated options",
+        "math_wrong_key": "Python check found a different correct option"
+      },
+      "error": null,
+      "quiz_id": 1,
+      "queue_position": 0,
+      "elapsed_s": 2.4,
+      "avg_question_s": 0.5,
+      "grounded_on": "generated_notes",
+      "difficulty_note": null
+    }
+  ]
+}

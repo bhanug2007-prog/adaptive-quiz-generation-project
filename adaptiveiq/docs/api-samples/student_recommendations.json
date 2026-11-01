@@ -1,0 +1,39 @@
+{
+  "method": "GET",
+  "path": "/api/student/recommendations",
+  "status": 200,
+  "body": [
+    {
+      "id": 2,
+      "kind": "practice_topic",
+      "topic_key": "p:dbms|sql joins",
+      "topic": "SQL joins",
+      "subject": "DBMS",
+      "reason": "Practise SQL joins because estimated mastery is 19% across 5 questions.",
+      "payload": {
+        "subject": "DBMS",
+        "topic": "SQL joins",
+        "difficulty": "medium",
+        "topic_id": null
+      },
+      "created_at": "2026-10-22T14:27:17.161314+00:00",
+      "algorithm_version": "mastery-beta-v3+difficulty-policy-v1+weak-rules-v2+reco-rules-v1+leitner-v1"
+    },
+    {
+      "id": 3,
+      "kind": "practice_topic",
+      "topic_key": "t:1",
+      "topic": "CPU Scheduling",
+      "subject": "Operating Systems",
+      "reason": "Practise CPU Scheduling because estimated mastery is 46% across 5 questions.",
+      "payload": {
+        "subject": "Operating Systems",
+        "topic": "CPU Scheduling",
+        "difficulty": "easy",
+        "topic_id": 1
+      },
+      "created_at": "2026-10-22T14:27:17.161318+00:00",
+      "algorithm_version": "mastery-beta-v3+difficulty-policy-v1+weak-rules-v2+reco-rules-v1+leitner-v1"
+    }
+  ]
+}

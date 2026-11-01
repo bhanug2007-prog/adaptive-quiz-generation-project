@@ -1,0 +1,132 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/questions/1/history",
+  "status": 200,
+  "body": [
+    {
+      "action": "approved",
+      "note": null,
+      "before": null,
+      "after": {
+        "text": "Which policy needs the burst length in advance?",
+        "explanation": "Beta 2 is correct because of reason 2.",
+        "difficulty": "easy",
+        "options": [
+          {
+            "label": "A",
+            "text": "Option alpha 2",
+            "is_correct": false
+          },
+          {
+            "label": "B",
+            "text": "Option beta 2",
+            "is_correct": true
+          },
+          {
+            "label": "C",
+            "text": "Option gamma 2",
+            "is_correct": false
+          },
+          {
+            "label": "D",
+            "text": "Option delta 2",
+            "is_correct": false
+          }
+        ]
+      },
+      "at": "2026-10-22T14:27:16.198633+00:00"
+    },
+    {
+      "action": "edited",
+      "note": null,
+      "before": {
+        "text": "Which policy needs the burst length in advance?",
+        "explanation": "Beta 2 is correct because of reason 2.",
+        "difficulty": "easy",
+        "options": [
+          {
+            "label": "A",
+            "text": "Option alpha 2",
+            "is_correct": false
+          },
+          {
+            "label": "B",
+            "text": "Option beta 2",
+            "is_correct": true
+          },
+          {
+            "label": "C",
+            "text": "Option gamma 2",
+            "is_correct": false
+          },
+          {
+            "label": "D",
+            "text": "Option delta 2",
+            "is_correct": false
+          }
+        ]
+      },
+      "after": {
+        "text": "Which policy needs the burst length in advance?",
+        "explanation": "Edited explanation.",
+        "difficulty": "easy",
+        "options": [
+          {
+            "label": "A",
+            "text": "Option alpha 2",
+            "is_correct": false
+          },
+          {
+            "label": "B",
+            "text": "Option beta 2",
+            "is_correct": true
+          },
+          {
+            "label": "C",
+            "text": "Option gamma 2",
+            "is_correct": false
+          },
+          {
+            "label": "D",
+            "text": "Option delta 2",
+            "is_correct": false
+          }
+        ]
+      },
+      "at": "2026-10-22T14:27:16.281286+00:00"
+    },
+    {
+      "action": "approved",
+      "note": "ok",
+      "before": null,
+      "after": {
+        "text": "Which policy needs the burst length in advance?",
+        "explanation": "Edited explanation.",
+        "difficulty": "easy",
+        "options": [
+          {
+            "label": "A",
+            "text": "Option alpha 2",
+            "is_correct": false
+          },
+          {
+            "label": "B",
+            "text": "Option beta 2",
+            "is_correct": true
+          },
+          {
+            "label": "C",
+            "text": "Option gamma 2",
+            "is_correct": false
+          },
+          {
+            "label": "D",
+            "text": "Option delta 2",
+            "is_correct": false
+          }
+        ]
+      },
+      "at": "2026-10-22T14:27:16.300304+00:00"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/questions/1",
+  "status": 200,
+  "body": {
+    "id": 1,
+    "text": "Which policy needs the burst length in advance?",
+    "explanation": "Edited explanation.",
+    "difficulty": "easy",
+    "subject_label": "Operating Systems",
+    "unit_label": "Unit 2: Scheduling",
+    "topic_label": "CPU Scheduling",
+    "topic_id": 1,
+    "objective_id": null,
+    "course_id": 1,
+    "review_status": "approved",
+    "source_type": "generated_notes",
+    "source_excerpt": "Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes",
+    "validation": {
+      "math_verified": false,
+      "max_similarity": 0.0,
+      "math_status": "not_math"
+    },
+    "model": "Qwen/Qwen2.5-7B-Instruct (finetuned, GGUF Q4_K_M)",
+    "options": [
+      {
+        "id": 1,
+        "label": "A",
+        "text": "Option alpha 2",
+        "is_correct": false
+      },
+      {
+        "id": 2,
+        "label": "B",
+        "text": "Option beta 2",
+        "is_correct": true
+      },
+      {
+        "id": 3,
+        "label": "C",
+        "text": "Option gamma 2",
+        "is_correct": false
+      },
+      {
+        "id": 4,
+        "label": "D",
+        "text": "Option delta 2",
+        "is_correct": false
+      }
+    ],
+    "created_at": "2026-10-22T14:27:13.687089Z",
+    "updated_at": "2026-10-22T14:27:16.299804Z",
+    "used_in_quizzes": 1,
+    "answered_count": 0,
+    "locked": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "method": "GET",
+  "path": "/api/topics/search",
+  "status": 200,
+  "body": [
+    {
+      "topic_id": 1,
+      "topic": "CPU Scheduling",
+      "unit_id": 1,
+      "unit": "Unit 2: Scheduling",
+      "subject_id": 1,
+      "subject": "Operating Systems",
+      "course_id": 1,
+      "course": "Operating Systems",
+      "objectives": [
+        {
+          "id": 1,
+          "text": "Compare FCFS, SJF and priority scheduling"
+        }
+      ]
+    },
+    {
+      "topic_id": 2,
+      "topic": "Round Robin",
+      "unit_id": 1,
+      "unit": "Unit 2: Scheduling",
+      "subject_id": 1,
+      "subject": "Operating Systems",
+      "course_id": 1,
+      "course": "Operating Systems",
+      "objectives": []
+    }
+  ]
+}

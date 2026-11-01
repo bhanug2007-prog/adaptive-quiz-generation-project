@@ -1,0 +1,48 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/model-quality",
+  "status": 200,
+  "body": {
+    "versions": [
+      {
+        "model_version_id": 1,
+        "name": "qwen7b-mcq",
+        "variant": "finetuned",
+        "base_model": "Qwen/Qwen2.5-7B-Instruct",
+        "adapter": "qwen-7b-mcq-adapter (LoRA r=16), merged",
+        "quantization": "GGUF Q4_K_M",
+        "runs": 1,
+        "runs_failed": 0,
+        "runs_partial": 0,
+        "model_calls": 9,
+        "passed_checks": 5,
+        "requested": 5,
+        "rejected_by_check": [
+          {
+            "reason": "format",
+            "text": "broken format, missing fields or repeated options",
+            "count": 2
+          },
+          {
+            "reason": "math_wrong_key",
+            "text": "Python check found a different correct option",
+            "count": 2
+          }
+        ],
+        "questions": 5,
+        "approved": 5,
+        "rejected": 0,
+        "pending": 0,
+        "edited": 1,
+        "pass_rate": 0.5556,
+        "retry_rate": 0.4444,
+        "run_failure_rate": 0.0,
+        "approval_rate": 1.0,
+        "rejection_rate": 0.0,
+        "edit_rate": 0.2,
+        "avg_seconds_per_question": 0.5
+      }
+    ],
+    "note": "Rates use only this lecturer's generation runs and review decisions. Approval and rejection rates count reviewed questions only; questions still waiting for review are shown as pending."
+  }
+}

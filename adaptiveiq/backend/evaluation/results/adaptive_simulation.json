@@ -1,0 +1,150 @@
+{
+  "note": "SYNTHETIC students (Rasch model). Not real data.",
+  "students_per_seed": 2000,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "policy": "difficulty-policy-v1",
+  "results": {
+    "static": {
+      "adaptive": {
+        "in_band": {
+          "mean": 0.6966,
+          "sd": 0.0137
+        },
+        "too_hard": {
+          "mean": 0.1276,
+          "sd": 0.0089
+        },
+        "too_easy": {
+          "mean": 0.0166,
+          "sd": 0.0009
+        },
+        "dist_07": {
+          "mean": 0.1484,
+          "sd": 0.0039
+        },
+        "level_changes_per_student": {
+          "mean": 1.7742,
+          "sd": 0.0108
+        }
+      },
+      "fixed": {
+        "in_band": {
+          "mean": 0.4555,
+          "sd": 0.0144
+        },
+        "too_hard": {
+          "mean": 0.3478,
+          "sd": 0.0072
+        },
+        "too_easy": {
+          "mean": 0.0127,
+          "sd": 0.002
+        },
+        "dist_07": {
+          "mean": 0.2382,
+          "sd": 0.0033
+        },
+        "level_changes_per_student": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "mixed": {
+        "in_band": {
+          "mean": 0.4589,
+          "sd": 0.0047
+        },
+        "too_hard": {
+          "mean": 0.3154,
+          "sd": 0.0078
+        },
+        "too_easy": {
+          "mean": 0.0511,
+          "sd": 0.0025
+        },
+        "dist_07": {
+          "mean": 0.2352,
+          "sd": 0.0032
+        },
+        "level_changes_per_student": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      }
+    },
+    "learning": {
+      "adaptive": {
+        "in_band": {
+          "mean": 0.6114,
+          "sd": 0.0053
+        },
+        "too_hard": {
+          "mean": 0.0626,
+          "sd": 0.0024
+        },
+        "too_easy": {
+          "mean": 0.12,
+          "sd": 0.0019
+        },
+        "dist_07": {
+          "mean": 0.1439,
+          "sd": 0.0012
+        },
+        "level_changes_per_student": {
+          "mean": 1.8268,
+          "sd": 0.0145
+        }
+      },
+      "fixed": {
+        "in_band": {
+          "mean": 0.5614,
+          "sd": 0.0066
+        },
+        "too_hard": {
+          "mean": 0.1457,
+          "sd": 0.005
+        },
+        "too_easy": {
+          "mean": 0.1003,
+          "sd": 0.0024
+        },
+        "dist_07": {
+          "mean": 0.1727,
+          "sd": 0.0025
+        },
+        "level_changes_per_student": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "mixed": {
+        "in_band": {
+          "mean": 0.4746,
+          "sd": 0.0069
+        },
+        "too_hard": {
+          "mean": 0.1592,
+          "sd": 0.0035
+        },
+        "too_easy": {
+          "mean": 0.1786,
+          "sd": 0.0079
+        },
+        "dist_07": {
+          "mean": 0.1922,
+          "sd": 0.002
+        },
+        "level_changes_per_student": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      }
+    }
+  }
+}

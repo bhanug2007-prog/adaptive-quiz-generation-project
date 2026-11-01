@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/courses/1/enroll",
+  "status": 200,
+  "body": {
+    "enrolled": [],
+    "already_enrolled": [],
+    "not_found": [
+      "nobody@example.edu"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/students",
+  "status": 200,
+  "body": {
+    "total": 1,
+    "page": 1,
+    "page_size": 25,
+    "items": [
+      {
+        "student_id": 2,
+        "name": "Sample Student",
+        "email": "student@example.edu",
+        "roll_number": "24BDS000",
+        "courses": [
+          "Operating Systems"
+        ],
+        "submissions": 1,
+        "last_activity": "2026-10-22T14:27:16.680330+00:00",
+        "weak_topics": 1,
+        "average": 40.0
+      }
+    ]
+  }
+}

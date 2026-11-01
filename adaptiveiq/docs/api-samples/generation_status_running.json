@@ -1,0 +1,22 @@
+{
+  "method": "GET",
+  "path": "/api/generation/1",
+  "status": 200,
+  "body": {
+    "run_id": 1,
+    "status": "running",
+    "stage": "Planning subtopics",
+    "ready": 0,
+    "total": 5,
+    "attempts": 0,
+    "rejected": {},
+    "rejected_reasons": {},
+    "error": null,
+    "quiz_id": 1,
+    "queue_position": 0,
+    "elapsed_s": 0.0,
+    "avg_question_s": null,
+    "grounded_on": null,
+    "difficulty_note": null
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "method": "POST",
+  "path": "/api/auth/register",
+  "status": 422,
+  "body": {
+    "detail": "email: value is not a valid email address: An email address must have an @-sign.; password: String should have at least 8 characters; full_name: String should have at least 2 characters"
+  }
+}

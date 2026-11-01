@@ -1,0 +1,70 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/courses/1/heatmap/cell",
+  "status": 200,
+  "body": {
+    "student": {
+      "id": 2,
+      "name": "Sample Student"
+    },
+    "topic": {
+      "id": 1,
+      "name": "CPU Scheduling"
+    },
+    "estimate": {
+      "score": 0.4561,
+      "lower": 0.2322,
+      "upper": 0.6801,
+      "evidence": 5.125,
+      "answers": 5,
+      "unique_questions": 5,
+      "correct": 2,
+      "incorrect": 2,
+      "skipped": 1,
+      "label": "needs_improvement",
+      "evidence_level": "moderate",
+      "recent_accuracy": 0.5,
+      "recent_n": 4,
+      "historical_accuracy": null,
+      "trend": "not_enough_data",
+      "details": {
+        "alpha": 3.25,
+        "beta": 3.875,
+        "half_life_days": 21.0,
+        "trend_p": null,
+        "min_evidence": 5,
+        "skip_weight": 0.5
+      },
+      "label_text": "Needs improvement",
+      "explanation": "Estimated mastery 46% (likely range 23\u201368%) from 5 answers on 5 questions: 2 correct, 2 wrong, 1 skipped. Recent answers and harder questions count more."
+    },
+    "status": "weak",
+    "status_reason": "Estimated mastery is 46% across 5 questions.",
+    "attempts": [
+      {
+        "session_id": 1,
+        "quiz": "Scheduling quiz 1",
+        "kind": "assessment",
+        "at": "2026-10-22T14:27:16.680330+00:00",
+        "correct": 2,
+        "incorrect": 2,
+        "skipped": 1
+      }
+    ],
+    "common_mistakes": [
+      {
+        "question_id": 2,
+        "question": "Which metric does shortest job first minimise?",
+        "chosen": "Option alpha 4",
+        "times": 1
+      },
+      {
+        "question_id": 4,
+        "question": "Which queue structure suits multilevel feedback?",
+        "chosen": "Option alpha 7",
+        "times": 1
+      }
+    ],
+    "suggested_intervention": "Assign a short easy-to-medium practice set on this topic and review the most-missed concept in class."
+  }
+}

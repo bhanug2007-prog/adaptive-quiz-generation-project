@@ -1,0 +1,20 @@
+{
+  "method": "POST",
+  "path": "/api/student/courses/join",
+  "status": 200,
+  "body": {
+    "id": 1,
+    "code": "CS301",
+    "title": "Operating Systems",
+    "program": null,
+    "semester": null,
+    "academic_year": null,
+    "archived": false,
+    "created_at": "2026-10-22T14:27:13.312443Z",
+    "lecturer_name": "Sample Lecturer",
+    "join_code": null,
+    "join_enabled": null,
+    "student_count": null,
+    "quiz_count": 0
+  }
+}

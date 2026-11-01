@@ -1,0 +1,107 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/courses/1/analytics",
+  "status": 200,
+  "body": {
+    "students": 1,
+    "quizzes": 1,
+    "submissions": 1,
+    "average": 40.0,
+    "median": 40.0,
+    "distribution": [
+      {
+        "range": "0-9",
+        "count": 0
+      },
+      {
+        "range": "10-19",
+        "count": 0
+      },
+      {
+        "range": "20-29",
+        "count": 0
+      },
+      {
+        "range": "30-39",
+        "count": 0
+      },
+      {
+        "range": "40-49",
+        "count": 1
+      },
+      {
+        "range": "50-59",
+        "count": 0
+      },
+      {
+        "range": "60-69",
+        "count": 0
+      },
+      {
+        "range": "70-79",
+        "count": 0
+      },
+      {
+        "range": "80-89",
+        "count": 0
+      },
+      {
+        "range": "90-100",
+        "count": 0
+      }
+    ],
+    "completion_rate": 1.0,
+    "expected_submissions": 1,
+    "trend": [
+      {
+        "quiz_id": 1,
+        "title": "Scheduling quiz 1",
+        "date": "2026-10-22T14:27:16.442114+00:00",
+        "submissions": 1,
+        "average": 40.0
+      }
+    ],
+    "trend_enough": false,
+    "commonly_missed": [],
+    "skipped_rate": 0.2,
+    "by_difficulty": [
+      {
+        "difficulty": "easy",
+        "answered": 1,
+        "accuracy": 0.0
+      },
+      {
+        "difficulty": "medium",
+        "answered": 2,
+        "accuracy": 0.5
+      },
+      {
+        "difficulty": "hard",
+        "answered": 1,
+        "accuracy": 1.0
+      }
+    ],
+    "mastery_distribution": [
+      {
+        "topic_id": 1,
+        "topic": "CPU Scheduling",
+        "unit": "Unit 2: Scheduling",
+        "subject": "Operating Systems",
+        "counts": {
+          "needs_improvement": 1
+        }
+      },
+      {
+        "topic_id": 2,
+        "topic": "Round Robin",
+        "unit": "Unit 2: Scheduling",
+        "subject": "Operating Systems",
+        "counts": {
+          "not_attempted": 1
+        }
+      }
+    ],
+    "needs_support": [],
+    "note": "Scores use each student's latest submitted attempt per quiz."
+  }
+}

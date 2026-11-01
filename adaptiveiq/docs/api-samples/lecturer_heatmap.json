@@ -1,0 +1,54 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/courses/1/heatmap",
+  "status": 200,
+  "body": {
+    "topics": [
+      {
+        "topic_id": 1,
+        "topic": "CPU Scheduling",
+        "unit": "Unit 2: Scheduling",
+        "subject": "Operating Systems"
+      },
+      {
+        "topic_id": 2,
+        "topic": "Round Robin",
+        "unit": "Unit 2: Scheduling",
+        "subject": "Operating Systems"
+      }
+    ],
+    "students": [
+      {
+        "student_id": 2,
+        "name": "Sample Student",
+        "roll_number": "24BDS000",
+        "cells": [
+          {
+            "topic_id": 1,
+            "label": "needs_improvement",
+            "score": 0.4561,
+            "lower": 0.2322,
+            "upper": 0.6801,
+            "answers": 5,
+            "unique_questions": 5,
+            "evidence_level": "moderate"
+          },
+          {
+            "topic_id": 2,
+            "label": "not_attempted",
+            "score": null,
+            "answers": 0,
+            "evidence_level": "none"
+          }
+        ]
+      }
+    ],
+    "labels": {
+      "insufficient_evidence": "Insufficient evidence",
+      "needs_improvement": "Needs improvement",
+      "developing": "Developing",
+      "proficient": "Proficient",
+      "strong": "Strong evidence of mastery"
+    }
+  }
+}

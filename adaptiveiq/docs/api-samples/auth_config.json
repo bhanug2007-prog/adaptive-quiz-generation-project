@@ -1,0 +1,10 @@
+{
+  "method": "GET",
+  "path": "/api/auth/config",
+  "status": 200,
+  "body": {
+    "lecturer_signup_enabled": true,
+    "allowed_email_domains": [],
+    "email_verification_required": false
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "method": "PUT",
+  "path": "/api/student/attempts/1/answers/4",
+  "status": 200,
+  "body": {
+    "option_id": 13,
+    "confidence": 1,
+    "checked": false,
+    "time_spent_s": 20.0
+  }
+}

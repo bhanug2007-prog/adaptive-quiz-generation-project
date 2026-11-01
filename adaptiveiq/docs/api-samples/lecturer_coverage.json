@@ -1,0 +1,21 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/courses/1/coverage",
+  "status": 200,
+  "body": {
+    "objectives": [
+      {
+        "objective_id": 1,
+        "code": null,
+        "objective": "Compare FCFS, SJF and priority scheduling",
+        "topic": "CPU Scheduling",
+        "unit": "Unit 2: Scheduling",
+        "subject": "Operating Systems",
+        "approved_questions": 0,
+        "in_published_quizzes": 0,
+        "coverage": "not_assessed"
+      }
+    ],
+    "has_untagged_questions": true
+  }
+}

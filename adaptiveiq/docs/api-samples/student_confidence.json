@@ -1,0 +1,31 @@
+{
+  "method": "GET",
+  "path": "/api/student/confidence",
+  "status": 200,
+  "body": {
+    "rated": 0,
+    "min_needed": 10,
+    "levels": [
+      {
+        "confidence": 1,
+        "name": "Guessing",
+        "answers": 0,
+        "accuracy": null
+      },
+      {
+        "confidence": 2,
+        "name": "Unsure",
+        "answers": 0,
+        "accuracy": null
+      },
+      {
+        "confidence": 3,
+        "name": "Sure",
+        "answers": 0,
+        "accuracy": null
+      }
+    ],
+    "pattern": null,
+    "message": "Rate your confidence on at least 10 practice answers to see a pattern (0 so far)."
+  }
+}
