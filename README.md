@@ -140,6 +140,3 @@ The repository includes pytest, Vitest, and Playwright suites for API behavior, 
 
 [Setup and tests](adaptiveiq/README.md) · [Architecture](adaptiveiq/docs/ARCHITECTURE.md) · [API](adaptiveiq/docs/API.md) · [Evaluation](adaptiveiq/docs/ML_EVALUATION.md) · [Monitoring](adaptiveiq/docs/MONITORING.md) · [Deployment](adaptiveiq/docs/DEPLOYMENT.md) · [Publishing future updates](PUBLISHING.md)
 
-## Academic context
-
-A DSAI team project at **IIIT Dharwad**, guided by **Dr. Utkarsh Mahadeo Khaire**. Training notebooks, application code, and evaluation records are linked above so the engineering work can be inspected directly.
