@@ -101,6 +101,23 @@ The preliminary 30-item, AI-assisted pilot does **not** establish that fine-tuni
 4. Students answer questions; the backend scores attempts and updates the evidence used for learning analytics.
 5. Topic mastery and revision policies inform the next practice recommendation or student-approved learning plan.
 
+## Repository layout
+
+```text
+adaptiveiq/                    Full-stack application
+  backend/                     FastAPI, learning policies, migrations and tests
+  frontend/                    React portals, monitoring and browser tests
+  docs/                        Architecture, API, evaluation and deployment guides
+    verification/              Dated integration and feature checks
+  deploy/                      Model-hosting configuration
+code/                          Training, conversion and evaluation notebooks
+results/                       Committed experiment outputs
+btech_mcq_dataset_clean.zip     Dataset archive used by the experiments
+PUBLISHING.md                  Future update and deployment workflow
+```
+
+Start with the [experiment guide](code/README.md) for the model work or the [results guide](results/README.md) for evaluation evidence. Runtime logs, credentials, local databases, dependencies and model weights are ignored.
+
 ## Explore the implementation
 
 | Area | Source |
@@ -128,7 +145,7 @@ For generation, supply the GGUF model and llama.cpp executable as described in t
 
 ## Verification and limitations
 
-The repository includes pytest, Vitest, and Playwright suites for API behavior, learning policies, permissions, UI flows, and monitoring. Historical verification is documented in the [QA report](adaptiveiq/docs/QA_REPORT.md), [Groq integration report](adaptiveiq/GROQ_REVIEW_VERIFICATION.md), and [activity-warning report](adaptiveiq/ACTIVITY_WARNINGS_VERIFICATION.md); these are dated records, not live CI status.
+The repository includes pytest, Vitest, and Playwright suites for API behavior, learning policies, permissions, UI flows, and monitoring. Historical verification is documented in the [QA report](adaptiveiq/docs/QA_REPORT.md), [Groq integration report](adaptiveiq/docs/verification/GROQ_REVIEW_VERIFICATION.md), and [activity-warning report](adaptiveiq/docs/verification/ACTIVITY_WARNINGS_VERIFICATION.md); these are dated records, not live CI status.
 
 - LLM-generated questions still require review; mathematical and AI checks are not guarantees of correctness.
 - CPU generation can be slow. Hosting the 7B model requires separate compute planning.

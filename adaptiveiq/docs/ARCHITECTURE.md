@@ -88,7 +88,7 @@ flowchart LR
 
 Lecturer drafts can retain failed questions with visible flags for correction. Practice and regeneration have separate acceptance rules. Generation logs record tool calls and retry decisions; a successful AI review does not itself approve or publish a question.
 
-The reviewer is configurable through the legacy `GROK_*` settings. The local Groq integration has a [dated verification report](../GROQ_REVIEW_VERIFICATION.md); the variable name should not be read as proof that every run uses xAI. Missing credentials and provider failures are surfaced, with fallback behavior described in the [quality guide](QUALITY_REVIEW.md).
+The reviewer is configurable through the legacy `GROK_*` settings. The local Groq integration has a [dated verification report](verification/GROQ_REVIEW_VERIFICATION.md); the variable name should not be read as proof that every run uses xAI. Missing credentials and provider failures are surfaced, with fallback behavior described in the [quality guide](QUALITY_REVIEW.md).
 
 ## Learning feedback and persistent plans
 
