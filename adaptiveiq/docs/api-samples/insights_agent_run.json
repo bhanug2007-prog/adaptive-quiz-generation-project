@@ -1,0 +1,132 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/agent-runs/2",
+  "status": 200,
+  "body": {
+    "id": 2,
+    "agent": "lecturer_insights",
+    "status": "done",
+    "course_id": 1,
+    "generation_run_id": null,
+    "input": {
+      "question": "Which students need help?",
+      "quiz_id": null
+    },
+    "output": {
+      "mode": "ai",
+      "tools": [
+        "get_student_performance",
+        "get_class_analytics"
+      ]
+    },
+    "llm_calls": 2,
+    "error": null,
+    "created_at": "2026-11-02T10:23:24.263819+00:00",
+    "finished_at": "2026-11-02T10:23:24.279053+00:00",
+    "steps": [
+      {
+        "seq": 1,
+        "kind": "llm",
+        "name": "plan_tools",
+        "args": {
+          "model": "grok-test"
+        },
+        "result": {
+          "tools": [
+            {
+              "name": "get_student_performance",
+              "args": {}
+            },
+            {
+              "name": "get_class_analytics",
+              "args": {}
+            }
+          ],
+          "reason": "The question is about individual students and the class as a whole."
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:24.280123+00:00"
+      },
+      {
+        "seq": 2,
+        "kind": "decision",
+        "name": "use_ai_plan",
+        "args": {
+          "tools": [
+            "get_student_performance",
+            "get_class_analytics"
+          ]
+        },
+        "result": {
+          "because": "The question is about individual students and the class as a whole."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:24.280138+00:00"
+      },
+      {
+        "seq": 3,
+        "kind": "tool",
+        "name": "get_student_performance",
+        "args": {},
+        "result": {
+          "students": "2 rows",
+          "count": 2
+        },
+        "ok": true,
+        "duration_ms": 7,
+        "at": "2026-11-02T10:23:24.280138+00:00"
+      },
+      {
+        "seq": 4,
+        "kind": "tool",
+        "name": "get_class_analytics",
+        "args": {},
+        "result": {
+          "scope": "course",
+          "quiz_id": null,
+          "students": 2,
+          "quizzes": 1,
+          "submissions": 2,
+          "average_pct": 50.0,
+          "median_pct": 50.0,
+          "completion_pct": 100.0,
+          "skipped_pct": 0.0,
+          "score_distribution": "2 rows",
+          "accuracy_by_difficulty": "3 rows",
+          "note": "Scores use each student's latest submitted attempt per quiz."
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:24.280139+00:00"
+      },
+      {
+        "seq": 5,
+        "kind": "llm",
+        "name": "write_answer",
+        "args": {
+          "model": "grok-test"
+        },
+        "result": {
+          "answer": "Student 2 scored lowest on Scheduling quiz; Student 1 did well."
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:24.280139+00:00"
+      },
+      {
+        "seq": 6,
+        "kind": "decision",
+        "name": "accept_answer",
+        "args": {},
+        "result": {
+          "because": "Every number in the AI's answer appears in the tool results."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:24.280140+00:00"
+      }
+    ]
+  }
+}

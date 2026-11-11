@@ -755,3 +755,63 @@
   text-transform: uppercase;
   color: var(--warning);
 }
+
+/* ---------- Document upload picker ---------- */
+.doc-picker__box {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.doc-picker__control {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.doc-picker__input {
+  width: 100%;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.doc-picker__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+}
+
+.doc-picker__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--accent);
+}
+
+.doc-card {
+  padding: var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--elevated);
+}
+
+.doc-card__name {
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+
+.doc-card__meta {
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+}
+
+.doc-card__preview > summary {
+  cursor: pointer;
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+  width: fit-content;
+}

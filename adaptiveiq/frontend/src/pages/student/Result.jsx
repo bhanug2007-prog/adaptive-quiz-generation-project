@@ -5,12 +5,14 @@ import {
 } from 'lucide-react'
 import { Alert, Badge, Button, Card, EmptyState, ErrorState, LoadingBlock, MasteryRing, PageHeader, Tabs } from '../../components/ui'
 import { useApi } from '../../api/useApi'
+import { MyMonitoringRecord } from '../../components/student/Monitoring'
 import { studentApi } from '../../api/endpoints'
 import { DIFFICULTY_TEXT, dateTime, duration, pct, plural } from '../../utils/format'
 import { KindBadge } from '../../components/student/Badges'
 import Expandable from '../../components/student/Expandable'
 import TopicMasteryCard from '../../components/student/TopicMasteryCard'
 import { practiceHref } from '../../components/student/helpers'
+import { formatSourceRef } from '../../components/lecturer/util'
 
 const OUTCOME = {
   correct: { text: 'Correct', tone: 'success', icon: CheckCircle2 },
@@ -57,6 +59,7 @@ function ScoreBlock({ r }) {
 function ReviewItem({ item }) {
   const o = OUTCOME[item.outcome] || OUTCOME.skipped
   const correct = item.options.find((x) => x.is_correct)
+  const sourceRefLabel = formatSourceRef(item.source_ref)
   return (
     <li className="st-review card card--flat" data-outcome={item.outcome}>
       <div className="row-between" style={{ alignItems: 'flex-start' }}>
@@ -87,13 +90,16 @@ function ReviewItem({ item }) {
         {item.time_spent_s != null && <span>{duration(item.time_spent_s)} on this question</span>}
         {item.outcome === 'skipped' && correct && <span>Correct answer: {correct.label}</span>}
       </p>
-      {(item.explanation || item.source_excerpt) && (
+      {(item.explanation || item.source_excerpt || sourceRefLabel) && (
         <Expandable label="Show explanation" openLabel="Hide explanation" defaultOpen={item.outcome === 'incorrect'}>
           <div className="stack" style={{ gap: 10 }}>
             {item.explanation && <p className="st-review__expl">{item.explanation}</p>}
             {item.math_verified && <Badge tone="success" icon={ShieldCheck}>Answer verified by a Python calculation</Badge>}
-            {item.source_excerpt && (
-              <blockquote className="st-source"><p className="eyebrow">From the reference material</p><p>{item.source_excerpt}</p></blockquote>
+            {(item.source_excerpt || sourceRefLabel) && (
+              <blockquote className="st-source">
+                <p className="eyebrow">{sourceRefLabel ? `From uploaded document · ${sourceRefLabel}` : 'From the reference material'}</p>
+                {item.source_excerpt && <p>{item.source_excerpt}</p>}
+              </blockquote>
             )}
           </div>
         </Expandable>
@@ -122,6 +128,7 @@ export default function Result() {
   const navigate = useNavigate()
   const { data: r, error, loading, reload } = useApi(() => studentApi.result(sessionId), [sessionId])
   const mastery = useApi(() => studentApi.mastery(), [sessionId])
+  const monitored = useApi(() => studentApi.myMonitoring(sessionId).catch((e) => (e.status === 404 ? null : Promise.reject(e))), [sessionId])
   const [filter, setFilter] = useState('all')
   const [retrying, setRetrying] = useState(false)
   const [retryErr, setRetryErr] = useState(null)
@@ -143,6 +150,7 @@ export default function Result() {
       const s = await studentApi.start(r.quiz_id)
       navigate(`/student/attempts/${s.session_id}`)
     } catch (e) {
+      if (e.status === 428) { navigate(`/student/quizzes/${r.quiz_id}`); return }   // monitored: agree on the quiz page first
       setRetryErr(e)
       setRetrying(false)
     }
@@ -238,6 +246,7 @@ export default function Result() {
           </section>
         </>
       )}
+      {monitored.data && <MyMonitoringRecord record={monitored.data} />}
     </div>
   )
 }

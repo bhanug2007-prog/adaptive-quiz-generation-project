@@ -4,6 +4,7 @@ import { FlaskConical, Info, Play, RotateCcw, Sparkles, X } from 'lucide-react'
 import {
   Alert, Button, Card, Checkbox, EmptyState, ErrorState, Field, Input, LoadingBlock, PageHeader, Segmented, Select, Textarea, useToast,
 } from '../../components/ui'
+import DocumentSourcePicker from '../../components/quiz/DocumentSourcePicker'
 import GenerationProgress from '../../components/quiz/GenerationProgress'
 import { useApi } from '../../api/useApi'
 import { studentApi, topicsApi } from '../../api/endpoints'
@@ -57,6 +58,7 @@ function PracticeForm({ choices, onStarted, disabledReason }) {
   const preTopicId = params.get('topic_id')
   const hasChoices = choices.length > 0
   const preMatch = preTopicId && choices.find((c) => String(c.topic_id) === preTopicId)
+  const [mode, setMode] = useState('topic')
   const [source, setSource] = useState(preMatch ? 'course' : params.get('topic') ? 'free' : hasChoices ? 'course' : 'free')
   const [topicId, setTopicId] = useState(preMatch ? String(preMatch.topic_id) : hasChoices ? String(choices[0].topic_id) : '')
   const [subject, setSubject] = useState(params.get('subject') || '')
@@ -67,12 +69,16 @@ function PracticeForm({ choices, onStarted, disabledReason }) {
   const [timeLimit, setTimeLimit] = useState('')
   const [confidence, setConfidence] = useState(true)
   const [reference, setReference] = useState('')
+  const [doc, setDoc] = useState(null)
+  const [docSection, setDocSection] = useState('')
+  const [docFocus, setDocFocus] = useState('')
+  const [docBusy, setDocBusy] = useState(false)
   const [errors, setErrors] = useState({})
   const [apiError, setApiError] = useState(null)
   const [busy, setBusy] = useState(false)
 
-  const picked = source === 'course' ? choices.find((c) => String(c.topic_id) === topicId) : null
-  const reco = useRecommended(difficulty === 'adaptive', picked ? picked.subject : subject, picked ? picked.topic : topic, picked?.topic_id)
+  const picked = mode === 'topic' && source === 'course' ? choices.find((c) => String(c.topic_id) === topicId) : null
+  const reco = useRecommended(mode === 'topic' && difficulty === 'adaptive', picked ? picked.subject : subject, picked ? picked.topic : topic, picked?.topic_id)
   const grouped = useMemo(() => {
     const g = new Map()
     choices.forEach((c) => {
@@ -86,26 +92,58 @@ function PracticeForm({ choices, onStarted, disabledReason }) {
   const refWords = words(reference)
   const submit = async (e) => {
     e.preventDefault()
+    if (docBusy) return
     const errs = {}
-    if (source === 'free') {
-      if (subject.trim().length < 2) errs.subject = 'Enter a subject (at least 2 characters).'
-      if (topic.trim().length < 2) errs.topic = 'Enter a topic (at least 2 characters).'
-    } else if (!picked) errs.topicId = 'Choose a topic.'
-    if (refWords > 0 && refWords < 40) errs.reference = `Reference material needs at least 40 words (${refWords} so far), or leave it empty.`
+    if (mode === 'document') {
+      if (!doc?.document_id) errs.document = 'Upload a PDF, DOCX, or TXT file first.'
+    } else {
+      if (source === 'free') {
+        if (subject.trim().length < 2) errs.subject = 'Enter a subject (at least 2 characters).'
+        if (topic.trim().length < 2) errs.topic = 'Enter a topic (at least 2 characters).'
+      } else if (!picked) errs.topicId = 'Choose a topic.'
+      if (refWords > 0 && refWords < 40) errs.reference = `Reference material needs at least 40 words (${refWords} so far), or leave it empty.`
+    }
     const tl = timeLimit.trim() ? Number(timeLimit) : null
     if (tl != null && (!Number.isInteger(tl) || tl < 1 || tl > 180)) errs.timeLimit = 'Use a whole number of minutes from 1 to 180, or leave it empty.'
     setErrors(errs)
     if (Object.keys(errs).length) return
-    const body = {
-      subject: picked ? picked.subject : subject.trim(), topic: picked ? picked.topic : topic.trim(),
-      topic_id: picked ? picked.topic_id : null, unit: picked ? picked.unit : unit.trim() || null,
-      question_count: Number(count), difficulty, reference_text: reference.trim() || null, time_limit_min: tl, confidence_enabled: confidence,
+
+    const isDoc = mode === 'document'
+    const body = isDoc ? {
+      source_mode: 'document',
+      subject: '',
+      topic: docFocus.trim(),
+      topic_id: null,
+      unit: null,
+      question_count: Number(count),
+      difficulty,
+      reference_text: null,
+      document_id: doc.document_id,
+      document_section: docSection || null,
+      time_limit_min: tl,
+      confidence_enabled: confidence,
+    } : {
+      source_mode: 'topic',
+      subject: picked ? picked.subject : subject.trim(),
+      topic: picked ? picked.topic : topic.trim(),
+      topic_id: picked ? picked.topic_id : null,
+      unit: picked ? picked.unit : unit.trim() || null,
+      question_count: Number(count),
+      difficulty,
+      reference_text: reference.trim() || null,
+      time_limit_min: tl,
+      confidence_enabled: confidence,
     }
     setApiError(null)
     setBusy(true)
     try {
       const run = await studentApi.generatePractice(body)
-      onStarted({ runId: run.run_id, quizId: run.quiz_id, topic: body.topic, note: run.difficulty_note })
+      onStarted({
+        runId: run.run_id,
+        quizId: run.quiz_id,
+        topic: isDoc ? (docFocus.trim() || docSection || doc.filename) : body.topic,
+        note: run.difficulty_note,
+      })
     } catch (ex) {
       setApiError(ex)
     } finally {
@@ -115,34 +153,81 @@ function PracticeForm({ choices, onStarted, disabledReason }) {
 
   return (
     <form onSubmit={submit} noValidate className="stack-lg">
-      {hasChoices && (
-        <div className="field">
-          <span className="field__label" id="st-src">What to practise</span>
-          <Segmented name="source" label="What to practise" value={source} onChange={setSource}
-            options={[{ value: 'course', label: 'A topic from my courses' }, { value: 'free', label: 'Any subject and topic' }]} />
-        </div>
-      )}
-      {source === 'course' && hasChoices ? (
-        <Field label="Course topic" error={errors.topicId} hint={picked?.objectives?.length ? `Objectives: ${picked.objectives.map((o) => o.text).join('; ')}` : picked ? picked.unit : null}>
-          {(p) => (
-            <Select {...p} value={topicId} onChange={(e) => setTopicId(e.target.value)}>
-              {grouped.map(([g, items]) => (
-                <optgroup key={g} label={g}>{items.map((c) => <option key={c.topic_id} value={c.topic_id}>{c.topic} ({c.unit})</option>)}</optgroup>
-              ))}
-            </Select>
+      <div className="field">
+        <span className="field__label" id="st-gen-mode">Generation mode</span>
+        <Segmented
+          name="sourceMode"
+          label="Generation mode"
+          value={mode}
+          onChange={setMode}
+          options={[
+            { value: 'topic', label: 'Topic / Text' },
+            { value: 'document', label: 'Upload File' },
+          ]}
+        />
+        <p className="field__hint">
+          {mode === 'document'
+            ? 'Practise from a PDF, DOCX, or TXT file you upload. Questions stay grounded in the file.'
+            : 'Practise a course topic or any subject, with optional pasted notes.'}
+        </p>
+      </div>
+
+      {mode === 'topic' ? (
+        <>
+          {hasChoices && (
+            <div className="field">
+              <span className="field__label" id="st-src">What to practise</span>
+              <Segmented name="source" label="What to practise" value={source} onChange={setSource}
+                options={[{ value: 'course', label: 'A topic from my courses' }, { value: 'free', label: 'Any subject and topic' }]} />
+            </div>
           )}
-        </Field>
+          {source === 'course' && hasChoices ? (
+            <Field label="Course topic" error={errors.topicId} hint={picked?.objectives?.length ? `Objectives: ${picked.objectives.map((o) => o.text).join('; ')}` : picked ? picked.unit : null}>
+              {(p) => (
+                <Select {...p} value={topicId} onChange={(e) => setTopicId(e.target.value)}>
+                  {grouped.map(([g, items]) => (
+                    <optgroup key={g} label={g}>{items.map((c) => <option key={c.topic_id} value={c.topic_id}>{c.topic} ({c.unit})</option>)}</optgroup>
+                  ))}
+                </Select>
+              )}
+            </Field>
+          ) : (
+            <div className="st-form-grid">
+              <Field label="Subject" error={errors.subject}>
+                {(p) => <Input {...p} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. DBMS" maxLength={160} />}
+              </Field>
+              <Field label="Topic" error={errors.topic}>
+                {(p) => <Input {...p} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. SQL joins" maxLength={160} />}
+              </Field>
+              <Field label="Syllabus unit (optional)" className="span-all">
+                {(p) => <Input {...p} value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="e.g. Unit 3: Relational queries" maxLength={160} />}
+              </Field>
+            </div>
+          )}
+        </>
       ) : (
-        <div className="st-form-grid">
-          <Field label="Subject" error={errors.subject}>
-            {(p) => <Input {...p} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. DBMS" maxLength={160} />}
+        <div className="stack">
+          <DocumentSourcePicker
+            doc={doc}
+            onDocChange={setDoc}
+            section={docSection}
+            onSectionChange={setDocSection}
+            busy={docBusy}
+            onBusyChange={setDocBusy}
+            externalError={errors.document}
+          />
+          <Field
+            label="Topic or chapter focus (optional)"
+            hint="Optional keywords to focus questions on part of the file. Leave empty to cover the whole document."
+          >
+            {(p) => <Input {...p} value={docFocus} onChange={(e) => setDocFocus(e.target.value)} placeholder="e.g. Chapter 3, normalisation" maxLength={160} />}
           </Field>
-          <Field label="Topic" error={errors.topic}>
-            {(p) => <Input {...p} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. SQL joins" maxLength={160} />}
-          </Field>
-          <Field label="Syllabus unit (optional)" className="span-all">
-            {(p) => <Input {...p} value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="e.g. Unit 3: Relational queries" maxLength={160} />}
-          </Field>
+          {doc && Number(count) > doc.recommended_max_questions && (
+            <Alert tone="warning" title="Document length limit">
+              This file supports up to about {doc.recommended_max_questions} questions ({doc.word_count.toLocaleString()} words).
+              Fewer questions may be generated if the document does not have enough material for {count}.
+            </Alert>
+          )}
         </div>
       )}
 
@@ -164,24 +249,28 @@ function PracticeForm({ choices, onStarted, disabledReason }) {
         {difficulty === 'adaptive' && (
           <div className="st-reco-diff" aria-live="polite">
             <Info size={15} aria-hidden="true" />
-            {reco.loading ? <span className="muted">Checking your mastery on this topic…</span>
-              : reco.data ? <span><strong>{DIFFICULTY_TEXT[reco.data.difficulty] || reco.data.difficulty}</strong> for you right now. {reco.data.reason}</span>
-                : reco.error ? <span className="muted">{reco.error.message}</span>
-                  : <span className="muted">Enter a subject and topic to see the recommended level.</span>}
+            {mode === 'document'
+              ? <span className="muted">Adapts difficulty when linked to your mastery or uses balanced document difficulty.</span>
+              : reco.loading ? <span className="muted">Checking your mastery on this topic…</span>
+                : reco.data ? <span><strong>{DIFFICULTY_TEXT[reco.data.difficulty] || reco.data.difficulty}</strong> for you right now. {reco.data.reason}</span>
+                  : reco.error ? <span className="muted">{reco.error.message}</span>
+                    : <span className="muted">Enter a subject and topic to see the recommended level.</span>}
           </div>
         )}
       </div>
 
-      <Field label="Reference material (optional)" error={errors.reference}
-        hint={`Paste notes or a textbook passage (at least 40 words) and the questions will be grounded in it. ${refWords ? `${refWords} words.` : ''}`}>
-        {(p) => <Textarea {...p} value={reference} onChange={(e) => setReference(e.target.value)} rows={5} maxLength={12000} placeholder="Optional. Leave empty to let the model write study notes for the topic first." />}
-      </Field>
+      {mode === 'topic' && (
+        <Field label="Reference material (optional)" error={errors.reference}
+          hint={`Paste notes or a textbook passage (at least 40 words) and the questions will be grounded in it. ${refWords ? `${refWords} words.` : ''}`}>
+          {(p) => <Textarea {...p} value={reference} onChange={(e) => setReference(e.target.value)} rows={5} maxLength={12000} placeholder="Optional. Leave empty to let the model write study notes for the topic first." />}
+        </Field>
+      )}
 
       <Checkbox label="Ask me how confident I am before checking each answer" checked={confidence} onChange={(e) => setConfidence(e.target.checked)} />
 
       {apiError && <Alert tone="error" title="Could not start generating">{apiError.message}</Alert>}
       <div className="row">
-        <Button type="submit" variant="primary" size="lg" icon={Sparkles} loading={busy} disabled={!!disabledReason}>Generate practice quiz</Button>
+        <Button type="submit" variant="primary" size="lg" icon={Sparkles} loading={busy} disabled={!!disabledReason || docBusy}>Generate practice quiz</Button>
         {disabledReason && <span className="muted st-small">{disabledReason}</span>}
       </div>
     </form>
@@ -219,7 +308,7 @@ function RunPanel({ stored, onClear, onFinished }) {
       actions={finished ? <Button size="sm" variant="ghost" icon={X} onClick={onClear}>Dismiss</Button> : null}>
       <div className="stack">
         {(run?.difficulty_note || stored.note) && <p className="st-small muted"><Info size={13} aria-hidden="true" className="st-inline-icon" /> {run?.difficulty_note || stored.note}</p>}
-        {run ? <GenerationProgress run={run} onCancel={active ? doCancel : null} cancelling={cancelling} />
+        {run ? <GenerationProgress run={run} onCancel={active ? doCancel : null} cancelling={cancelling} showQuality={false} />
           : error ? <Alert tone="error">{error.message}</Alert> : <LoadingBlock rows={1} label="Loading progress" />}
         {error && run && <Alert tone="warning">Lost contact with the server; retrying. {error.message}</Alert>}
         {startErr && <Alert tone="error">{startErr.message}</Alert>}
@@ -235,12 +324,42 @@ function RunPanel({ stored, onClear, onFinished }) {
   )
 }
 
+function readRunFromParams(params) {
+  const runIdParam = Number(params?.get('run_id'))
+  if (Number.isInteger(runIdParam) && runIdParam > 0) {
+    return {
+      runId: runIdParam,
+      quizId: null,
+      topic: params.get('topic') || 'Recommended practice',
+      note: null,
+    }
+  }
+  return readRun()
+}
+
 export default function Practice() {
   const choices = useApi(() => topicsApi.choices(), [])
   const past = useApi(() => studentApi.practiceQuizzes(), [])
   const health = useModelHealth()
-  const [stored, setStored] = useState(readRun)
+  const [searchParams] = useSearchParams()
+  const urlRunId = searchParams.get('run_id')
+  const [stored, setStored] = useState(() => readRunFromParams(searchParams))
   const { notify } = useToast()
+
+  useEffect(() => {
+    const rid = Number(urlRunId)
+    if (!Number.isInteger(rid) || rid <= 0) return
+    setStored((prev) => {
+      const next = prev?.runId === rid ? prev : {
+        runId: rid,
+        quizId: null,
+        topic: searchParams.get('topic') || 'Recommended practice',
+        note: null,
+      }
+      safeSession.set(RUN_KEY, JSON.stringify(next))
+      return next
+    })
+  }, [urlRunId, searchParams])
 
   const onStarted = (s) => {
     safeSession.set(RUN_KEY, JSON.stringify(s))

@@ -13,24 +13,24 @@
     "static": {
       "adaptive": {
         "in_band": {
-          "mean": 0.6966,
-          "sd": 0.0137
+          "mean": 0.6994,
+          "sd": 0.0125
         },
         "too_hard": {
-          "mean": 0.1276,
-          "sd": 0.0089
+          "mean": 0.1289,
+          "sd": 0.0099
         },
         "too_easy": {
-          "mean": 0.0166,
-          "sd": 0.0009
+          "mean": 0.0156,
+          "sd": 0.0018
         },
         "dist_07": {
-          "mean": 0.1484,
-          "sd": 0.0039
+          "mean": 0.1485,
+          "sd": 0.0038
         },
         "level_changes_per_student": {
-          "mean": 1.7742,
-          "sd": 0.0108
+          "mean": 1.7884,
+          "sd": 0.0233
         }
       },
       "fixed": {
@@ -81,24 +81,24 @@
     "learning": {
       "adaptive": {
         "in_band": {
-          "mean": 0.6114,
-          "sd": 0.0053
+          "mean": 0.6131,
+          "sd": 0.0066
         },
         "too_hard": {
-          "mean": 0.0626,
-          "sd": 0.0024
+          "mean": 0.063,
+          "sd": 0.0025
         },
         "too_easy": {
-          "mean": 0.12,
-          "sd": 0.0019
+          "mean": 0.1179,
+          "sd": 0.0033
         },
         "dist_07": {
-          "mean": 0.1439,
-          "sd": 0.0012
+          "mean": 0.1437,
+          "sd": 0.0014
         },
         "level_changes_per_student": {
-          "mean": 1.8268,
-          "sd": 0.0145
+          "mean": 1.8504,
+          "sd": 0.0125
         }
       },
       "fixed": {

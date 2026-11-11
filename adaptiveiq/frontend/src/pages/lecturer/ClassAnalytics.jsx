@@ -9,8 +9,9 @@ import { CourseGate, CourseSelect, useCourses } from '../../components/lecturer/
 import { ChartFigure, MasteryStacks, SimpleBars, TrendLine } from '../../components/lecturer/charts'
 import Heatmap from '../../components/lecturer/Heatmap'
 import { errText, slug } from '../../components/lecturer/util'
+import AskClass from '../../components/lecturer/AskClass'
 
-const TABS = [{ id: 'performance', label: 'Class performance' }, { id: 'heatmap', label: 'Mastery heatmap' }, { id: 'insights', label: 'Insights & coverage' }]
+const TABS = [{ id: 'performance', label: 'Class performance' }, { id: 'heatmap', label: 'Mastery heatmap' }, { id: 'insights', label: 'Insights & coverage' }, { id: 'ask', label: 'Ask about your class' }]
 const EMPTY_F = { subject_id: '', unit_id: '', topic_id: '', quiz_id: '', student_id: '', from: '', to: '' }
 
 export default function ClassAnalytics() {
@@ -34,6 +35,7 @@ export default function ClassAnalytics() {
                   {tab === 'performance' && <Performance courseId={courseId} />}
                   {tab === 'heatmap' && <HeatmapTab courseId={courseId} />}
                   {tab === 'insights' && <InsightsTab courseId={courseId} />}
+                  {tab === 'ask' && <AskClass courseId={courseId} />}
                 </div>
               </>
             )}

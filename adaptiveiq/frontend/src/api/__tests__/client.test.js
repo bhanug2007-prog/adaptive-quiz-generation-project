@@ -47,4 +47,16 @@ describe('api client', () => {
     expect(qs({ a: 1, b: '', c: null, d: undefined, e: 'x y' })).toBe('?a=1&e=x+y')
     expect(qs({})).toBe('')
   })
+
+  it('sends FormData uploads with CSRF header and without forcing JSON Content-Type', async () => {
+    const f = vi.spyOn(globalThis, 'fetch').mockReturnValue(reply(200, { document_id: 'doc-1' }))
+    const form = new FormData()
+    form.append('file', new File(['hello'], 'notes.txt', { type: 'text/plain' }))
+    await api.upload('/api/documents/extract', form)
+    const [, init] = f.mock.calls[0]
+    expect(init.credentials).toBe('include')
+    expect(init.headers['X-Requested-With']).toBe('AdaptiveIQ')
+    expect(init.headers['Content-Type']).toBeUndefined()
+    expect(init.body).toBe(form)
+  })
 })

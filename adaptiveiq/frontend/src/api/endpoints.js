@@ -15,6 +15,9 @@ export const authApi = {
   changePassword: (current_password, new_password) => api.post('/api/auth/change-password', { current_password, new_password }),
   verifyEmail: (token) => api.post('/api/auth/verify-email', { token }),
   resendVerification: () => api.post('/api/auth/resend-verification'),
+  forgotPassword: (email) => api.post('/api/auth/forgot-password', { email }),
+  verifyResetToken: (token) => api.post('/api/auth/reset-password/verify', { token }),
+  resetPassword: (token, new_password) => api.post('/api/auth/reset-password', { token, new_password }),
 }
 
 export const generationApi = {
@@ -27,6 +30,15 @@ export const topicsApi = {
   choices: () => api.get('/api/topics/search'),
 }
 
+export const documentsApi = {
+  extract: (file) => {
+    const form = new FormData()
+    form.append('file', file)
+    return api.upload('/api/documents/extract', form)
+  },
+  remove: (documentId) => api.del(`/api/documents/${documentId}`),
+}
+
 export const studentApi = {
   overview: () => api.get('/api/student/overview'),
   courses: () => api.get('/api/student/courses'),
@@ -34,7 +46,7 @@ export const studentApi = {
   assigned: () => api.get('/api/student/quizzes/assigned'),
   practiceQuizzes: () => api.get('/api/student/quizzes/practice'),
   quiz: (id) => api.get(`/api/student/quizzes/${id}`),
-  start: (quizId) => api.post(`/api/student/quizzes/${quizId}/start`),
+  start: (quizId, body = {}) => api.post(`/api/student/quizzes/${quizId}/start`, body),
   attempt: (sid) => api.get(`/api/student/attempts/${sid}`),
   saveAnswer: (sid, qid, body) => api.put(`/api/student/attempts/${sid}/answers/${qid}`, body),
   checkAnswer: (sid, qid) => api.post(`/api/student/attempts/${sid}/answers/${qid}/check`),
@@ -55,6 +67,18 @@ export const studentApi = {
   startRevision: () => api.post('/api/student/revision/start'),
   confidence: () => api.get('/api/student/confidence'),
   studyPlan: () => api.get('/api/student/study-plan'),
+  learningPlanPreview: (p) => api.get(`/api/student/learning-plan/preview${qs(p)}`),
+  learningPlanCurrent: () => api.get('/api/student/learning-plan/current'),
+  learningPlanCreate: (body = {}) => api.post('/api/student/learning-plan', body),
+  learningPlanGet: (planId) => api.get(`/api/student/learning-plan/${planId}`),
+  learningPlanApprove: (planId, body = {}) => api.post(`/api/student/learning-plan/${planId}/approve`, body),
+  learningPlanDismiss: (planId, body = {}) => api.post(`/api/student/learning-plan/${planId}/dismiss`, body),
+  learningPlanPostpone: (planId, body = {}) => api.post(`/api/student/learning-plan/${planId}/postpone`, body),
+  learningPlanRefresh: (planId, body = {}) => api.post(`/api/student/learning-plan/${planId}/refresh`, body),
+  monitoringDevices: (sid, body) => api.post(`/api/student/attempts/${sid}/monitoring/devices`, body),
+  monitoringEvents: (sid, events) => api.post(`/api/student/attempts/${sid}/monitoring/events?warnings=true`, { events }),
+  myMonitoring: (sid) => api.get(`/api/student/attempts/${sid}/monitoring`),
+  monitoringReport: (sid, body) => api.post(`/api/student/attempts/${sid}/monitoring/reports`, body),
 }
 
 export const lecturerApi = {
@@ -89,6 +113,8 @@ export const lecturerApi = {
   reviewQuestion: (id, action, note) => api.post(`/api/lecturer/questions/${id}/review`, { action, note }),
   duplicateQuestion: (id) => api.post(`/api/lecturer/questions/${id}/duplicate`),
   questionHistory: (id) => api.get(`/api/lecturer/questions/${id}/history`),
+  checkQuality: (id) => api.post(`/api/lecturer/questions/${id}/check-quality`),
+  questionEvaluations: (id) => api.get(`/api/lecturer/questions/${id}/evaluations`),
   deleteQuestion: (id) => api.del(`/api/lecturer/questions/${id}`),
   // quizzes
   quizzes: (p) => api.get(`/api/lecturer/quizzes${qs(p)}`),
@@ -113,6 +139,15 @@ export const lecturerApi = {
   courseQuestionAnalytics: (courseId, flagged_only) => api.get(`/api/lecturer/courses/${courseId}/question-analytics${qs({ flagged_only })}`),
   insights: (courseId) => api.get(`/api/lecturer/courses/${courseId}/insights`),
   coverage: (courseId) => api.get(`/api/lecturer/courses/${courseId}/coverage`),
+  // agents
+  askClass: (body) => api.post('/api/lecturer/insights/ask', body),
+  askHistory: (courseId) => api.get(`/api/lecturer/insights/history${qs({ course_id: courseId })}`),
+  agentRun: (id) => api.get(`/api/lecturer/agent-runs/${id}`),
+  generationAgent: (runId) => api.get(`/api/lecturer/generation/${runId}/agent`),
+  // integrity monitoring
+  quizMonitoring: (quizId) => api.get(`/api/lecturer/quizzes/${quizId}/monitoring`),
+  monitoringTimeline: (id) => api.get(`/api/lecturer/monitoring/${id}`),
+  monitoringReview: (id, body) => api.post(`/api/lecturer/monitoring/${id}/review`, body),
   modelQuality: () => api.get('/api/lecturer/model-quality'),
   students: (p) => api.get(`/api/lecturer/students${qs(p)}`),
   student: (id) => api.get(`/api/lecturer/students/${id}`),

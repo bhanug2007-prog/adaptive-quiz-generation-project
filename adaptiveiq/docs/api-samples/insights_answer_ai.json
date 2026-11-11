@@ -1,0 +1,34 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/insights/ask",
+  "status": 200,
+  "body": {
+    "agent_run_id": 2,
+    "question": "Which students need help?",
+    "answer": "Sample Student B scored lowest on Scheduling quiz; Sample Student A did well.",
+    "findings": [
+      "2 students submitted the quiz."
+    ],
+    "suggestions": [
+      "Check in with Sample Student B about CPU Scheduling."
+    ],
+    "caveats": [
+      "Each student has one submission, so this is little evidence."
+    ],
+    "mode": "ai",
+    "ai_note": null,
+    "tools_used": [
+      {
+        "name": "get_student_performance",
+        "args": {},
+        "ok": true
+      },
+      {
+        "name": "get_class_analytics",
+        "args": {},
+        "ok": true
+      }
+    ],
+    "model": "grok-test"
+  }
+}

@@ -9,6 +9,8 @@ import { studentApi } from '../../api/endpoints'
 import { DIFFICULTY_TEXT, plural } from '../../utils/format'
 import { KindBadge } from '../../components/student/Badges'
 import { safeSession } from '../../components/student/helpers'
+import { useMonitoring } from '../../monitoring/useMonitoring'
+import { FullscreenRequired, MonitoringGate, MonitoringMessages, MonitoringStatus } from '../../components/student/Monitoring'
 
 const CONFIDENCE = [{ v: 1, label: 'Guessing' }, { v: 2, label: 'Unsure' }, { v: 3, label: 'Sure' }]
 const KEY_INDEX = { 1: 0, 2: 1, 3: 2, 4: 3, a: 0, b: 1, c: 2, d: 3 }
@@ -154,12 +156,17 @@ export default function QuizPlayer() {
     return () => document.removeEventListener('visibilitychange', onVis)
   }, [closeSegment])
 
+  /* ---------- integrity monitoring (only when the lecturer turned it on) ---------- */
+  const mon = useMonitoring({ attempt, sessionId })
+  const monFinish = mon.finish
+
   /* ---------- finishing ---------- */
   const goResult = useCallback(() => {
     submittedRef.current = true
     safeSession.del(flagKey)
+    monFinish()                                        // stops the camera and microphone, sends what is left
     navigate(`/student/attempts/${sessionId}/result`, { replace: true })
-  }, [navigate, sessionId, flagKey])
+  }, [navigate, sessionId, flagKey, monFinish])
 
   /* ---------- autosave: one request per question at a time, latest value wins ---------- */
   const send = useCallback(async (id) => {
@@ -315,7 +322,7 @@ export default function QuizPlayer() {
   /* ---------- keyboard ---------- */
   useEffect(() => {
     const onKey = (e) => {
-      if (e.ctrlKey || e.metaKey || e.altKey || confirm) return
+      if (e.ctrlKey || e.metaKey || e.altKey || confirm || (mon.enabled && !mon.started) || mon.needsFullscreen) return
       const tag = e.target?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target?.isContentEditable) return
       if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + 1); return }
@@ -325,11 +332,12 @@ export default function QuizPlayer() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [go, idx, q, choose, confirm])
+  }, [go, idx, q, choose, confirm, mon.enabled, mon.started, mon.needsFullscreen])
 
   /* ---------- render ---------- */
   if (loadErr) return <ErrorState error={loadErr} onRetry={load} title={loadErr.status === 404 ? 'Attempt not found' : 'Could not load this attempt'} />
   if (!attempt) return <LoadingBlock rows={4} label="Loading your quiz" />
+  if (mon.enabled && !mon.started) return <MonitoringGate attempt={attempt} mon={mon} />
 
   const total = questions.length
   const answeredCount = questions.filter((x) => answers[x.question_id]?.option_id).length
@@ -357,6 +365,7 @@ export default function QuizPlayer() {
           </div>
         </div>
         <div className="st-player__status">
+          <MonitoringStatus mon={mon} />
           <SaveStatus status={status} onRetry={retryAll} />
           <Timerbox left={left} total={totalMs} />
         </div>
@@ -367,8 +376,10 @@ export default function QuizPlayer() {
       </header>
 
       {timeUp && <Alert tone="warning" title="Time is up">Submitting the answers you saved…</Alert>}
+      <MonitoringMessages mon={mon} />
       {attempt.instructions && idx === 0 && <Alert tone="info" title="Instructions">{attempt.instructions}</Alert>}
 
+      {mon.needsFullscreen ? <FullscreenRequired mon={mon} /> : (
       <div className="st-player__grid">
         <section className="st-qcard card" aria-labelledby="st-qtext">
           <div className="st-qcard__meta">
@@ -492,6 +503,7 @@ export default function QuizPlayer() {
           <p className="faint st-small st-navigator__keys">Keys: <span className="kbd">1</span>–<span className="kbd">4</span> or <span className="kbd">A</span>–<span className="kbd">D</span> choose · <span className="kbd">←</span> <span className="kbd">→</span> move</p>
         </aside>
       </div>
+      )}
 
       <ConfirmDialog open={confirm} onClose={() => !submitting && setConfirm(false)} onConfirm={doSubmit} loading={submitting}
         title="Submit your answers?" confirmLabel="Submit now" tone="teal">

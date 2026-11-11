@@ -10,6 +10,33 @@ const FILTERS = [
   { value: '', label: 'All' }, { value: 'draft', label: 'Drafts' }, { value: 'published', label: 'Published' }, { value: 'archived', label: 'Archived' },
 ]
 
+function quizMonitoringCell(z) {
+  const s = z.monitoring_summary
+  const enabled = s ? s.enabled : Boolean(
+    z.monitor_tab || (z.monitor_fullscreen && z.monitor_fullscreen !== 'off') || z.monitor_camera || z.monitor_microphone,
+  )
+  const hasRecords = (s?.monitored_count || 0) > 0
+  if (!enabled && !hasRecords) return <span className="faint lc-small">Off</span>
+  return (
+    <div className="stack" style={{ gap: 2, justifyItems: 'start' }}>
+      <Link className="lc-cell-link lc-small" to={`/lecturer/quizzes/${z.id}?step=monitoring`}>
+        {enabled ? 'Monitoring & activity' : 'Earlier activity'}
+      </Link>
+      {s ? (
+        <span className={(s.awaiting_review || s.needs_review) ? 'lc-warn lc-small' : 'faint lc-small'}>
+          {s.awaiting_review > 0
+            ? `${s.awaiting_review} awaiting review`
+            : s.monitored_count > 0
+              ? `${s.monitored_count} monitored`
+              : 'Enabled'}
+        </span>
+      ) : (
+        <span className="faint lc-small">Enabled</span>
+      )}
+    </div>
+  )
+}
+
 export default function Quizzes() {
   const [sp, setSp] = useSearchParams()
   const status = sp.get('status') || ''
@@ -55,7 +82,7 @@ export default function Quizzes() {
             <thead>
               <tr>
                 <th scope="col">Quiz</th><th scope="col">Status</th><th scope="col" className="num">Questions</th>
-                <th scope="col">Review</th><th scope="col">Due</th><th scope="col" className="num">Weight</th>
+                <th scope="col">Review</th><th scope="col">Monitoring</th><th scope="col">Due</th><th scope="col" className="num">Weight</th>
               </tr>
             </thead>
             <tbody>
@@ -71,6 +98,7 @@ export default function Quizzes() {
                     <td><Badge tone={st.tone}>{st.text}</Badge>{z.status === 'published' && z.feedback_release === 'manual' && !z.feedback_released && <span className="faint lc-small lc-block">Feedback not released</span>}</td>
                     <td className="num">{z.question_count}</td>
                     <td>{z.question_count ? (approved === z.question_count ? <span className="lc-ok lc-small">All approved</span> : <span className="lc-warn lc-small">{approved}/{z.question_count} approved</span>) : <span className="faint">—</span>}</td>
+                    <td>{quizMonitoringCell(z)}</td>
                     <td className="lc-small">{z.due_at ? dateTime(z.due_at) : <span className="faint">No due date</span>}</td>
                     <td className="num">{z.graded ? `${z.contribution_pct}%` : <span className="faint">Practice</span>}</td>
                   </tr>

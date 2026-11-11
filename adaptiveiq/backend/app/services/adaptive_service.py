@@ -118,12 +118,16 @@ def _update_revision(db: Session, session: QuizSession, now: datetime):
     for qid in session.question_order:
         a = answers.get(qid)
         correct = bool(a and a.is_correct)
+        q = db.get(Question, qid)
         item = db.scalar(select(RevisionSchedule).where(RevisionSchedule.student_id == session.student_id,
                                                         RevisionSchedule.question_id == qid))
+        if q is None or q.review_status == "rejected" or (q.validation or {}).get("quarantined"):
+            if item is not None and item.status == "active":
+                item.status = "retired"
+            continue
         if item is None:
             if correct:
                 continue
-            q = db.get(Question, qid)
             box, due, status = spaced_revision.after_answer(None, False, now)
             db.add(RevisionSchedule(student_id=session.student_id, question_id=qid, topic_key=q.topic_key, box=box,
                                     due_at=due, last_correct=False, status=status))
@@ -137,10 +141,21 @@ def _update_revision(db: Session, session: QuizSession, now: datetime):
 
 def due_revision_counts(db: Session, student_id: int, now: datetime | None = None) -> dict[str, int]:
     now = now or utcnow()
-    rows = db.execute(select(RevisionSchedule.topic_key, func.count()).where(
-        RevisionSchedule.student_id == student_id, RevisionSchedule.status == "active",
-        RevisionSchedule.due_at <= now).group_by(RevisionSchedule.topic_key))
-    return {k: n for k, n in rows}
+    rows = db.execute(
+        select(RevisionSchedule.topic_key, Question.validation)
+        .join(Question, Question.id == RevisionSchedule.question_id)
+        .where(
+            RevisionSchedule.student_id == student_id,
+            RevisionSchedule.status == "active",
+            RevisionSchedule.due_at <= now,
+            Question.review_status != "rejected",
+        )
+    )
+    counts: dict[str, int] = defaultdict(int)
+    for k, val in rows:
+        if not (val or {}).get("quarantined"):
+            counts[k] += 1
+    return dict(counts)
 
 
 def topic_infos(db: Session, student_id: int, s: Settings) -> list[recommendations.TopicInfo]:

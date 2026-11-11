@@ -2,6 +2,7 @@
 from collections import defaultdict
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -15,6 +16,7 @@ from app.schemas.attempts import (AnswerSave, AttemptOption, AttemptOut, Attempt
                                   ReviewItem, ReviewOption, SavedAnswer, TopicPerformance)
 from app.schemas.quizzes import StudentQuizCard
 from app.services import attempt_service as att
+from app.services import monitoring_service as mon
 from app.services import permissions as perm
 
 router = APIRouter(prefix="/api/student", tags=["student quizzes"])
@@ -38,7 +40,7 @@ def _card(db: Session, student: User, z: Quiz, now) -> StudentQuizCard:
         due_at=z.due_at, closes_at=z.closes_at, attempts_allowed=z.attempts_allowed, attempts_used=len(done),
         state=att.quiz_state(z, sessions, now), in_progress_session_id=inprog,
         last_session_id=done[-1].id if done else None, best_percentage=best, graded=z.graded,
-        contribution_pct=z.contribution_pct, created_at=z.created_at)
+        contribution_pct=z.contribution_pct, created_at=z.created_at, monitoring=mon.quiz_settings(z))
 
 
 @router.get("/quizzes/assigned", response_model=list[StudentQuizCard])
@@ -69,7 +71,15 @@ def quiz_card(quiz_id: int, user: User = Depends(require_student), db: Session =
     return _card(db, user, z, utcnow())
 
 
-def attempt_out(db: Session, sess: QuizSession) -> AttemptOut:
+def _monitoring(db: Session, sess: QuizSession, s: Settings) -> dict | None:
+    m = mon.for_attempt(db, sess)
+    if m is None:
+        return None
+    return {**m.settings, "camera_state": m.camera, "microphone_state": m.microphone,
+            "face_interval_ms": s.monitoring_face_interval_ms, "retention_days": s.monitoring_retention_days}
+
+
+def attempt_out(db: Session, sess: QuizSession, s: Settings) -> AttemptOut:
     z = db.get(Quiz, sess.quiz_id)
     marks = {i.question_id: i.marks for i in z.items}
     qs = {q.id: q for q in db.scalars(select(Question).where(Question.id.in_(sess.question_order)))}
@@ -87,15 +97,28 @@ def attempt_out(db: Session, sess: QuizSession) -> AttemptOut:
     return AttemptOut(session_id=sess.id, quiz_id=z.id, quiz_title=z.title, kind=z.kind, instructions=z.instructions,
                       attempt_no=sess.attempt_no, status=sess.status, started_at=sess.started_at,
                       deadline_at=sess.deadline_at, server_now=utcnow(), confidence_enabled=z.confidence_enabled,
-                      can_check_answers=z.kind == "practice", questions=questions, answers=answers)
+                      can_check_answers=z.kind == "practice", questions=questions, answers=answers,
+                      monitoring=_monitoring(db, sess, s))
+
+
+class StartRequest(BaseModel):
+    monitoring_consent: bool = False      # the student read what is monitored and agreed
 
 
 @router.post("/quizzes/{quiz_id}/start", response_model=AttemptOut)
-def start(quiz_id: int, user: User = Depends(require_student), db: Session = Depends(get_db),
-          s: Settings = Depends(get_settings_dep)):
+def start(quiz_id: int, body: StartRequest | None = None, user: User = Depends(require_student),
+          db: Session = Depends(get_db), s: Settings = Depends(get_settings_dep)):
     z = perm.student_quiz(db, user, quiz_id)
+    watch = mon.quiz_settings(z)
+    resuming = any(x.status == "in_progress" for x in att.sessions_for(db, z.id, user.id))
+    if watch and not resuming and not (body and body.monitoring_consent):
+        # 428: the quiz page must show what is monitored and get the student's agreement first.
+        raise HTTPException(428, "This assessment is monitored. Read what is recorded and agree before starting.")
     sess = att.start_attempt(db, user, z, s)
-    return attempt_out(db, sess)
+    if watch and body and body.monitoring_consent and sess.status == "in_progress" and mon.for_attempt(db, sess) is None:
+        mon.open_session(db, sess, {**watch, "warning_policy": mon.warning_policy(s)})
+        db.commit()
+    return attempt_out(db, sess, s)
 
 
 @router.get("/attempts/{session_id}", response_model=AttemptOut)
@@ -103,7 +126,7 @@ def get_attempt(session_id: int, user: User = Depends(require_student), db: Sess
                 s: Settings = Depends(get_settings_dep)):
     sess = perm.student_session(db, user, session_id)
     att.expire_if_needed(db, sess, s)
-    return attempt_out(db, sess)
+    return attempt_out(db, sess, s)
 
 
 @router.put("/attempts/{session_id}/answers/{question_id}", response_model=SavedAnswer)
@@ -185,7 +208,8 @@ def result_out(db: Session, sess: QuizSession, user: User) -> ResultOut:
             options=[ReviewOption(id=oid, label=LETTERS[k], text=by_id[oid].text, is_correct=by_id[oid].is_correct,
                                   selected=bool(a and a.selected_option_id == oid)) for k, oid in enumerate(order) if oid in by_id],
             explanation=q.explanation, math_verified=bool((q.validation or {}).get("math_verified")),
-            source_excerpt=q.source_excerpt if q.source_type == "reference_text" else None,
+            source_excerpt=q.source_excerpt if q.source_type in ("reference_text", "document") else None,
+            source_ref=(q.validation or {}).get("source") if q.source_type == "document" else None,
             time_spent_s=a.time_spent_s if a else None))
         if a and a.time_spent_s:
             active += a.time_spent_s

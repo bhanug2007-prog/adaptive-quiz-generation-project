@@ -13,12 +13,16 @@ export const setUnauthorizedHandler = (fn) => { onUnauthorized = fn }
 
 async function request(method, path, body, { raw } = {}) {
   let res
+  const isForm = typeof FormData !== 'undefined' && body instanceof FormData
   try {
     res = await fetch(BASE + path, {
       method,
       credentials: 'include',
-      headers: { 'X-Requested-With': 'AdaptiveIQ', ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}) },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      headers: {
+        'X-Requested-With': 'AdaptiveIQ',
+        ...(body !== undefined && !isForm ? { 'Content-Type': 'application/json' } : {}),
+      },
+      body: body !== undefined ? (isForm ? body : JSON.stringify(body)) : undefined,
     })
   } catch {
     throw new ApiError(0, 'Cannot reach the AdaptiveIQ server. Check that the backend is running.')
@@ -43,6 +47,7 @@ export const api = {
   put: (p, b = {}) => request('PUT', p, b),
   patch: (p, b = {}) => request('PATCH', p, b),
   del: (p) => request('DELETE', p),
+  upload: (p, formData) => request('POST', p, formData),
   text: async (p) => (await request('GET', p, undefined, { raw: true })).text(),
   /** Downloads a file from an authorised GET endpoint (CSV exports). */
   download: async (p, filename) => {

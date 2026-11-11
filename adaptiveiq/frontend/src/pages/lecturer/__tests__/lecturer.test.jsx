@@ -12,10 +12,12 @@ import { renderAt } from './helpers'
 
 vi.mock('../../../api/endpoints', () => ({
   lecturerApi: {
-    modelQuality: vi.fn(), heatmapCell: vi.fn(), quiz: vi.fn(), preview: vi.fn(), publish: vi.fn(), courses: vi.fn(),
+    modelQuality: vi.fn(), heatmapCell: vi.fn(), quiz: vi.fn(), quizzes: vi.fn(), preview: vi.fn(), publish: vi.fn(), courses: vi.fn(),
     course: vi.fn(), updateItems: vi.fn(), regenerate: vi.fn(), googleStatus: vi.fn(), googleExports: vi.fn(),
+    quizMonitoring: vi.fn(), monitoringTimeline: vi.fn(), monitoringReview: vi.fn(), generate: vi.fn(),
   },
   topicsApi: { choices: vi.fn(() => Promise.resolve([])) },
+  documentsApi: { extract: vi.fn(), remove: vi.fn(() => Promise.resolve()) },
   generationApi: { get: vi.fn(), cancel: vi.fn() },
   healthApi: { get: vi.fn(() => Promise.resolve({ model: { state: 'ok' } })) },
   authApi: { changePassword: vi.fn(), updateMe: vi.fn(), resendVerification: vi.fn() },
@@ -24,7 +26,7 @@ vi.mock('../../../auth/AuthProvider', () => ({
   useAuth: () => ({ user: { full_name: 'Sample Lecturer', email: 'l@example.edu', email_verified: true, created_at: '2026-10-21T00:00:00Z' }, setUser: vi.fn() }),
 }))
 
-const { lecturerApi, generationApi, authApi } = await import('../../../api/endpoints')
+const { lecturerApi, generationApi, authApi, documentsApi } = await import('../../../api/endpoints')
 const { ApiError } = await import('../../../api/client')
 
 beforeEach(() => { vi.clearAllMocks(); sessionStorage.clear() })
@@ -123,6 +125,60 @@ describe('Create quiz', () => {
     expect(screen.getByText(/Generating “Scheduling quiz 1”/)).toBeInTheDocument()
     expect(generationApi.get).toHaveBeenCalledWith(1)
   })
+
+  it('switches to Upload File mode, extracts a document and submits document generation', async () => {
+    lecturerApi.courses.mockResolvedValue([{ id: 1, code: 'CS301', title: 'Operating Systems' }])
+    lecturerApi.course.mockResolvedValue({
+      id: 1,
+      code: 'CS301',
+      title: 'Operating Systems',
+      subjects: [{
+        id: 10,
+        name: 'Operating Systems',
+        units: [{ id: 100, name: 'Unit 2', topics: [{ id: 1000, name: 'CPU Scheduling', objectives: [] }] }],
+      }],
+    })
+    documentsApi.extract.mockResolvedValue({
+      document_id: 'doc-42',
+      filename: 'chapter2.pdf',
+      file_type: 'pdf',
+      size_bytes: 20480,
+      page_count: 3,
+      word_count: 600,
+      chunk_count: 4,
+      sections: ['Round Robin', 'Priority Aging'],
+      headings: ['Round Robin', 'Priority Aging'],
+      recommended_max_questions: 15,
+      warning: null,
+      preview: 'Round robin scheduling...',
+    })
+    lecturerApi.generate.mockResolvedValue({ run_id: 99, quiz_id: 55 })
+    generationApi.get.mockResolvedValue({
+      ...runRunning.body,
+      run_id: 99,
+      quiz_id: 55,
+      grounded_on: 'document',
+      document_name: 'chapter2.pdf',
+      insufficient_content_note: 'Generated 5 instead of 10 due to short material.',
+    })
+    const { default: CreateQuiz } = await import('../CreateQuiz')
+    renderAt(<CreateQuiz />)
+    fireEvent.change(await screen.findByLabelText('Quiz title'), { target: { value: 'Doc Grounded Quiz' } })
+    fireEvent.click(screen.getByRole('radio', { name: 'Upload File' }))
+    const fileInput = screen.getByLabelText(/Study material file/i)
+    const pdfFile = new File(['%PDF-1.4 content'], 'chapter2.pdf', { type: 'application/pdf' })
+    fireEvent.change(fileInput, { target: { files: [pdfFile] } })
+    expect(await screen.findByText('chapter2.pdf')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText(/Chapter or section/i), { target: { value: 'Priority Aging' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Generate questions' }))
+    await waitFor(() => expect(lecturerApi.generate).toHaveBeenCalledWith(expect.objectContaining({
+      source_mode: 'document',
+      document_id: 'doc-42',
+      document_section: 'Priority Aging',
+    })))
+    expect(await screen.findByText(/From uploaded document \(chapter2\.pdf\)/)).toBeInTheDocument()
+    expect(screen.getByText(/Generated 5 instead of 10/)).toBeInTheDocument()
+  })
 })
 
 describe('Settings', () => {
@@ -154,5 +210,39 @@ describe('Question editor', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalled())
     expect(onSubmit.mock.calls[0][0]).toMatchObject({ correct_label: 'B', options: ['Choice 0', 'Choice 1', 'Choice 2', 'Choice 3'] })
+  })
+})
+
+describe('Monitoring discoverability', () => {
+  it('shows monitoring links on the Quizzes table and quiz summary banner on QuizDetail', async () => {
+    const monitoredQuiz = {
+      ...quizUpdate.body,
+      status: 'published',
+      monitor_tab: true,
+      monitor_camera: true,
+      monitoring_summary: {
+        enabled: true, attempt_count: 3, monitored_count: 3, with_events: 2, needs_review: 1, unavailable_count: 0, awaiting_review: 2,
+      },
+    }
+    lecturerApi.courses.mockResolvedValue([])
+    lecturerApi.quizzes.mockResolvedValue([monitoredQuiz])
+    const { default: Quizzes } = await import('../Quizzes')
+    renderAt(<Quizzes />)
+    const link = await screen.findByRole('link', { name: 'Monitoring & activity' })
+    expect(link).toHaveAttribute('href', `/lecturer/quizzes/${monitoredQuiz.id}?step=monitoring`)
+    expect(screen.getByText('2 awaiting review')).toBeInTheDocument()
+
+    lecturerApi.quiz.mockResolvedValue(monitoredQuiz)
+    lecturerApi.quizMonitoring.mockResolvedValue({
+      quiz_id: monitoredQuiz.id, quiz_title: monitoredQuiz.title,
+      settings: { tab: true, fullscreen: 'off', camera: true, microphone: false },
+      rules: { algorithm: 'monitor-rules-v1', needs_review_when: [], note: '' },
+      retention_days: 180, totals: { needs_review: 1, event_recorded: 1, normal: 1 }, students: [],
+    })
+    const { default: QuizDetail } = await import('../QuizDetail')
+    renderAt(<QuizDetail />, { path: '/lecturer/quizzes/:quizId', route: `/lecturer/quizzes/${monitoredQuiz.id}` })
+    expect(await screen.findByText(/3 monitored attempts/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Open monitoring & activity' }))
+    expect(await screen.findByRole('tab', { name: /Monitoring & activity \(2 awaiting review\)/ })).toHaveAttribute('aria-selected', 'true')
   })
 })

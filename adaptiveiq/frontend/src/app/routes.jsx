@@ -10,6 +10,8 @@ const Landing = lazy(() => import('../pages/landing/Landing'))
 const SignIn = lazy(() => import('../pages/auth/SignIn'))
 const Register = lazy(() => import('../pages/auth/Register'))
 const VerifyEmail = lazy(() => import('../pages/auth/VerifyEmail'))
+const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'))
+const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 
 const S = {
@@ -57,6 +59,8 @@ export default function AppRoutes() {
       <Route path="signin" element={<Page><SignIn /></Page>} />
       <Route path="register" element={<Page><Register /></Page>} />
       <Route path="verify-email" element={<Page><VerifyEmail /></Page>} />
+      <Route path="forgot-password" element={<Page><ForgotPassword /></Page>} />
+      <Route path="reset-password" element={<Page><ResetPassword /></Page>} />
 
       <Route path="student" element={<RequireRole role="student" />}>
         <Route element={<PortalLayout role="student" />}>

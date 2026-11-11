@@ -1,0 +1,49 @@
+{
+  "method": "GET",
+  "path": "/api/generation/1",
+  "status": 200,
+  "body": {
+    "run_id": 1,
+    "status": "partial",
+    "stage": "1 of 2 questions passed the checks; 1 kept for your review, marked \"Failed checks\"",
+    "ready": 1,
+    "total": 2,
+    "attempts": 4,
+    "rejected": {
+      "quality_difficulty": 3
+    },
+    "rejected_reasons": {
+      "quality_difficulty": "AI review: difficulty differs from the one requested"
+    },
+    "error": null,
+    "quiz_id": 1,
+    "queue_position": 0,
+    "elapsed_s": 1.4,
+    "avg_question_s": 1.3,
+    "grounded_on": "generated_notes",
+    "difficulty_note": null,
+    "quality": {
+      "ai_review": "used",
+      "ai_model": "grok-test",
+      "ai_note": null,
+      "requested": {
+        "easy": 1,
+        "hard": 1
+      },
+      "labelled": {
+        "easy": 1,
+        "hard": 1
+      },
+      "ai_assessed": {
+        "hard": 2
+      },
+      "assessed_count": 2,
+      "question_count": 2,
+      "mix_matches": false,
+      "mismatched_question_ids": [
+        1
+      ],
+      "failed_kept": 1
+    }
+  }
+}

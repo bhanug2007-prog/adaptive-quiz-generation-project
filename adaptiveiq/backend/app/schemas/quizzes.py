@@ -30,44 +30,78 @@ class DraftGenerateRequest(BaseModel):
     question_count: int = Field(ge=1, le=30)
     difficulty: DifficultyChoice = "mixed"
     distribution: Distribution | None = None
+    source_mode: Literal["topic", "document"] = "topic"
     reference_text: str | None = Field(default=None, max_length=12000)
+    document_id: str | None = Field(default=None, max_length=120)
+    document_section: str | None = Field(default=None, max_length=200)
+    focus_topic: str | None = Field(default=None, max_length=200)
     objective_ids: list[int] = Field(default=[], max_length=10)
     target_duration_min: int | None = Field(default=None, ge=1, le=300)
     marks_each: float = Field(default=1.0, gt=0, le=100)
+
+    @field_validator("document_id", "document_section", "focus_topic")
+    @classmethod
+    def _clean_doc_fields(cls, v):
+        c = _clean(v)
+        return c or None
 
     @model_validator(mode="after")
     def _dist(self):
         if self.distribution and self.distribution.total != self.question_count:
             raise ValueError(f"The difficulty mix adds up to {self.distribution.total}, not {self.question_count} questions.")
-        if self.reference_text is not None and len(self.reference_text.split()) < 40:
-            if self.reference_text.strip():
-                raise ValueError("Reference material needs at least 40 words, or leave it empty.")
+        if self.source_mode == "document":
+            if not self.document_id:
+                raise ValueError("Upload a PDF, DOCX, or TXT document first.")
             self.reference_text = None
+        else:
+            self.document_id = None
+            self.document_section = None
+            if self.reference_text is not None and len(self.reference_text.split()) < 40:
+                if self.reference_text.strip():
+                    raise ValueError("Reference material needs at least 40 words, or leave it empty.")
+                self.reference_text = None
         return self
 
 
 class PracticeGenerateRequest(BaseModel):
-    subject: str = Field(min_length=2, max_length=160)
-    topic: str = Field(min_length=2, max_length=160)
+    source_mode: Literal["topic", "document"] = "topic"
+    subject: str = Field(default="", max_length=160)
+    topic: str = Field(default="", max_length=160)
     topic_id: int | None = None                       # a topic from an enrolled course, if picked
     unit: str | None = Field(default=None, max_length=160)
     question_count: Literal[5, 10, 15, 20] = 5
     difficulty: Literal["easy", "medium", "hard", "mixed", "adaptive"] = "mixed"
     reference_text: str | None = Field(default=None, max_length=12000)
+    document_id: str | None = Field(default=None, max_length=120)
+    document_section: str | None = Field(default=None, max_length=200)
     time_limit_min: int | None = Field(default=None, ge=1, le=180)
     confidence_enabled: bool = True
 
-    @field_validator("subject", "topic", "unit")
+    @field_validator("subject", "topic", "unit", "document_id", "document_section")
     @classmethod
     def _c(cls, v):
         return _clean(v)
 
     @model_validator(mode="after")
     def _ref(self):
-        if self.reference_text is not None and len(self.reference_text.split()) < 40:
-            if self.reference_text.strip():
-                raise ValueError("Reference material needs at least 40 words, or leave it empty.")
+        self.document_id = self.document_id or None
+        self.document_section = self.document_section or None
+        if self.source_mode == "document":
+            if not self.document_id:
+                raise ValueError("Upload a PDF, DOCX, or TXT document first.")
             self.reference_text = None
+        else:
+            self.document_id = None
+            self.document_section = None
+            if self.topic_id is None:
+                if len((self.subject or "").strip()) < 2:
+                    raise ValueError("subject: String should have at least 2 characters")
+                if len((self.topic or "").strip()) < 2:
+                    raise ValueError("topic: String should have at least 2 characters")
+            if self.reference_text is not None and len(self.reference_text.split()) < 40:
+                if self.reference_text.strip():
+                    raise ValueError("Reference material needs at least 40 words, or leave it empty.")
+                self.reference_text = None
         return self
 
 
@@ -86,7 +120,13 @@ class RunStatus(BaseModel):
     elapsed_s: float
     avg_question_s: float | None
     grounded_on: str | None
+    source_mode: str | None = None
+    document_name: str | None = None
+    requested_count: int | None = None
+    supported_count: int | None = None
+    insufficient_content_note: str | None = None
     difficulty_note: str | None = None
+    quality: dict | None = None                       # AI review use and requested vs judged difficulty mix
 
 
 class OptionOut(BaseModel):
@@ -114,6 +154,7 @@ class QuestionFull(BaseModel):
     review_status: str
     source_type: str
     source_excerpt: str | None
+    source_ref: dict | None = None
     validation: dict
     model: str | None
     options: list[OptionFull]
@@ -197,6 +238,10 @@ class QuizSettings(BaseModel):
     contribution_pct: float | None = Field(default=None, ge=0, le=100)
     confidence_enabled: bool | None = None
     target_duration_min: int | None = Field(default=None, ge=1, le=300)
+    monitor_tab: bool | None = None
+    monitor_fullscreen: Literal["off", "record", "required"] | None = None
+    monitor_camera: bool | None = None
+    monitor_microphone: bool | None = None
 
     @field_validator("opens_at", "due_at", "closes_at")
     @classmethod
@@ -246,6 +291,11 @@ class QuizOut(BaseModel):
     contribution_pct: float
     confidence_enabled: bool
     target_duration_min: int | None
+    monitor_tab: bool = False
+    monitor_fullscreen: str = "off"
+    monitor_camera: bool = False
+    monitor_microphone: bool = False
+    monitoring_summary: dict | None = None
     created_at: datetime
     published_at: datetime | None
     generation_run_id: int | None
@@ -282,3 +332,4 @@ class StudentQuizCard(BaseModel):
     graded: bool
     contribution_pct: float
     created_at: datetime
+    monitoring: dict | None = None                    # what is monitored (tab, fullscreen, camera, microphone)

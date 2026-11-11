@@ -1815,3 +1815,142 @@
   justify-self: start;
   align-self: start;
 }
+
+/* Phase 5: practice difficulty decisions under the mastery chart */
+.st-diffhist { margin-top: var(--space-4); border-top: 1px solid var(--border); padding-top: var(--space-3); display: grid; gap: var(--space-2); }
+
+/* Phase 6: integrity monitoring status in the quiz header */
+.st-monbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.st-monpill { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-xs); padding: 2px 8px;
+  border-radius: 999px; border: 1px solid var(--border); color: var(--text-2); white-space: nowrap; }
+.st-monpill[data-state="denied"], .st-monpill[data-state="unavailable"], .st-monpill[data-state="lost"] { border-color: var(--warning); }
+.st-consent { display: flex; gap: 8px; align-items: flex-start; }
+.st-activity-warning {
+  color: #8b1515;
+  background: #fff1f2;
+  border: 2px solid #b91c1c;
+  border-left-width: 6px;
+  border-radius: 8px;
+  padding: 16px;
+}
+.st-activity-warning p { margin: 8px 0 0; }
+
+/* Personalized Learning Agent (Stage 1 preview on Insights) */
+.st-agent {
+  border-color: var(--teal-line, var(--border-strong));
+}
+
+.st-agent__head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.st-agent__warnings {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 4px;
+}
+
+.st-agent__actions {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.st-agent__actions-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.st-agent__actions-head .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.st-agent__trace summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+}
+
+.st-agent__trace summary:hover {
+  color: var(--text);
+}
+
+.st-agent__trace-body {
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.st-agent__edges {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+/* Stage 2 HITL persistent learning plan controls & progress */
+.st-agent__progress {
+  display: grid;
+  gap: 6px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.st-agent__progress-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.st-agent__approval-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.st-agent__item-side {
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.st-agent__item-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .st-agent__item-side {
+    align-items: flex-start;
+  }
+
+  .st-agent__item-controls {
+    justify-content: flex-start;
+  }
+}

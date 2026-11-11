@@ -71,7 +71,7 @@ function CourseReports({ course }) {
         ) : (
           <div className="table-wrap">
             <table className="table">
-              <thead><tr><th scope="col">Quiz</th>{QUIZ_REPORTS.map((r) => <th key={r.key} scope="col">{r.label}</th>)}</tr></thead>
+              <thead><tr><th scope="col">Quiz</th>{QUIZ_REPORTS.map((r) => <th key={r.key} scope="col">{r.label}</th>)}<th scope="col">Monitoring</th></tr></thead>
               <tbody>
                 {list.map((z) => (
                   <tr key={z.id}>
@@ -82,6 +82,11 @@ function CourseReports({ course }) {
                           onClick={() => dl.get(`${z.id}-${r.key}`, r.fn, z.id, `${slug(z.title)}-${r.key}.csv`)}>CSV</Button>
                       </td>
                     ))}
+                    <td>
+                      <Button size="sm" variant="ghost" to={`/lecturer/quizzes/${z.id}?step=monitoring`}>
+                        {z.monitoring_summary?.awaiting_review > 0 ? `Activity (${z.monitoring_summary.awaiting_review})` : 'Monitoring & activity'}
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

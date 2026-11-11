@@ -9,13 +9,15 @@ import { studentApi } from '../../api/endpoints'
 import { DIFFICULTY_TEXT, STATUS_TEXT, dateTime, plural, relative } from '../../utils/format'
 import { CalibrationChart } from '../../components/student/Charts'
 import { evidenceSentence, practiceHref } from '../../components/student/helpers'
+import LearningPlan from '../../components/student/LearningPlan'
 
-function WeakAreas() {
+export function WeakAreas() {
   const { data, error, loading, reload } = useApi(() => studentApi.weakAreas(), [])
   if (loading && !data) return <LoadingBlock rows={2} />
   if (error) return <ErrorState error={error} onRetry={reload} />
   const groups = [['weak', 'Weak areas'], ['developing', 'Developing'], ['insufficient_evidence', 'Not enough evidence yet']]
-  const any = groups.some(([k]) => data[k]?.length)
+  const skipped = data.often_skipped || []
+  const any = groups.some(([k]) => data[k]?.length) || skipped.length > 0
   if (!any) {
     return <EmptyState icon={Check} title={data.ok?.length ? 'No weak areas right now' : 'No evidence yet'}>
       {data.ok?.length ? 'Every topic with enough answers is on track.' : 'Weak areas are found from your submitted answers. Take a quiz to begin.'}
@@ -49,6 +51,18 @@ function WeakAreas() {
           </ul>
         </div>
       ) : null)}
+      {skipped.length > 0 && (
+        <div className="stack" style={{ gap: 8 }}>
+          <p className="eyebrow">Often left blank ({skipped.length})</p>
+          <ul className="list-plain stack" style={{ gap: 6 }}>
+            {skipped.map((s) => (
+              <li key={s.topic_key} className="st-small"><strong>{s.topic}</strong> <span className="faint">{s.subject}</span>
+                {' '}· {s.skipped} of {s.answers} questions skipped ({s.skipped_pct}%)</li>
+            ))}
+          </ul>
+          <p className="faint st-small">{data.often_skipped_rule} Skipping is shown apart from wrong answers: it can mean running out of time, not only not knowing.</p>
+        </div>
+      )}
       {data.not_attempted?.length > 0 && (
         <p className="muted st-small">Not attempted yet: {data.not_attempted.map((t) => t.topic).join(', ')}.</p>
       )}
@@ -256,6 +270,7 @@ export default function Insights() {
   return (
     <div className="st-page stack-lg">
       <PageHeader title="Learning Insights" subtitle="Weak areas, what to do next and when to revise. Every suggestion explains its reason." />
+      <LearningPlan />
       <div className="st-cols">
         <div className="stack-lg">
           <Card title="Weak areas" subtitle="Topics with consistently low results, judged on accuracy, difficulty, number of questions and how recent they are.">

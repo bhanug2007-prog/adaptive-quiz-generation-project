@@ -51,8 +51,8 @@
           "sd": 0.0037
         },
         "beta_label_acc": {
-          "mean": 0.5701,
-          "sd": 0.0121
+          "mean": 0.5674,
+          "sd": 0.0095
         },
         "baseline_label_acc": {
           "mean": 0.561,
@@ -67,8 +67,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.1728,
-          "sd": 0.0066
+          "mean": 0.1804,
+          "sd": 0.0046
         },
         "baseline_overclaim": {
           "mean": 0.2541,
@@ -94,7 +94,7 @@
         },
         "beta_label_acc": {
           "mean": 0.6303,
-          "sd": 0.0099
+          "sd": 0.0093
         },
         "baseline_label_acc": {
           "mean": 0.6086,
@@ -109,8 +109,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.1317,
-          "sd": 0.0071
+          "mean": 0.1402,
+          "sd": 0.0066
         },
         "baseline_overclaim": {
           "mean": 0.2546,
@@ -135,8 +135,8 @@
           "sd": 0.0018
         },
         "beta_label_acc": {
-          "mean": 0.6874,
-          "sd": 0.0068
+          "mean": 0.6859,
+          "sd": 0.0073
         },
         "baseline_label_acc": {
           "mean": 0.7,
@@ -151,8 +151,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.102,
-          "sd": 0.0057
+          "mean": 0.1087,
+          "sd": 0.0061
         },
         "baseline_overclaim": {
           "mean": 0.1611,
@@ -177,8 +177,8 @@
           "sd": 0.0006
         },
         "beta_label_acc": {
-          "mean": 0.7213,
-          "sd": 0.0063
+          "mean": 0.7229,
+          "sd": 0.0048
         },
         "baseline_label_acc": {
           "mean": 0.7471,
@@ -193,8 +193,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.0831,
-          "sd": 0.0045
+          "mean": 0.0896,
+          "sd": 0.0037
         },
         "baseline_overclaim": {
           "mean": 0.1147,
@@ -251,8 +251,8 @@
           "sd": 0.0021
         },
         "beta_label_acc": {
-          "mean": 0.538,
-          "sd": 0.016
+          "mean": 0.5319,
+          "sd": 0.0143
         },
         "baseline_label_acc": {
           "mean": 0.4648,
@@ -267,8 +267,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.2486,
-          "sd": 0.0096
+          "mean": 0.264,
+          "sd": 0.0095
         },
         "baseline_overclaim": {
           "mean": 0.4471,
@@ -293,8 +293,8 @@
           "sd": 0.0017
         },
         "beta_label_acc": {
-          "mean": 0.5879,
-          "sd": 0.0121
+          "mean": 0.5833,
+          "sd": 0.0128
         },
         "baseline_label_acc": {
           "mean": 0.4417,
@@ -309,8 +309,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.2311,
-          "sd": 0.0065
+          "mean": 0.2402,
+          "sd": 0.0071
         },
         "baseline_overclaim": {
           "mean": 0.5205,
@@ -335,8 +335,8 @@
           "sd": 0.0013
         },
         "beta_label_acc": {
-          "mean": 0.654,
-          "sd": 0.0137
+          "mean": 0.649,
+          "sd": 0.0133
         },
         "baseline_label_acc": {
           "mean": 0.4948,
@@ -351,8 +351,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.2083,
-          "sd": 0.0079
+          "mean": 0.2193,
+          "sd": 0.0075
         },
         "baseline_overclaim": {
           "mean": 0.4822,
@@ -377,8 +377,8 @@
           "sd": 0.0018
         },
         "beta_label_acc": {
-          "mean": 0.6852,
-          "sd": 0.0125
+          "mean": 0.6813,
+          "sd": 0.0118
         },
         "baseline_label_acc": {
           "mean": 0.5298,
@@ -393,8 +393,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.196,
-          "sd": 0.0111
+          "mean": 0.2068,
+          "sd": 0.0102
         },
         "baseline_overclaim": {
           "mean": 0.4561,
@@ -451,8 +451,8 @@
           "sd": 0.0023
         },
         "beta_label_acc": {
-          "mean": 0.5193,
-          "sd": 0.0113
+          "mean": 0.518,
+          "sd": 0.0107
         },
         "baseline_label_acc": {
           "mean": 0.5278,
@@ -467,7 +467,7 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.1446,
+          "mean": 0.1505,
           "sd": 0.0075
         },
         "baseline_overclaim": {
@@ -493,8 +493,8 @@
           "sd": 0.0031
         },
         "beta_label_acc": {
-          "mean": 0.5043,
-          "sd": 0.0128
+          "mean": 0.5119,
+          "sd": 0.0107
         },
         "baseline_label_acc": {
           "mean": 0.5715,
@@ -509,8 +509,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.0771,
-          "sd": 0.0083
+          "mean": 0.0823,
+          "sd": 0.0097
         },
         "baseline_overclaim": {
           "mean": 0.1844,
@@ -535,8 +535,8 @@
           "sd": 0.0021
         },
         "beta_label_acc": {
-          "mean": 0.3591,
-          "sd": 0.016
+          "mean": 0.3675,
+          "sd": 0.0133
         },
         "baseline_label_acc": {
           "mean": 0.5041,
@@ -551,8 +551,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.0172,
-          "sd": 0.0019
+          "mean": 0.0193,
+          "sd": 0.0027
         },
         "baseline_overclaim": {
           "mean": 0.0364,
@@ -577,8 +577,8 @@
           "sd": 0.0016
         },
         "beta_label_acc": {
-          "mean": 0.2163,
-          "sd": 0.0094
+          "mean": 0.228,
+          "sd": 0.0105
         },
         "baseline_label_acc": {
           "mean": 0.3702,
@@ -593,8 +593,8 @@
           "sd": 0.0
         },
         "beta_overclaim": {
-          "mean": 0.0018,
-          "sd": 0.0014
+          "mean": 0.0021,
+          "sd": 0.0018
         },
         "baseline_overclaim": {
           "mean": 0.003,

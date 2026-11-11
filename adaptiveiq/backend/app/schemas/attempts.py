@@ -39,6 +39,7 @@ class AttemptOut(BaseModel):
     server_now: datetime
     confidence_enabled: bool
     can_check_answers: bool          # practice: reveal answers one by one
+    monitoring: dict | None = None   # what is monitored and the browser settings, when the attempt is monitored
     questions: list[AttemptQuestion]
     answers: dict[int, SavedAnswer]
 
@@ -70,6 +71,7 @@ class ReviewItem(BaseModel):
     explanation: str | None
     math_verified: bool
     source_excerpt: str | None       # only when generated from supplied reference material
+    source_ref: dict | None = None
     time_spent_s: float | None
 
 

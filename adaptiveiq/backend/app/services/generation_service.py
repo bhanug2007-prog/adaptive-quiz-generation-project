@@ -10,18 +10,19 @@ import math
 import queue
 import re
 import threading
-import time
 from collections import Counter
 
 from sqlalchemy import select
 
+from app.agents.question_quality import QuestionQualityAgent, close_unfinished
 from app.core.config import Settings
 from app.core.db import Database
-from app.models import (AnswerOption, GenerationRun, ModelVersion, Question, QuestionReviewRecord, Quiz,
-                        QuizQuestion)
+from app.models import (AnswerOption, GenerationRun, ModelVersion, Question, QuestionEvaluation,
+                        QuestionReviewRecord, Quiz, QuizQuestion)
 from app.models.base import utcnow
 from app.services.model_service import ModelBadResponse, ModelError, ModelService
-from app.services.validation_service import Validator
+from app.services.quality_service import QualityEvaluator, QualityResult
+from app.services.validation_service import REASONS, Validator
 
 log = logging.getLogger("adaptiveiq.generation")
 LEVELS = ["easy", "medium", "hard"]
@@ -84,6 +85,7 @@ class GenerationService:
     def __init__(self, settings: Settings, database: Database, model: ModelService):
         self.s, self.dbm, self.model = settings, database, model
         self.validator = Validator(settings, model)
+        self.quality = QualityEvaluator(settings)
         self.queue: "queue.Queue[int]" = queue.Queue()
         self.cancel_flags: dict[int, threading.Event] = {}
         self._worker = threading.Thread(target=self._work, daemon=True, name="question-generator")
@@ -118,6 +120,7 @@ class GenerationService:
                 run.status, run.finished_at = "failed", utcnow()
                 run.error = "The server restarted before this generation finished."
                 self._close_quiz(db, run)
+                close_unfinished(db, run, run.error)
             db.commit()
 
     # ---------- worker ----------
@@ -135,6 +138,7 @@ class GenerationService:
                         run.status, run.finished_at = "failed", utcnow()
                         run.error = "Unexpected server error while generating. Check the backend log."
                         self._close_quiz(db, run)
+                        close_unfinished(db, run, run.error)
                         db.commit()
             finally:
                 self.cancel_flags.pop(run_id, None)
@@ -154,32 +158,55 @@ class GenerationService:
             db.commit()
             rejected: Counter = Counter()
             times: list[float] = []
+            agent = QuestionQualityAgent(self, db, run, flag, rejected, times)
+            db.commit()
             try:
-                contexts, grounded_on = self._contexts(db, run, flag)
+                contexts, grounded_on = agent.rec.tool(
+                    "prepare_contexts",
+                    {"source_mode": (run.params or {}).get("source_mode", "topic"),
+                     "reference_material": bool((run.params or {}).get("reference_text"))},
+                    lambda: self._contexts(db, run, flag), lambda r: {"passages": len(r[0]), "source": r[1]})
                 run.grounded_on = grounded_on
                 db.commit()
-                self._generate(db, run, contexts, flag, rejected, times)
+                agent.run_slots(contexts)
             except ModelError as e:
                 run.rejected = dict(rejected)
-                if run.ready == 0:
+                run.quality = self._quality_summary(db, run)
+                if run.ready == 0 and not run.quality["failed_kept"]:
                     run.status, run.error = "failed", str(e)
                 else:
                     run.status, run.error = "partial", f"{e} Stopped after {run.ready} questions."
             else:
                 run.rejected = dict(rejected)
+                run.quality = self._quality_summary(db, run)
+                kept = run.quality["failed_kept"]
+                is_doc = (run.params or {}).get("source_mode") == "document"
                 if flag.is_set():
                     run.status, run.stage = "cancelled", "Cancelled"
-                elif run.ready == 0:
+                elif run.ready == 0 and not kept:
                     run.status = "failed"
-                    run.error = ("The model did not produce any question that passed the checks. "
-                                 "Try a more specific topic or paste reference material.")
+                    run.error = (
+                        "Could not generate source-grounded questions from the uploaded document. "
+                        "Check that the document contains enough clear, factual material for your topic."
+                        if is_doc else
+                        "The model did not produce any question that passed the checks. "
+                        "Try a more specific topic or paste reference material."
+                    )
                 elif run.ready < run.total:
                     run.status, run.stage = "partial", f"{run.ready} of {run.total} questions passed the checks"
+                    if kept:
+                        run.stage += f"; {kept} kept for your review, marked \"Failed checks\""
                 else:
-                    run.status, run.stage = "done", "Questions ready"
+                    note = (run.params or {}).get("insufficient_content_note")
+                    run.status = "done"
+                    run.stage = (
+                        f"Questions ready (generated {run.total} due to limited document content)"
+                        if note else "Questions ready"
+                    )
             run.finished_at = utcnow()
             run.avg_question_s = round(sum(times) / len(times), 1) if times else None
             self._close_quiz(db, run)
+            agent.finish()
             db.commit()
 
     def _close_quiz(self, db, run: GenerationRun):
@@ -196,8 +223,15 @@ class GenerationService:
         else:
             quiz.status = "draft"                              # lecturer must review before publishing
 
-    def _contexts(self, db, run: GenerationRun, flag) -> tuple[list[str], str]:
+    def _contexts(self, db, run: GenerationRun, flag) -> tuple[list[str | dict], str]:
         p = run.params
+        if p.get("source_mode") == "document":
+            run.stage = "Reading the uploaded study material"
+            db.commit()
+            chunks = p.get("document_chunks") or []
+            if not chunks:
+                raise ModelBadResponse("No readable chunks were available from the uploaded document.")
+            return chunks, "document"
         if p.get("reference_text"):
             run.stage = "Reading the reference material"
             db.commit()
@@ -233,57 +267,85 @@ class GenerationService:
             q = q.where(Question.owner_id == run.requested_by)
         return list(db.scalars(q))
 
-    def _generate(self, db, run: GenerationRun, contexts: list[str], flag, rejected: Counter, times: list[float]):
-        p = run.params
-        if not contexts:
-            return
-        plan = difficulty_plan(p.get("difficulty", "mixed"), run.total, p.get("distribution"))
-        existing = self._existing_texts(db, run)
-        mv_id = model_version_id(db, self.s)
-        run.model_version_id = mv_id                   # so reliability can be reported per model version
-        bad_responses = 0
-        for i, level in enumerate(plan):
-            t0 = time.time()
-            for attempt in range(self.s.max_attempts_per_question):
-                if flag.is_set():
-                    return
-                run.stage = f"Generating question {i + 1} of {run.total}" + (f" (retry {attempt})" if attempt else "")
-                run.attempts += 1
-                db.commit()
-                ctx = contexts[(i + attempt * 7) % len(contexts)]
-                try:
-                    text = self.model.generate_mcq_text(p["subject"], p["topic"], level, ctx)
-                except ModelBadResponse:
-                    bad_responses += 1
-                    if bad_responses >= 3:
-                        raise
-                    rejected["format"] += 1
-                    continue
-                run.stage = f"Checking question {i + 1} of {run.total}"
-                db.commit()
-                c = self.validator.check(text, existing, passage=ctx, grounded=p.get("reference_text") is not None)
-                if not c.ok:
-                    rejected[c.reason] += 1
-                    run.rejected = dict(rejected)
-                    continue
-                self._store(db, run, c, level, ctx, mv_id)
-                existing.insert(0, c.mcq["question"])
-                times.append(time.time() - t0)
-                run.ready += 1
-                run.rejected = dict(rejected)
-                db.commit()
-                break
+    def _log(self, db, run: GenerationRun, i: int, attempt: int, level: str, c, q_res: QualityResult | None,
+             reason: str | None, question_id: int | None = None, raw: str | None = None) -> QuestionEvaluation:
+        """Evaluation log: one row per checked attempt, kept even when the attempt was thrown away."""
+        snap = None
+        if question_id is None:
+            m = c.mcq
+            snap = ({"question": m["question"], "options": m["options"], "answer": m["answer"],
+                     "explanation": m.get("explanation")} if m else {"raw": (raw or "")[:1500]})
+        row = QuestionEvaluation(
+            question_id=question_id, generation_run_id=run.id, slot=i + 1, attempt=attempt + 1,
+            evaluator=q_res.evaluator if q_res else "rules", evaluator_model=q_res.evaluator_model if q_res else None,
+            requested_difficulty=level, passed=reason is None, reason=reason,
+            quality_score=q_res.score if q_res else None,
+            checks=q_res.checks if q_res else {"python_checks": "failed" if reason else "passed", **(c.info or {})},
+            feedback=q_res.feedback if q_res else None,
+            regeneration_instructions=q_res.regeneration_instructions if q_res else None,
+            ai_error=q_res.ai_error if q_res else None, snapshot=snap)
+        db.add(row)
+        db.flush()
+        return row
 
-    def _store(self, db, run: GenerationRun, c, level: str, ctx: str, mv_id: int):
+    def _quality_summary(self, db, run: GenerationRun) -> dict:
+        """Requested difficulty mix vs the questions stored, using the AI's judged level where it exists."""
+        p = run.params or {}
+        plan = difficulty_plan(p.get("difficulty", "mixed"), run.total, p.get("distribution"))
+        qs = list(db.scalars(select(Question).where(Question.generation_run_id == run.id)))
+        evaluators = {((q.validation or {}).get("quality") or {}).get("evaluator") for q in qs}
+        last_err = db.scalar(select(QuestionEvaluation.ai_error).where(QuestionEvaluation.generation_run_id == run.id,
+                                                                       QuestionEvaluation.ai_error.is_not(None))
+                             .order_by(QuestionEvaluation.id.desc()).limit(1))
+        used = self.quality.enabled_for(p.get("purpose"))
+        if not used:
+            ai = "not_used"
+        elif evaluators == {"grok"}:
+            ai = "used"
+        elif "grok" in evaluators:
+            ai = "partly"
+        else:
+            ai = "not_used"
+        assessed = {}
+        mismatched = []
+        for q in qs:
+            a = ((q.validation or {}).get("quality") or {}).get("assessed_difficulty")
+            if a:
+                assessed[a] = assessed.get(a, 0) + 1
+                if a != q.difficulty:
+                    mismatched.append(q.id)
+        n_assessed = sum(assessed.values())
+        requested = dict(Counter(plan))
+        return {
+            "ai_review": ai, "ai_model": self.s.grok_model if ai != "not_used" else None,
+            "ai_note": None if ai == "used" else (last_err or self.quality.skip_reason(p.get("purpose"))),
+            "requested": requested, "labelled": dict(Counter(q.difficulty for q in qs)), "ai_assessed": assessed,
+            "assessed_count": n_assessed, "question_count": len(qs),
+            "mix_matches": (assessed == requested) if qs and n_assessed == len(qs) and len(qs) == len(plan) else None,
+            "mismatched_question_ids": mismatched,
+            "failed_kept": sum(1 for q in qs if (q.validation or {}).get("failed_validation")),
+        }
+
+    def _store(self, db, run: GenerationRun, c, level: str, ctx: str | dict, mv_id: int,
+               q_res: QualityResult | None = None, failed_reason: str | None = None) -> Question:
         p, m = run.params, c.mcq
+        ctx_text = ctx["text"] if isinstance(ctx, dict) else ctx
+        quality = q_res.summary() if q_res else {"status": "not_checked", "evaluator": None,
+                                                 "ai_error": self.quality.skip_reason(p.get("purpose"))}
+        validation = {"math_verified": c.math_verified, **c.info, "quality": quality}
+        if isinstance(ctx, dict) and "source" not in validation:
+            validation["source"] = {k: v for k, v in ctx.items() if k != "text"}
+        if failed_reason:
+            validation.update(failed_validation=True, failure_reason=failed_reason,
+                              failure_text=REASONS.get(failed_reason, failed_reason))
         q = Question(owner_id=run.requested_by, course_id=p.get("course_id"), topic_id=p.get("topic_id"),
                      objective_id=p.get("objective_id"), topic_key=p["topic_key"], subject_label=p["subject"],
                      unit_label=p.get("unit"), topic_label=p["topic"], text=m["question"],
                      explanation=m["explanation"] or None, difficulty=level,
-                     source_type=run.grounded_on or "generated_notes", source_excerpt=ctx, model_version_id=mv_id,
+                     source_type=run.grounded_on or "generated_notes", source_excerpt=ctx_text, model_version_id=mv_id,
                      generation_run_id=run.id,
                      review_status="personal" if p.get("purpose") == "practice" else "draft",
-                     validation={"math_verified": c.math_verified, **c.info})
+                     validation=validation)
         for k, (label, txt) in enumerate(zip("ABCD", m["options"])):
             q.options.append(AnswerOption(label=label, text=txt, is_correct=(label == m["answer"]), position=k))
         db.add(q)
@@ -306,3 +368,4 @@ class GenerationService:
                 pos = len(quiz.items)
                 quiz.items.append(QuizQuestion(question_id=q.id, position=pos, marks=float(p.get("marks_each", 1.0))))
                 quiz.max_marks = float(sum(i.marks for i in quiz.items))
+        return q

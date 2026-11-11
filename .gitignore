@@ -25,3 +25,28 @@ dist/
 # Secrets and local data
 .env
 *.db
+
+# Local environment variants; keep shareable configuration templates
+.env.*
+!.env.example
+!.env.*.example
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Runtime output, test caches and private key files
+.run-logs/
+*.log
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+*.pem
+*.key

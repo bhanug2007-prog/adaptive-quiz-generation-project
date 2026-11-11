@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.core.config import Settings
 from app.ml import mastery as mastery_ml
@@ -65,7 +65,8 @@ def best_sessions(db: Session, quiz_ids: list[int], f: Filters | None = None) ->
     latest is shown and labelled as such)."""
     if not quiz_ids:
         return []
-    q = select(QuizSession).where(QuizSession.quiz_id.in_(quiz_ids), QuizSession.status == "submitted")
+    q = (select(QuizSession).where(QuizSession.quiz_id.in_(quiz_ids), QuizSession.status == "submitted")
+         .options(selectinload(QuizSession.answers), selectinload(QuizSession.result)))   # 3 queries, not one per attempt
     if f and f.student_id:
         q = q.where(QuizSession.student_id == f.student_id)
     if f and f.date_from:
@@ -271,9 +272,12 @@ def insights(db: Session, course: Course, s: Settings) -> list[dict]:
     perf = class_performance(db, course, Filters(), s)
     out = []
     topic_acc = defaultdict(lambda: [0, 0, "", ""])
-    for x in best_sessions(db, [z.id for z in course_quizzes(db, course.id)]):
+    sessions = best_sessions(db, [z.id for z in course_quizzes(db, course.id)])
+    qids = {a.question_id for x in sessions for a in x.answers}
+    questions = {q.id: q for q in db.scalars(select(Question).where(Question.id.in_(qids)))} if qids else {}
+    for x in sessions:
         for a in x.answers:
-            q = db.get(Question, a.question_id)
+            q = questions[a.question_id]
             if a.selected_option_id is None or q.topic_id is None:
                 continue
             t = topic_acc[q.topic_id]

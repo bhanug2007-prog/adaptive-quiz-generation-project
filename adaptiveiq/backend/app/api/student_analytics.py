@@ -10,16 +10,20 @@ from sqlalchemy.orm import Session
 from app.core.config import Settings
 from app.core.deps import get_db, get_settings_dep, require_student
 from app.ml import confidence as conf_ml
-from app.ml.mastery import LABEL_TEXT, LabelThresholds, explain
-from app.models import (Course, LearningRecommendation, Question, Quiz, QuizQuestion, QuizSession, RevisionSchedule,
+from app.ml.mastery import LabelThresholds
+from app.models import (Course, LearningRecommendation, Question, Quiz, QuizSession, RevisionSchedule,
                         StudentAnswer, TopicMasterySnapshot, User)
 from app.models.base import utcnow
 from app.services import adaptive_service as ad
 from app.services import attempt_service as att
+from app.services import learning_service as learn
 from app.services import permissions as perm
 
 router = APIRouter(prefix="/api/student", tags=["student analytics"])
 MIN_TREND_POINTS = 3
+OFTEN_SKIPPED_MIN = 5          # questions seen on a topic before its skipping is reported
+OFTEN_SKIPPED_SHARE = 0.3
+LEVELS = ("easy", "medium", "hard")
 
 
 def _submitted(db: Session, user: User):
@@ -38,31 +42,7 @@ def _streak(days: set, today) -> int:
 
 
 def _topic_rows(db: Session, user: User, s: Settings) -> list[dict]:
-    rows = []
-    last_seen = {}
-    for a, sess, q in db.execute(select(StudentAnswer, QuizSession, Question)
-                                 .join(QuizSession, QuizSession.id == StudentAnswer.session_id)
-                                 .join(Question, Question.id == StudentAnswer.question_id)
-                                 .where(QuizSession.student_id == user.id, QuizSession.status == "submitted")):
-        t = sess.submitted_at
-        if q.topic_key not in last_seen or t > last_seen[q.topic_key]:
-            last_seen[q.topic_key] = t
-    for info in ad.topic_infos(db, user.id, s):
-        e = info.estimate
-        rows.append({
-            "topic_key": info.topic_key, "subject": info.subject_label, "topic": info.topic_label,
-            "topic_id": info.course_topic_id, "status": info.status.status, "status_reason": info.status.reason,
-            "label": e.label if e else "not_attempted",
-            "label_text": LABEL_TEXT[e.label] if e else "Not attempted",
-            "score": e.score if e else None, "lower": e.lower if e else None, "upper": e.upper if e else None,
-            "answers": e.answers if e else 0, "unique_questions": e.unique_questions if e else 0,
-            "correct": e.correct if e else 0, "incorrect": e.incorrect if e else 0, "skipped": e.skipped if e else 0,
-            "recent_accuracy": e.recent_accuracy if e else None,
-            "historical_accuracy": e.historical_accuracy if e else None,
-            "next_difficulty": info.next_difficulty, "explanation": explain(e) if e else "No answers on this topic yet.",
-            "last_activity": last_seen.get(info.topic_key), **ad.topic_summary(e, s)})
-    rank = {"weak": 0, "developing": 1, "insufficient_evidence": 2, "ok": 3, "not_attempted": 4}
-    return sorted(rows, key=lambda r: (rank.get(r["status"], 9), r["score"] if r["score"] is not None else 2, r["topic"]))
+    return learn.analytics_topic_rows(db, user, s)
 
 
 @router.get("/overview")
@@ -134,7 +114,9 @@ def mastery_history(topic_key: str, user: User = Depends(require_student), db: S
                                                           TopicMasterySnapshot.topic_key == topic_key)
                        .order_by(TopicMasterySnapshot.computed_at))
     pts = [{"at": x.computed_at, "score": x.score, "lower": x.lower, "upper": x.upper, "label": x.label,
-            "answers": x.answers, "next_difficulty": x.next_difficulty} for x in snaps]
+            "answers": x.answers, "next_difficulty": x.next_difficulty,
+            "previous_difficulty": (x.details or {}).get("previous_difficulty"),
+            "difficulty_reason": (x.details or {}).get("difficulty_reason")} for x in snaps]
     return {"topic_key": topic_key, "points": pts, "enough_data": len(pts) >= MIN_TREND_POINTS}
 
 
@@ -144,9 +126,14 @@ def weak_areas(user: User = Depends(require_student), db: Session = Depends(get_
     groups = defaultdict(list)
     for r in rows:
         groups[r["status"]].append(r)
+    often_skipped = [{"topic_key": r["topic_key"], "topic": r["topic"], "subject": r["subject"], "skipped": r["skipped"],
+                      "answers": r["answers"], "skipped_pct": round(r["skipped"] / r["answers"] * 100, 1)}
+                     for r in rows if r["answers"] >= OFTEN_SKIPPED_MIN and r["skipped"] / r["answers"] >= OFTEN_SKIPPED_SHARE]
     return {"weak": groups["weak"], "developing": groups["developing"],
             "insufficient_evidence": groups["insufficient_evidence"], "not_attempted": groups["not_attempted"],
-            "ok": groups["ok"]}
+            "ok": groups["ok"], "often_skipped": sorted(often_skipped, key=lambda x: -x["skipped_pct"]),
+            "often_skipped_rule": f"At least {OFTEN_SKIPPED_SHARE:.0%} of {OFTEN_SKIPPED_MIN} or more questions seen "
+                                  "on the topic were left blank."}
 
 
 @router.get("/question-status")
@@ -208,7 +195,40 @@ def trends(user: User = Depends(require_student), db: Session = Depends(get_db))
     repeated = [qid for qid, n in wrong_count.items() if n >= 2]
     for q in db.scalars(select(Question).where(Question.id.in_(repeated))) if repeated else []:
         qtext[q.id] = (q.text, q.topic_label)
-    rev = list(db.scalars(select(RevisionSchedule).where(RevisionSchedule.student_id == user.id)))
+    # difficulty-wise and subject-wise accuracy, only from quizzes whose results are released to the student
+    diff = {d: {"correct": 0, "answered": 0, "skipped": 0} for d in LEVELS}
+    subj: dict = defaultdict(lambda: {"correct": 0, "answered": 0, "skipped": 0, "topics": set()})
+    for x, z in subs:
+        if not att.feedback_visible(z, now):
+            continue
+        for a in x.answers:
+            q = db.get(Question, a.question_id)
+            if q is None:
+                continue
+            b, sb = diff.get(q.difficulty), subj[q.subject_label or "Practice topics"]
+            sb["topics"].add(q.topic_key)
+            for bucket in (b, sb):
+                if bucket is None:
+                    continue
+                if a.selected_option_id is None:
+                    bucket["skipped"] += 1
+                else:
+                    bucket["answered"] += 1
+                    bucket["correct"] += bool(a.is_correct)
+    acc = lambda b: round(b["correct"] / b["answered"], 3) if b["answered"] else None
+    rev_rows = list(db.execute(
+        select(RevisionSchedule, Question)
+        .join(Question, Question.id == RevisionSchedule.question_id)
+        .where(RevisionSchedule.student_id == user.id)
+    ))
+    rev = [r for r, _ in rev_rows]
+    due_now = sum(
+        r.status == "active"
+        and r.due_at <= now
+        and q.review_status != "rejected"
+        and not (q.validation or {}).get("quarantined")
+        for r, q in rev_rows
+    )
     return {
         "scores": scores, "scores_enough": len(scores) >= MIN_TREND_POINTS,
         "weekly_activity": [{"week": k, **v} for k, v in sorted(weekly.items())],
@@ -219,9 +239,15 @@ def trends(user: User = Depends(require_student), db: Session = Depends(get_db))
                            "enough_data": first[1] >= 5 and later[1] >= 5},
         "repeated_mistakes": [{"question_id": q, "times_wrong": wrong_count[q], "text": qtext[q][0], "topic": qtext[q][1]}
                               for q in repeated if q in qtext][:20],
+        "by_difficulty": [{"difficulty": d, **diff[d], "accuracy": acc(diff[d])} for d in LEVELS],
+        "by_subject": sorted(({"subject": k, "correct": v["correct"], "answered": v["answered"], "skipped": v["skipped"],
+                               "topics": len(v["topics"]), "accuracy": acc(v)} for k, v in subj.items()),
+                             key=lambda r: r["subject"]),
+        "breakdown_note": "Accuracy counts answered questions only; skipped ones are shown separately. Only quizzes "
+                          "whose results are released to you are included.",
         "revision": {"scheduled": len(rev), "reviewed": sum(r.reviews > 0 for r in rev),
                      "retired": sum(r.status == "retired" for r in rev),
-                     "due_now": sum(r.status == "active" and r.due_at <= now for r in rev)},
+                     "due_now": due_now},
     }
 
 
@@ -255,18 +281,8 @@ def refresh_recommendations(user: User = Depends(require_student), db: Session =
 
 
 def _revisable(db: Session, user: User, now):
-    """Active revision items whose source quiz feedback is visible (never leak an unreleased key)."""
-    items = list(db.scalars(select(RevisionSchedule).where(RevisionSchedule.student_id == user.id,
-                                                           RevisionSchedule.status == "active")
-                            .order_by(RevisionSchedule.due_at)))
-    out = []
-    for it in items:
-        quizzes = db.scalars(select(Quiz).join(QuizQuestion, QuizQuestion.quiz_id == Quiz.id)
-                             .join(QuizSession, QuizSession.quiz_id == Quiz.id)
-                             .where(QuizQuestion.question_id == it.question_id, QuizSession.student_id == user.id))
-        if any(att.feedback_visible(z, now) for z in quizzes):
-            out.append(it)
-    return out
+    """Active revision items for valid questions whose source quiz feedback is visible (never leak an unreleased key)."""
+    return learn.revisable_items(db, user.id, now)
 
 
 @router.get("/revision")
@@ -284,20 +300,8 @@ def revision(user: User = Depends(require_student), db: Session = Depends(get_db
 def start_revision(user: User = Depends(require_student), db: Session = Depends(get_db),
                    s: Settings = Depends(get_settings_dep)):
     """Builds a practice quiz from up to 10 due revision questions (no AI generation needed)."""
-    now = utcnow()
-    due = [i for i in _revisable(db, user, now) if i.due_at <= now][:10]
-    if not due:
-        raise HTTPException(409, "Nothing is due for revision right now.")
-    random.shuffle(due)
-    z = Quiz(owner_id=user.id, kind="practice", title="Spaced revision", status="published", graded=False,
-             attempts_allowed=0, confidence_enabled=True, published_at=now)
-    for k, it in enumerate(due):
-        z.items.append(QuizQuestion(question_id=it.question_id, position=k, marks=1.0))
-    z.max_marks = float(len(due))
-    db.add(z)
-    db.commit()
-    sess = att.start_attempt(db, user, z, s)
-    return {"quiz_id": z.id, "session_id": sess.id}
+    res = learn.start_spaced_revision(db, user, s, topic_key=None, reuse_active=True)
+    return {"quiz_id": res["quiz_id"], "session_id": res["session_id"]}
 
 
 @router.get("/confidence")

@@ -18,6 +18,19 @@ export const SOURCE_TEXT = {
   manual: 'Written by hand',
   reference_text: 'From reference material',
   generated_notes: 'From AI-written study notes',
+  document: 'From uploaded document',
+}
+
+export function formatSourceRef(ref) {
+  if (!ref || typeof ref !== 'object') return ''
+  const parts = []
+  if (ref.document_name) parts.push(ref.document_name)
+  if (ref.page != null) {
+    parts.push(ref.page_end && ref.page_end !== ref.page ? `pp. ${ref.page}–${ref.page_end}` : `p. ${ref.page}`)
+  }
+  const sec = ref.section || ref.heading
+  if (sec) parts.push(sec)
+  return parts.join(' · ')
 }
 
 export const MATH_TEXT = {
@@ -26,7 +39,27 @@ export const MATH_TEXT = {
   unchecked: 'Numeric answer could not be checked',
   wrong_key: 'Python check found a different answer',
   no_match: 'Python check matched no option',
+  ambiguous: 'Multiple options match the computed answer',
+  unsupported: 'Calculation used an unsupported expression',
 }
+
+/** AI review state of a question (validation.quality.status). */
+export const QUALITY = {
+  passed: { text: 'AI review passed', tone: 'success' },
+  failed: { text: 'AI review failed', tone: 'error' },
+  not_checked: { text: 'AI review not done', tone: undefined },
+}
+
+export const AI_CHECKS = [
+  ['correctness', 'Answer key', (a) => ({ correct: 'Looks correct', incorrect: 'Looks wrong', unsure: 'Reviewer unsure' }[a.verdict] || a.verdict)],
+  ['relevance', 'Topic', (a) => (a.ok ? 'Tests the topic' : 'Off topic')],
+  ['difficulty', 'Judged difficulty', (a) => a.assessed],
+  ['options', 'Wrong options', (a) => (a.ok ? 'Distinct and plausible' : 'Weak or overlapping')],
+  ['multiple_correct', 'More than one correct', (a) => (a.value ? 'Possibly' : 'No')],
+  ['ambiguity', 'Ambiguous', (a) => (a.ambiguous ? 'Yes' : 'No')],
+  ['explanation', 'Explanation', (a) => (a.supports_answer ? 'Supports the answer' : 'Does not support the answer')],
+  ['clarity', 'Wording', (a) => (a.ok ? 'Clear' : 'Unclear')],
+]
 
 export const FEEDBACK_TEXT = {
   immediate: 'Right after submitting',

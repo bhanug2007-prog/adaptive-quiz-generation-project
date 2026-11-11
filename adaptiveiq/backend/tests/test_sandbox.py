@@ -49,10 +49,28 @@ def test_wall_clock_timeout():
     assert value is None and (err == "timed out" or "run error" in err)
 
 
-@posix_only
 def test_memory_limit():
     value, err = run_code("x = [0] * (10**9)\nanswer = len(x)")
-    assert value is None and "MemoryError" in err
+    assert value is None and err
+    value2, err2 = run_code("b = bytearray(600 * 1024 * 1024)\nanswer = len(b)")
+    assert value2 is None and ("MemoryError" in err2 or "run error" in err2)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows Job Object isolation test")
+def test_windows_job_object_blocks_subprocess_spawn(tmp_path):
+    from app.validators.mathcheck import _run_windows_isolated, _worker_executable
+
+    assert sandbox_layers()["os_limits"] is True
+    value, err = run_code("import itertools\nanswer = sum(1 for _ in itertools.islice(range(5), 3))")
+    assert value == 3 and err is None
+
+    env = {"PATH": os.environ.get("PATH", ""), "SYSTEMROOT": os.environ.get("SYSTEMROOT", "")}
+    exe = _worker_executable()
+    rc, _, stderr, timed_out = _run_windows_isolated(
+        [exe, "-I", "-S", "-B", "-c", f"import subprocess; subprocess.run([{exe!r}, '-I', '-S', '-B', '-c', 'pass'])"],
+        str(tmp_path), env, timeout=5,
+    )
+    assert not timed_out and rc != 0 and ("1816" in stderr or "quota" in stderr.lower() or "OSError" in stderr or "PermissionError" in stderr)
 
 
 @posix_only
@@ -82,19 +100,32 @@ def test_network_namespace_has_no_network_when_available():
 
 
 def test_validator_never_runs_model_code_without_os_limits(monkeypatch, settings):
-    """On a machine without OS limits (Windows) a numeric question is accepted as 'unchecked' and the
-    model is never asked for a program."""
+    """When the isolated worker is unavailable, multi-step Python code must never execute without
+    isolation and verification must fail closed, while simple expressions still verify safely via
+    the restricted AST parser."""
     from app.services import validation_service as vs
+    from app.validators import mathcheck
 
     monkeypatch.setattr(vs, "can_run_safely", lambda allow=False: False)
+    monkeypatch.setattr(mathcheck.subprocess, "Popen", lambda *a, **k: (_ for _ in ()).throw(AssertionError("worker must not launch")))
+    monkeypatch.setattr(mathcheck.subprocess, "run", lambda *a, **k: (_ for _ in ()).throw(AssertionError("worker must not launch")))
 
-    class NoModel:
+    class LoopModel:
         def chat(self, *a, **k):
-            raise AssertionError("model-written code must not be requested here")
+            return "```python\ntotal = 0\nfor i in range(1, 6):\n    total += i\nanswer = total\n```"
 
-    text = ("question: A radar has PRF 10 kHz. What is its maximum unambiguous range? options: (A) 1.5 km "
-            "(B) 15 km (C) 150 km (D) 1500 km answer: B explanation: R = c / (2 PRF) = 15 km.")
-    res = vs.Validator(settings, NoModel()).check(text, [])
-    assert res.ok and res.info["math_status"] == "unchecked"
-    strict = vs.Validator(settings.model_copy(update={"math_check_strict": True}), NoModel()).check(text, [])
-    assert not strict.ok and strict.reason == "math_unchecked"
+    text = ("question: What is the sum of 1..5? options: (A) 10 (B) 15 (C) 20 (D) 25 "
+            "answer: B explanation: 1+2+3+4+5 = 15.")
+    res = vs.Validator(settings, LoopModel()).check(text, [])
+    assert not res.ok and res.reason == "math_unchecked" and res.info["math_status"] == "unchecked"
+    permissive = vs.Validator(settings.model_copy(update={"math_check_strict": False}), LoopModel()).check(text, [])
+    assert not permissive.ok and permissive.reason == "math_unchecked"
+
+    class SimpleExprModel:
+        def chat(self, *a, **k):
+            return "```python\nanswer = 3e8/(2*10e3)/1000\n```"
+
+    radar = ("question: A radar has PRF 10 kHz. What is its maximum unambiguous range? options: (A) 1.5 km "
+             "(B) 15 km (C) 150 km (D) 1500 km answer: B explanation: R = c / (2 PRF) = 15 km.")
+    ok_res = vs.Validator(settings, SimpleExprModel()).check(radar, [])
+    assert ok_res.ok and ok_res.math_verified and ok_res.info["math_method"] == "expression_parser"

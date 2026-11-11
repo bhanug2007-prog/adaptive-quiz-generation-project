@@ -1,10 +1,16 @@
-"""Personalised recommendations (version RECO_VERSION). Every recommendation carries its reason."""
+"""Personalised recommendations (version RECO_VERSION). Every recommendation carries its reason.
+
+Kinds: prerequisite, practice_topic (weak, developing or not enough evidence), revisit_incorrect (spaced
+revision is due) and, since v2, try_harder: a topic where mastery and recent answers are high enough for the
+difficulty policy to step up (the same thresholds as difficulty.next_action), with the lowest priority.
+"""
 from dataclasses import dataclass, field
 
-from app.ml.mastery import MasteryEstimate
+from app.ml.difficulty import next_action
+from app.ml.mastery import MasteryEstimate, pct100
 from app.ml.weak_areas import TopicStatus
 
-RECO_VERSION = "reco-rules-v1"
+RECO_VERSION = "reco-rules-v2"
 MAX_RECOMMENDATIONS = 6
 
 
@@ -59,6 +65,11 @@ def build(topics: list[TopicInfo], due_revision: dict[str, int]) -> list[Reco]:
             out.append(Reco("practice_topic", t.topic_key, t.subject_label, t.topic_label,
                             f"Try a mixed quiz on {t.topic_label}: {st.reason[0].lower() + st.reason[1:]}",
                             st.priority, prefill))
+        elif st.status == "ok" and e is not None and next_action(e)[0] == "try_harder":
+            out.append(Reco("try_harder", t.topic_key, t.subject_label, t.topic_label,
+                            f"You are doing well on {t.topic_label} (mastery {pct100(e.score)}%, {pct100(e.recent_accuracy)}% "
+                            f"of your last {e.recent_n} answers correct), so try a {t.next_difficulty} quiz next.",
+                            0.05, prefill))
         due = due_revision.get(t.topic_key, 0)
         if due:
             out.append(Reco("revisit_incorrect", t.topic_key, t.subject_label, t.topic_label,

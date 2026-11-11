@@ -4,7 +4,11 @@ __pycache__/
 .venv/
 .pytest_cache/
 backend/.env
+.env
+.env.local
 backend/*.db
+backend/.dev_reset_outbox*
+.dev_reset_outbox*
 backend/evaluation/results/generation_*.csv
 backend/evaluation/results/grading_sheet*
 
@@ -17,3 +21,8 @@ frontend/playwright-report/
 
 # Models are large and live outside the repo
 *.gguf
+# MediaPipe WebAssembly, copied from node_modules by frontend/scripts/copy-mediapipe.mjs
+frontend/public/mediapipe/wasm/
+
+# Timestamped local runs contain account IDs and course join codes
+backend/evaluation/results/full_flow_check_*.md

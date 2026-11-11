@@ -2,7 +2,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import model_validator
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEV_SECRET = "dev-only-change-me-dev-only-change-me"
@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     login_max_failures: int = 5
     login_window_minutes: int = 10
     invite_max_failures: int = 5                      # wrong lecturer invite codes per client per window
+    reset_token_minutes: int = 15
+    reset_request_max: int = 5
+    reset_ip_max: int = 20
+    reset_verify_max: int = 10
+    reset_window_minutes: int = 15
 
     # Email verification. Without SMTP settings the verification link is written to the backend log
     # (development only; production refuses to start without SMTP when verification is required).
@@ -56,16 +61,52 @@ class Settings(BaseSettings):
     default_branch: str = "CSE"
     max_attempts_per_question: int = 3
     math_check: bool = True
-    math_check_strict: bool = False
-    # Windows has no OS memory/CPU limits for the sandbox, so the check is skipped there unless this is set
+    math_check_strict: bool = True
+    # Only set on platforms without POSIX setrlimit or Windows Job Objects
     math_check_allow_without_os_limits: bool = False
     duplicate_threshold: float = 0.85
     max_queued_generations: int = 10
     max_reference_chars: int = 12000
+    max_document_bytes: int = 10 * 1024 * 1024
+    document_ttl_minutes: int = 30
+    min_document_words: int = 40
+    min_words_per_document_question: int = 22
+
+    # Question quality evaluation (an LLM reviewer after the Python checks; see app/services/quality_service.py).
+    # Without GROK_API_KEY, or when Grok is down / rate limited / out of quota, only the Python checks run
+    # and every question says "AI review not done", so generation keeps working.
+    quality_check: bool = True                        # run the AI reviewer on lecturer questions when a key is set
+    quality_check_practice: bool = False              # also on student practice (costs one API call per question)
+    quality_check_difficulty: bool = True             # a question whose judged difficulty differs is retried
+    quality_min_score: int = 60                       # 0-100; below this the question is retried
+    grok_api_key: str = ""                            # backend only, never sent to the browser
+    grok_base_url: str = "https://api.x.ai/v1"
+    grok_model: str = "grok-4.3"                      # any chat model name your xAI account can use
+    grok_timeout_s: float = 45.0
+    grok_cooldown_s: float = 300.0                    # pause Grok calls this long after a rate limit or quota error
+    # Lecturer Insights Agent ("Ask about your class"). Without Grok it answers from fixed rules and templates.
+    insights_ai: bool = True                          # let Grok pick the tools and word the answer (when a key is set)
+    insights_per_10_min: int = 20                     # questions one lecturer may ask in 10 minutes
+    # Assessment integrity monitoring (switched on per quiz by the lecturer; see docs/MONITORING.md)
+    monitoring_retention_days: int = 180              # monitoring events older than this are deleted; 0 = keep
+    monitoring_face_interval_ms: int = 1500           # how often the browser checks the camera image for faces
+    monitoring_warning_threshold: int = Field(default=3, ge=1, le=100)
+    monitoring_warning_cooldown_ms: int = Field(default=15000, ge=0, le=3600000)
+    monitoring_warning_face_none_ms: int = Field(default=10000, ge=1000, le=300000)
+    monitoring_warning_face_multiple_ms: int = Field(default=3000, ge=1000, le=300000)
+    monitoring_warning_speech_ms: int = Field(default=5000, ge=1000, le=300000)
+    monitoring_warning_page_hidden_ms: int = Field(default=1000, ge=0, le=300000)
+    monitoring_warning_fullscreen_exit_ms: int = Field(default=1000, ge=0, le=300000)
 
     # Adaptive engine thresholds (documented in docs/ML_EVALUATION.md)
     mastery_min_evidence: int = 5                     # unique questions before any confident label
     mastery_half_life_days: float = 21.0              # older answers count half after this many days
+
+    # Personalized Learning Agent (LangGraph Stage 2 persistent HITL workflow)
+    # Uses SQLAlchemy tables (`lg_checkpoints`, `lg_checkpoint_blobs`, `lg_checkpoint_writes`)
+    # on DATABASE_URL (SQLite locally or PostgreSQL in deployment), requiring no extra broker.
+    learning_agent_checkpoint_backend: Literal["sqlalchemy"] = "sqlalchemy"
+    learning_agent_plan_ttl_days: int = Field(default=30, ge=1, le=365)
 
     # Google Forms (optional; leave empty until an OAuth client exists)
     google_client_id: str = ""
@@ -99,6 +140,28 @@ class Settings(BaseSettings):
     @property
     def smtp_configured(self) -> bool:
         return bool(self.smtp_host and self.smtp_from)
+
+    @property
+    def grok_configured(self) -> bool:
+        return bool(self.grok_api_key.strip())
+
+    @property
+    def ai_provider_id(self) -> str:
+        u = self.grok_base_url.lower()
+        if "groq.com" in u:
+            return "groq"
+        if "x.ai" in u:
+            return "grok"
+        return "openai_compatible"
+
+    @property
+    def ai_provider_label(self) -> str:
+        u = self.grok_base_url.lower()
+        if "groq.com" in u:
+            return "Groq API"
+        if "x.ai" in u:
+            return "xAI Grok"
+        return "the configured AI provider"
 
     @property
     def google_forms_configured(self) -> bool:

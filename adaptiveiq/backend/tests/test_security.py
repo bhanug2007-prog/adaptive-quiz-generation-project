@@ -104,3 +104,18 @@ def test_csv_formula_cells_neutralised(course_setup, app):
     qid = _published(course_setup)
     text = course_setup["lec"].get(f"/api/lecturer/reports/quizzes/{qid}/results.csv").text
     assert "'=HYPERLINK" in text
+
+
+def test_oversized_bodies_are_refused_even_without_content_length(make_client):
+    c = make_client()
+    big = b'{"email": "a@example.com", "password": "' + b"x" * (300 * 1024) + b'"}'
+    r = c.post("/api/auth/login", content=big, headers={"Content-Type": "application/json"})
+    assert r.status_code == 413
+    def chunks():                                     # a chunked upload sends no Content-Length
+        for i in range(0, len(big), 32 * 1024):
+            yield big[i:i + 32 * 1024]
+    r = c.post("/api/auth/login", content=chunks(), headers={"Content-Type": "application/json"})
+    assert r.status_code == 413 and r.json()["detail"] == "Request is too large."
+    small = c.post("/api/auth/login", content=iter([b'{"email": "a@example.com", ', b'"password": "wrong-pass1"}']),
+                   headers={"Content-Type": "application/json"})
+    assert small.status_code == 401                   # normal chunked requests still work

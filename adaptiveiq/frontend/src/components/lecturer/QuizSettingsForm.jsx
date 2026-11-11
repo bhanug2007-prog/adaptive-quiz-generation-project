@@ -13,6 +13,8 @@ function init(q) {
     shuffle_questions: q.shuffle_questions, shuffle_options: q.shuffle_options,
     feedback_release: q.feedback_release || 'immediate', contribution_pct: String(q.contribution_pct ?? 0),
     confidence_enabled: q.confidence_enabled, target_duration_min: q.target_duration_min ? String(q.target_duration_min) : '',
+    monitor_tab: !!q.monitor_tab, monitor_fullscreen: q.monitor_fullscreen || 'off', monitor_camera: !!q.monitor_camera,
+    monitor_microphone: !!q.monitor_microphone,
   }
 }
 
@@ -49,6 +51,8 @@ export function toBody(v) {
     shuffle_questions: v.shuffle_questions, shuffle_options: v.shuffle_options, feedback_release: v.feedback_release,
     contribution_pct: v.graded ? Number(v.contribution_pct) : 0, confidence_enabled: v.confidence_enabled,
     target_duration_min: v.target_duration_min ? Number(v.target_duration_min) : null,
+    monitor_tab: v.monitor_tab, monitor_fullscreen: v.monitor_fullscreen, monitor_camera: v.monitor_camera,
+    monitor_microphone: v.monitor_microphone,
   }
 }
 
@@ -170,6 +174,33 @@ export default function QuizSettingsForm({ quiz, onSave }) {
           {show.contribution_warn && <Alert tone="warning">{show.contribution_warn}</Alert>}
         </Card>
       )}
+
+      <Card title="Integrity monitoring (optional)"
+        subtitle="Records events for you to review. It cannot prove or prevent cheating, and it never labels a student as cheating.">
+        <div className="lc-form-grid">
+          <div className="stack" style={{ gap: 'var(--space-2)', alignContent: 'start' }}>
+            <Checkbox label="Record when students leave the quiz page" checked={v.monitor_tab} onChange={set('monitor_tab')} />
+            <Checkbox label="Camera: record when no face or more than one face is visible" checked={v.monitor_camera} onChange={set('monitor_camera')} />
+            <Checkbox label="Microphone: record speech-like sound" checked={v.monitor_microphone} onChange={set('monitor_microphone')} />
+          </div>
+          <Field label="Full screen">
+            {(a) => (
+              <Select {...a} value={v.monitor_fullscreen} onChange={set('monitor_fullscreen')}>
+                <option value="off">Not used</option>
+                <option value="record">Ask for it and record when students leave it</option>
+                <option value="required">Required: hide the questions until they return</option>
+              </Select>
+            )}
+          </Field>
+        </div>
+        {(v.monitor_tab || v.monitor_camera || v.monitor_microphone || v.monitor_fullscreen !== 'off') && (
+          <p className="muted st-small" style={{ marginTop: 'var(--space-3)' }}>
+            Students see exactly what is recorded and must agree before starting. Camera and microphone are analysed in the
+            student's browser; no video or audio is stored or sent. Offer another way to take the assessment to students who
+            cannot or do not want to use a camera or microphone.
+          </p>
+        )}
+      </Card>
 
       {error && <Alert tone="error" title="Settings not saved">{error}</Alert>}
       {touched && blocking.length > 0 && <Alert tone="error">Fix the highlighted fields first.</Alert>}

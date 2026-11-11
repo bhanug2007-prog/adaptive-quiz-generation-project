@@ -15,8 +15,8 @@ Pipeline (each step can reject the question; the reason is counted on the genera
     enough content words with the passage it came from. Overlap is a cheap screen, not proof that the
     passage supports the question; factual support is judged by the lecturer and in offline evaluation
  9. Python maths check for numeric questions (the model writes a program; a sandbox runs it)
-The difficulty label comes from the request plan and is checked against the allowed set at the API.
-Passing every check does not prove a question is factually correct; lecturers review before publishing.
+The difficulty label comes from the request plan; when the AI reviewer is set up it also judges the real
+difficulty (quality_service.py, run after these checks). Passing every check does not prove a question is factually correct; lecturers review before publishing.
 """
 import re
 from dataclasses import dataclass, field
@@ -24,22 +24,30 @@ from difflib import SequenceMatcher
 
 from app.core.config import Settings
 from app.services.model_service import ModelService
+from app.services.quality_service import QUALITY_REASONS
 from app.validators.mathcheck import can_run_safely, math_check, needs_math
 from app.validators.mcq_format import parse_mcq
 from app.validators.numcheck import numeric_conflict
 
 TFIDF_DUP = 0.80
 MIN_GROUNDING = 0.20
+STRICT_GROUNDING = 0.25
+STRICT_STEM_GROUNDING = 0.25
 
 REASONS = {
     "format": "broken format, missing fields or repeated options",
     "duplicate": "same as or very close to an existing question",
     "answer_in_question": "question gives the answer away",
     "explanation_number": "explanation's number contradicts the answer key",
-    "not_grounded": "too little word overlap with the reference passage",
+    "not_grounded": "not supported by or too little overlap with the source passage",
     "math_wrong_key": "Python check found a different correct option",
     "math_no_match": "Python check result matches no option",
+    "math_ambiguous": "Multiple options match the computed numeric answer",
+    "math_unsupported": "Calculation used an unsupported expression",
     "math_unchecked": "numeric answer could not be checked",
+    "quarantined_invalid_mcq": "quarantined because the question or answer key is invalid",
+    "quarantine_recheck_required": "edited after quarantine; run Check again before approving",
+    **QUALITY_REASONS,
 }
 
 STOP = set("""a an the of to in on for and or is are was were be been being by with as at from that this these
@@ -107,12 +115,55 @@ def grounding(mcq: dict, passage: str) -> float:
     return round(len(words & src) / len(words), 3)
 
 
+def _non_trivial_numbers(s: str) -> set[str]:
+    out = set()
+    for n in re.findall(r"\b\d+(?:\.\d+)?\b", s):
+        if "." in n:
+            val = float(n)
+            out.add(str(int(val)) if val.is_integer() else str(val))
+        else:
+            val = int(n)
+            if val >= 10:
+                out.add(str(val))
+    return out
+
+
+def verify_source_grounding(mcq: dict, passage: str, strict: bool = False) -> tuple[bool, float, dict]:
+    """Independent grounding verification combining overall overlap, stem overlap, and strict numeric facts."""
+    key = mcq["options"]["ABCD".index(mcq["answer"])]
+    overall = grounding(mcq, passage)
+    stem_words = _content_words(mcq["question"])
+    src = _content_words(passage)
+    stem_g = round(len(stem_words & src) / len(stem_words), 3) if stem_words else 1.0
+
+    ungrounded_nums: list[str] = []
+    if strict:
+        src_nums = _non_trivial_numbers(passage)
+        stem_nums = _non_trivial_numbers(mcq["question"])
+        ungrounded = stem_nums - src_nums
+        may_be_derived_calc = needs_math(mcq) and bool(re.search(r"\d", mcq["question"]))
+        if not may_be_derived_calc:
+            ungrounded |= (_non_trivial_numbers(key) - src_nums)
+        ungrounded_nums = sorted(ungrounded)
+
+    min_overall = STRICT_GROUNDING if strict else MIN_GROUNDING
+    min_stem = STRICT_STEM_GROUNDING if strict else 0.0
+    ok = (overall >= min_overall) and (stem_g >= min_stem) and (not ungrounded_nums)
+    info: dict = {"grounding": overall, "stem_grounding": stem_g, "grounding_verified": ok}
+    if ungrounded_nums:
+        info["ungrounded_numbers"] = ungrounded_nums[:5]
+    if not ok:
+        info["rules_failed"] = True
+        info["rules_reason"] = "not_grounded"
+    return ok, overall, info
+
+
 class Validator:
     def __init__(self, settings: Settings, model: ModelService):
         self.s, self.model = settings, model
 
     def check(self, raw_text: str, existing_questions: list[str], passage: str | None = None,
-              grounded: bool = False) -> Checked:
+              grounded: bool = False, strict_grounding: bool = False, source_meta: dict | None = None) -> Checked:
         mcq = parse_mcq(raw_text)
         if mcq is None or len(mcq["question"]) < 10:
             return Checked(False, "format")
@@ -123,29 +174,37 @@ class Validator:
             return Checked(False, "answer_in_question", mcq)
         if numeric_conflict(mcq):
             return Checked(False, "explanation_number", mcq)
-        info = {"max_similarity": sim}
+        info: dict = {"max_similarity": sim}
+        if source_meta:
+            info["source"] = source_meta
         if grounded and passage:
-            g = grounding(mcq, passage)
-            info["grounding"] = g
-            if g < MIN_GROUNDING:
+            g_ok, _g, g_info = verify_source_grounding(mcq, passage, strict=strict_grounding)
+            info.update(g_info)
+            if not g_ok:
                 return Checked(False, "not_grounded", mcq, info=info)
         if not self.s.math_check:
             return Checked(True, mcq=mcq, info=info)
-        if not can_run_safely(self.s.math_check_allow_without_os_limits):
-            # No OS sandbox limits on this machine (Windows): never run model-written code here.
-            if not needs_math(mcq):
-                return Checked(True, mcq=mcq, info=info)
-            info["math_status"] = "unchecked"
-            info["math_note"] = "Python check skipped: this machine cannot sandbox it (use Docker or Linux)."
-            if self.s.math_check_strict:
-                return Checked(False, "math_unchecked", mcq, info=info)
+        if not needs_math(mcq):
             return Checked(True, mcq=mcq, info=info)
-        res = math_check(mcq, lambda m: self.model.chat(m, temperature=0.0, max_tokens=400),
-                         allow_unchecked=not self.s.math_check_strict)
+        res = math_check(
+            mcq,
+            lambda m: self.model.chat(m, temperature=0.0, max_tokens=400),
+            allow_unchecked=not self.s.math_check_strict,
+            allow_without_os_limits=self.s.math_check_allow_without_os_limits,
+            worker_available=can_run_safely(self.s.math_check_allow_without_os_limits),
+        )
         status = res["status"]
         info["math_status"] = status
+        if res.get("method"):
+            info["math_method"] = res["method"]
+        if res.get("note"):
+            info["math_note"] = res["note"]
+        if res.get("errors"):
+            info["math_errors"] = res["errors"][:3]
         if status == "verified":
             return Checked(True, mcq=mcq, math_verified=True, info=info)
-        if status == "not_math" or (status == "unchecked" and res["accept"]):
+        if status == "not_math":
+            return Checked(True, mcq=mcq, info=info)
+        if status == "unchecked" and res["accept"]:
             return Checked(True, mcq=mcq, info=info)
         return Checked(False, f"math_{status}", mcq, info=info)

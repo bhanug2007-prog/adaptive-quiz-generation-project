@@ -19,6 +19,9 @@ MCQ_SYSTEM = ("You are a B.Tech exam setter. From the context, write ONE multipl
               "Check any calculation before answering. Reply in exactly this format: question: <question> options: (A) <option> "
               "(B) <option> (C) <option> (D) <option> answer: <letter> explanation: <one or two sentences>")
 
+DOC_MCQ_SYSTEM = (MCQ_SYSTEM + " Use ONLY facts explicitly stated in the provided document context; "
+                  "do not rely on outside knowledge or invent unsupported claims.")
+
 NOTES_SYSTEM = "You are a B.Tech lecturer who writes accurate, compact study notes."
 ASPECTS_USER = ("List {n} different subtopics of \"{topic}\" (subject: {subject}) that a B.Tech exam could test. "
                 "Write one short subtopic per line, with no numbering and no other text.")
@@ -89,15 +92,19 @@ class ModelService:
 
     # ---------- prompts ----------
 
-    def mcq_messages(self, subject: str, topic: str, difficulty: str, context: str, branch: str | None = None) -> list[dict]:
-        user = build_input(branch or self.s.default_branch, subject, topic, difficulty, context)
-        msgs = [{"role": "system", "content": MCQ_SYSTEM}]
+    def mcq_messages(self, subject: str, topic: str, difficulty: str, context: str, branch: str | None = None,
+                     strict_source: bool = False, source_label: str | None = None) -> list[dict]:
+        ctx_text = f"[{source_label}]\n{context}" if source_label else context
+        user = build_input(branch or self.s.default_branch, subject, topic, difficulty, ctx_text)
+        msgs = [{"role": "system", "content": DOC_MCQ_SYSTEM if strict_source else MCQ_SYSTEM}]
         for ex in self.fewshot:                       # untrained base model: two worked examples first
             msgs += [{"role": "user", "content": ex["input_text"]}, {"role": "assistant", "content": ex["target_text"]}]
         return msgs + [{"role": "user", "content": user}]
 
-    def generate_mcq_text(self, subject, topic, difficulty, context) -> str:
-        return self.chat(self.mcq_messages(subject, topic, difficulty, context))
+    def generate_mcq_text(self, subject, topic, difficulty, context, strict_source: bool = False,
+                          source_label: str | None = None) -> str:
+        return self.chat(self.mcq_messages(subject, topic, difficulty, context, strict_source=strict_source,
+                                           source_label=source_label))
 
     def generate_aspects(self, subject: str, topic: str, n: int) -> list[str]:
         text = self.chat([{"role": "system", "content": NOTES_SYSTEM},

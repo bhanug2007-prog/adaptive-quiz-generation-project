@@ -55,6 +55,37 @@ class ChangePasswordRequest(BaseModel):
         return check_password(v)
 
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def _strip_email(cls, v):
+        return v.strip() if isinstance(v, str) else v
+
+
+class ForgotPasswordResponse(BaseModel):
+    message: str
+
+
+class VerifyResetTokenRequest(BaseModel):
+    token: str = Field(min_length=1, max_length=2000)
+
+
+class ResetTokenStatus(BaseModel):
+    valid: bool
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(min_length=1, max_length=2000)
+    new_password: str = Field(min_length=8, max_length=72)
+
+    @field_validator("new_password")
+    @classmethod
+    def _pw(cls, v: str) -> str:
+        return check_password(v)
+
+
 class ProfileUpdate(BaseModel):
     full_name: str | None = Field(default=None, min_length=2, max_length=120)
     roll_number: str | None = Field(default=None, max_length=40)

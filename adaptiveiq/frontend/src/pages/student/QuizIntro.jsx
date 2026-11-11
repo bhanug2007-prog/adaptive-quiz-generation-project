@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, CalendarClock, CheckCircle2, Clock, FileQuestion, Keyboard, Play, RotateCcw, Save, Target, Trophy, User } from 'lucide-react'
-import { Alert, Button, Card, ErrorState, LoadingBlock, PageHeader } from '../../components/ui'
+import { Alert, Button, Card, Checkbox, ErrorState, LoadingBlock, PageHeader } from '../../components/ui'
+import { MonitoringNotice } from '../../components/student/Monitoring'
 import { useApi } from '../../api/useApi'
 import { studentApi } from '../../api/endpoints'
 import { dateTime, pct, plural, relative } from '../../utils/format'
@@ -23,6 +24,7 @@ export default function QuizIntro() {
   const { data: q, error, loading, reload } = useApi(() => studentApi.quiz(quizId), [quizId])
   const [busy, setBusy] = useState(false)
   const [startErr, setStartErr] = useState(null)
+  const [agree, setAgree] = useState(false)
   const back = q?.kind === 'practice' ? { to: '/student/practice', label: 'Practice Lab' } : { to: '/student/assigned', label: 'Assigned quizzes' }
 
   if (loading && !q) return <LoadingBlock rows={4} label="Loading quiz" />
@@ -30,11 +32,12 @@ export default function QuizIntro() {
 
   const action = quizAction(q)
   const left = attemptsLeft(q)
+  const needsConsent = !!(q.monitoring && action && q.state !== 'in_progress')
   const start = async () => {
     setBusy(true)
     setStartErr(null)
     try {
-      const s = await studentApi.start(q.id)
+      const s = await studentApi.start(q.id, needsConsent ? { monitoring_consent: true } : {})
       navigate(`/student/attempts/${s.session_id}`)
     } catch (e) {
       setStartErr(e)
@@ -89,9 +92,18 @@ export default function QuizIntro() {
         </ul>
       </Card>
 
+      {q.monitoring && (
+        <MonitoringNotice m={q.monitoring}>
+          {needsConsent && (
+            <Checkbox label="I have read what is recorded and agree to it for this attempt." checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+          )}
+        </MonitoringNotice>
+      )}
+
       {startErr && <Alert tone="error" title="Could not start">{startErr.message}</Alert>}
       <div className="row">
-        {action && <Button variant={q.kind === 'practice' ? 'primary' : 'teal'} size="lg" icon={Play} onClick={start} loading={busy}>{action.label}</Button>}
+        {action && <Button variant={q.kind === 'practice' ? 'primary' : 'teal'} size="lg" icon={Play} onClick={start} loading={busy}
+          disabled={needsConsent && !agree} title={needsConsent && !agree ? 'Agree to the monitoring first' : undefined}>{action.label}</Button>}
         {!action && q.state === 'upcoming' && <Alert tone="info">This quiz opens {q.opens_at ? `${dateTime(q.opens_at)} (${relative(q.opens_at)})` : 'later'}.</Alert>}
         {!action && q.state === 'expired' && <Alert tone="warning">This quiz has closed. It can no longer be attempted.</Alert>}
         {!action && q.state === 'submitted' && q.kind === 'assessment' && <span className="muted">You have used all your attempts.</span>}

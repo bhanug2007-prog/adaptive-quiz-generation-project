@@ -83,43 +83,43 @@ Passing every check means a question is well-formed, not a duplicate, does not g
 
 **Baseline.** Plain accuracy (share correct, skips counted as wrong) with the same 5-question minimum and the same label cut-offs.
 
-**Simulation** (`python -m evaluation.simulate_mastery`). Synthetic students answer questions under a Rasch model, P(correct) = sigmoid(θ − b) with b = −1, 0, +1 for easy, medium, hard. "True mastery" is P(correct) on a medium question. 2,000 students per seed, 5 seeds; mean ± sd across seeds. Scenarios: stable ability with a random mix of difficulties; stable ability but mostly easy questions (skewed); ability rising by 1.5 logits over 30 answers, one a day (improving). Over-claim means a label higher than the true one, the costly error, since a student told they have mastered a topic stops practising it.
+**Simulation** (`python -m evaluation.simulate_mastery`; tables regenerated on 2 Nov 2026, because the saved ones predated the rule that compares labels on the shown whole number. Error and coverage did not change; label agreement and over-claim moved by up to 1.5 points). Synthetic students answer questions under a Rasch model, P(correct) = sigmoid(θ − b) with b = −1, 0, +1 for easy, medium, hard. "True mastery" is P(correct) on a medium question. 2,000 students per seed, 5 seeds; mean ± sd across seeds. Scenarios: stable ability with a random mix of difficulties; stable ability but mostly easy questions (skewed); ability rising by 1.5 logits over 30 answers, one a day (improving). Over-claim means a label higher than the true one, the costly error, since a student told they have mastered a topic stops practising it.
 
 #### Scenario: stable
 
 | answers | MAE Beta | MAE baseline | label acc. Beta | label acc. baseline | over-claim Beta | over-claim baseline | 80% coverage | trend up | trend down |
 |---|---|---|---|---|---|---|---|---|---|
 | 3 | 0.143 ± 0.003 | 0.220 ± 0.005 | n/a | n/a | n/a | n/a | 83.6% ± 1.2 | 0.0% ± 0.0 | 0.0% ± 0.0 |
-| 5 | 0.126 ± 0.003 | 0.168 ± 0.004 | 57.0% ± 1.2 | 56.1% ± 1.2 | 17.3% ± 0.7 | 25.4% ± 0.3 | 83.6% ± 0.8 | 0.0% ± 0.0 | 0.0% ± 0.0 |
-| 10 | 0.102 ± 0.002 | 0.119 ± 0.002 | 63.0% ± 1.0 | 60.9% ± 0.4 | 13.2% ± 0.7 | 25.5% ± 0.4 | 83.8% ± 1.3 | 0.5% ± 0.1 | 0.4% ± 0.2 |
-| 20 | 0.079 ± 0.001 | 0.085 ± 0.002 | 68.7% ± 0.7 | 70.0% ± 0.6 | 10.2% ± 0.6 | 16.1% ± 0.4 | 86.0% ± 1.2 | 1.1% ± 0.1 | 1.1% ± 0.1 |
-| 30 | 0.068 ± 0.000 | 0.071 ± 0.001 | 72.1% ± 0.6 | 74.7% ± 0.9 | 8.3% ± 0.4 | 11.5% ± 0.5 | 86.9% ± 0.4 | 1.1% ± 0.2 | 1.3% ± 0.1 |
+| 5 | 0.126 ± 0.003 | 0.168 ± 0.004 | 56.7% ± 0.9 | 56.1% ± 1.2 | 18.0% ± 0.5 | 25.4% ± 0.3 | 83.6% ± 0.8 | 0.0% ± 0.0 | 0.0% ± 0.0 |
+| 10 | 0.102 ± 0.002 | 0.119 ± 0.002 | 63.0% ± 0.9 | 60.9% ± 0.4 | 14.0% ± 0.7 | 25.5% ± 0.4 | 83.8% ± 1.3 | 0.5% ± 0.1 | 0.4% ± 0.2 |
+| 20 | 0.079 ± 0.001 | 0.085 ± 0.002 | 68.6% ± 0.7 | 70.0% ± 0.6 | 10.9% ± 0.6 | 16.1% ± 0.4 | 86.0% ± 1.2 | 1.1% ± 0.1 | 1.1% ± 0.1 |
+| 30 | 0.068 ± 0.000 | 0.071 ± 0.001 | 72.3% ± 0.5 | 74.7% ± 0.9 | 9.0% ± 0.4 | 11.5% ± 0.5 | 86.9% ± 0.4 | 1.1% ± 0.2 | 1.3% ± 0.1 |
 
 #### Scenario: skewed
 
 | answers | MAE Beta | MAE baseline | label acc. Beta | label acc. baseline | over-claim Beta | over-claim baseline | 80% coverage | trend up | trend down |
 |---|---|---|---|---|---|---|---|---|---|
 | 3 | 0.146 ± 0.001 | 0.230 ± 0.001 | n/a | n/a | n/a | n/a | 82.6% ± 0.4 | 0.0% ± 0.0 | 0.0% ± 0.0 |
-| 5 | 0.130 ± 0.001 | 0.183 ± 0.002 | 53.8% ± 1.6 | 46.5% ± 0.8 | 24.9% ± 1.0 | 44.7% ± 0.8 | 82.1% ± 0.3 | 0.0% ± 0.0 | 0.0% ± 0.0 |
-| 10 | 0.107 ± 0.001 | 0.143 ± 0.002 | 58.8% ± 1.2 | 44.2% ± 0.8 | 23.1% ± 0.7 | 52.0% ± 0.8 | 82.2% ± 0.4 | 0.3% ± 0.1 | 0.4% ± 0.1 |
-| 20 | 0.086 ± 0.001 | 0.119 ± 0.001 | 65.4% ± 1.4 | 49.5% ± 1.3 | 20.8% ± 0.8 | 48.2% ± 1.4 | 82.2% ± 0.7 | 0.9% ± 0.3 | 1.4% ± 0.3 |
-| 30 | 0.077 ± 0.001 | 0.109 ± 0.002 | 68.5% ± 1.2 | 53.0% ± 0.8 | 19.6% ± 1.1 | 45.6% ± 0.8 | 82.4% ± 0.9 | 0.6% ± 0.1 | 1.5% ± 0.2 |
+| 5 | 0.130 ± 0.001 | 0.183 ± 0.002 | 53.2% ± 1.4 | 46.5% ± 0.8 | 26.4% ± 0.9 | 44.7% ± 0.8 | 82.1% ± 0.3 | 0.0% ± 0.0 | 0.0% ± 0.0 |
+| 10 | 0.107 ± 0.001 | 0.143 ± 0.002 | 58.3% ± 1.3 | 44.2% ± 0.8 | 24.0% ± 0.7 | 52.0% ± 0.8 | 82.2% ± 0.4 | 0.3% ± 0.1 | 0.4% ± 0.1 |
+| 20 | 0.086 ± 0.001 | 0.119 ± 0.001 | 64.9% ± 1.3 | 49.5% ± 1.3 | 21.9% ± 0.8 | 48.2% ± 1.4 | 82.2% ± 0.7 | 0.9% ± 0.3 | 1.4% ± 0.3 |
+| 30 | 0.077 ± 0.001 | 0.109 ± 0.002 | 68.1% ± 1.2 | 53.0% ± 0.8 | 20.7% ± 1.0 | 45.6% ± 0.8 | 82.4% ± 0.9 | 0.6% ± 0.1 | 1.5% ± 0.2 |
 
 #### Scenario: improving
 
 | answers | MAE Beta | MAE baseline | label acc. Beta | label acc. baseline | over-claim Beta | over-claim baseline | 80% coverage | trend up | trend down |
 |---|---|---|---|---|---|---|---|---|---|
 | 3 | 0.144 ± 0.001 | 0.219 ± 0.002 | n/a | n/a | n/a | n/a | 83.2% ± 0.7 | 0.0% ± 0.0 | 0.0% ± 0.0 |
-| 5 | 0.129 ± 0.002 | 0.169 ± 0.002 | 51.9% ± 1.1 | 52.8% ± 0.9 | 14.5% ± 0.8 | 23.9% ± 0.3 | 82.4% ± 0.9 | 0.0% ± 0.0 | 0.0% ± 0.0 |
-| 10 | 0.112 ± 0.003 | 0.128 ± 0.003 | 50.4% ± 1.3 | 57.1% ± 0.7 | 7.7% ± 0.8 | 18.4% ± 0.9 | 80.0% ± 0.7 | 0.6% ± 0.1 | 0.3% ± 0.1 |
-| 20 | 0.119 ± 0.002 | 0.131 ± 0.002 | 35.9% ± 1.6 | 50.4% ± 1.2 | 1.7% ± 0.2 | 3.6% ± 0.2 | 65.9% ± 1.1 | 2.2% ± 0.2 | 0.4% ± 0.2 |
-| 30 | 0.139 ± 0.001 | 0.161 ± 0.002 | 21.6% ± 0.9 | 37.0% ± 0.8 | 0.2% ± 0.1 | 0.3% ± 0.1 | 45.5% ± 1.1 | 2.6% ± 0.8 | 0.2% ± 0.2 |
+| 5 | 0.129 ± 0.002 | 0.169 ± 0.002 | 51.8% ± 1.1 | 52.8% ± 0.9 | 15.0% ± 0.8 | 23.9% ± 0.3 | 82.4% ± 0.9 | 0.0% ± 0.0 | 0.0% ± 0.0 |
+| 10 | 0.112 ± 0.003 | 0.128 ± 0.003 | 51.2% ± 1.1 | 57.1% ± 0.7 | 8.2% ± 1.0 | 18.4% ± 0.9 | 80.0% ± 0.7 | 0.6% ± 0.1 | 0.3% ± 0.1 |
+| 20 | 0.119 ± 0.002 | 0.131 ± 0.002 | 36.8% ± 1.3 | 50.4% ± 1.2 | 1.9% ± 0.3 | 3.6% ± 0.2 | 65.9% ± 1.1 | 2.2% ± 0.2 | 0.4% ± 0.2 |
+| 30 | 0.139 ± 0.001 | 0.161 ± 0.002 | 22.8% ± 1.1 | 37.0% ± 0.8 | 0.2% ± 0.2 | 0.3% ± 0.1 | 45.5% ± 1.1 | 2.6% ± 0.8 | 0.2% ± 0.2 |
 
 
 **What the simulation shows**
 
 - The Beta estimate has a lower error than plain accuracy in every scenario and at every number of answers, and the gap is largest with few answers and when a student mostly sees easy questions.
-- It over-claims much less: in the skewed case about 20% against 45 to 52% for plain accuracy.
+- It over-claims much less: in the skewed case about 21 to 26% against 45 to 52% for plain accuracy.
 - Its exact-label agreement is slightly lower than the baseline's in the stable case after 20 or more answers. This is the price of the conservative "strong" rule (the whole 80% range must sit above 0.80), which turns some truly strong students into "proficient". That trade was chosen on purpose.
 - The 80% range covers the true value 82 to 87% of the time when ability is stable in this simulation. It is still an approximation: the answers are weighted, so it is not a calibrated statistical interval, and it has not been checked on real students. When ability rises steadily, the estimate lags behind and coverage falls to about 46% by 30 answers. Recency weighting with a 21-day half-life is not enough for fast learners.
 - Trend detection: a plain 20-point threshold on the last 5 answers flagged about 20% of students with unchanged ability as improving or declining. Version 2 added a two-proportion z-test, which brought false flags to about 2 to 3% in each direction. An external review pointed out that a z-test is unreliable with only 5 answers on one side, and checking every possible small table confirmed it: for example it called 0 of 5 right after 3 of 5 a decline, while Fisher's exact test gives p = 0.17. Version 3 uses Fisher's exact test (two-sided, 5% level, `mastery.fisher_exact_p`, checked against scipy on every table in the tests). False flags are now about 0.5 to 1.5% in each direction. The cost: the trend fires even more rarely, only about 2.6% of the improving students are flagged by 30 answers. The app therefore says "No clear change" rather than "Stable", and the trend is a secondary signal, not part of the score.
@@ -149,7 +149,7 @@ A shorter half-life follows improving students better but is noisier for stable 
 
 | policy | in 50-85% band | too hard (<40%) | too easy (>90%) | mean abs(p - 0.7) | level changes per student |
 |---|---|---|---|---|---|
-| adaptive | 69.7% ± 1.4 | 12.8% ± 0.9 | 1.7% ± 0.1 | 0.148 ± 0.004 | 1.774 ± 0.011 |
+| adaptive | 69.9% ± 1.2 | 12.9% ± 1.0 | 1.6% ± 0.2 | 0.148 ± 0.004 | 1.788 ± 0.023 |
 | fixed | 45.6% ± 1.4 | 34.8% ± 0.7 | 1.3% ± 0.2 | 0.238 ± 0.003 | 0.000 ± 0.000 |
 | mixed | 45.9% ± 0.5 | 31.5% ± 0.8 | 5.1% ± 0.2 | 0.235 ± 0.003 | 0.000 ± 0.000 |
 
@@ -157,7 +157,7 @@ A shorter half-life follows improving students better but is noisier for stable 
 
 | policy | in 50-85% band | too hard (<40%) | too easy (>90%) | mean abs(p - 0.7) | level changes per student |
 |---|---|---|---|---|---|
-| adaptive | 61.1% ± 0.5 | 6.3% ± 0.2 | 12.0% ± 0.2 | 0.144 ± 0.001 | 1.827 ± 0.015 |
+| adaptive | 61.3% ± 0.7 | 6.3% ± 0.2 | 11.8% ± 0.3 | 0.144 ± 0.001 | 1.850 ± 0.013 |
 | fixed | 56.1% ± 0.7 | 14.6% ± 0.5 | 10.0% ± 0.2 | 0.173 ± 0.003 | 0.000 ± 0.000 |
 | mixed | 47.5% ± 0.7 | 15.9% ± 0.4 | 17.9% ± 0.8 | 0.192 ± 0.002 | 0.000 ± 0.000 |
 
@@ -170,11 +170,13 @@ A shorter half-life follows improving students better but is noisier for stable 
 
 Transparent rules (`app/ml/weak_areas.py`, `weak-rules-v2`): weak means "needs improvement", or "developing"/"proficient" with a clear decline (the same significance-tested trend as above). Unattempted topics are never called weak. No supervised model is trained, because there are no trustworthy "truly weak" labels yet; K-Means was deliberately not used, since clusters would add a claim of machine learning without adding meaning. Once real outcomes exist (for example a later exam score per topic), these rules become the baseline for a supervised model, judged by precision, recall and F1 on held-out students.
 
+Topics the student often leaves blank (at least 5 questions seen and 30% or more skipped) are listed separately, not as weak, because skipping can mean running out of time. Weak areas are per topic; there is no per learning-objective breakdown yet, because questions are not tagged with objectives.
+
 ## 5. Other parts of the engine
 
 | Part | Rule | Evaluation plan |
 |---|---|---|
-| Recommendations (`reco-rules-v1`) | At most 6, each with its reason: practise a weak topic at the suggested level, a weak prerequisite first, revisit missed questions | Share followed, and mastery change on that topic afterwards |
+| Recommendations (`reco-rules-v2`) | At most 6, each with its reason: practise a weak topic at the suggested level, a weak prerequisite first, revisit missed questions, and (lowest priority, added 2 Nov) try a harder quiz once a topic is mastered with enough evidence and the difficulty rule says step up | Share followed, and mastery change on that topic afterwards |
 | Spaced revision (`leitner-v1`) | Missed or skipped questions enter box 1; intervals 1, 3, 7, 14, 30 days; a wrong answer goes back to box 1 | Retention on revision items against items not scheduled |
 | Confidence calibration | Needs 10 rated answers and 3 per level before showing a pattern | Whether "sure but wrong" falls over time |
 | Question statistics | Facility p, point-biserial discrimination, expected p range by difficulty; no flag below 10 answers | Lecturer agreement with the flags |

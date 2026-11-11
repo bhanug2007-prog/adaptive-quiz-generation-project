@@ -3,7 +3,7 @@ import { Repeat, RotateCcw, TrendingUp } from 'lucide-react'
 import { Button, Card, EmptyState, ErrorState, Field, LoadingBlock, PageHeader, Select, Skeleton, Stat } from '../../components/ui'
 import { useApi } from '../../api/useApi'
 import { studentApi } from '../../api/endpoints'
-import { LABELS, pct01, plural } from '../../utils/format'
+import { DIFFICULTY_TEXT, LABELS, dateTime, pct01, plural } from '../../utils/format'
 import TopicMasteryCard from '../../components/student/TopicMasteryCard'
 import Expandable from '../../components/student/Expandable'
 import { MasteryHistoryChart, ScoresChart, WeeklyActivityChart } from '../../components/student/Charts'
@@ -56,6 +56,65 @@ function HistoryPanel({ topics }) {
         </Field>
       </div>
       {h.loading && !h.data ? <Skeleton height={240} /> : h.error ? <ErrorState error={h.error} onRetry={h.reload} /> : <MasteryHistoryChart history={h.data} topicName={name} />}
+      {h.data && <DifficultyHistory points={h.data.points} />}
+    </Card>
+  )
+}
+
+const LEVEL_NAME = (d) => (d === 'mixed' ? 'Mixed' : DIFFICULTY_TEXT[d] || d)
+
+/** Why the practice difficulty changed after each quiz on this topic, newest first. */
+export function DifficultyHistory({ points }) {
+  const rows = (points || []).filter((p) => p.difficulty_reason).slice(-5).reverse()
+  if (!rows.length) return null
+  return (
+    <div className="st-diffhist">
+      <p className="eyebrow">Practice difficulty decisions</p>
+      <ul className="list-plain stack" style={{ gap: 6 }}>
+        {rows.map((p, i) => (
+          <li key={i} className="st-small">
+            <strong>{p.previous_difficulty && p.previous_difficulty !== p.next_difficulty
+              ? `${LEVEL_NAME(p.previous_difficulty)} → ${LEVEL_NAME(p.next_difficulty)}` : LEVEL_NAME(p.next_difficulty)}</strong>
+            <span className="faint"> · {dateTime(p.at)}</span>
+            <span className="muted lc-block"> {p.difficulty_reason}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+export function Breakdown({ t }) {
+  if (!t.by_difficulty) return null
+  const any = t.by_difficulty.some((d) => d.answered || d.skipped)
+  return (
+    <Card title="Accuracy by difficulty and subject" subtitle={t.breakdown_note}>
+      {!any ? <p className="muted st-small">No released results yet.</p> : (
+        <div className="grid-2">
+          <div className="table-wrap">
+            <table className="table">
+              <thead><tr><th>Difficulty</th><th className="num">Answered</th><th className="num">Correct</th><th className="num">Skipped</th></tr></thead>
+              <tbody>
+                {t.by_difficulty.map((d) => (
+                  <tr key={d.difficulty}><td>{DIFFICULTY_TEXT[d.difficulty] || d.difficulty}</td><td className="num">{d.answered}</td>
+                    <td className="num">{d.accuracy == null ? '—' : pct01(d.accuracy)}</td><td className="num">{d.skipped}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="table-wrap">
+            <table className="table">
+              <thead><tr><th>Subject</th><th className="num">Topics</th><th className="num">Answered</th><th className="num">Correct</th><th className="num">Skipped</th></tr></thead>
+              <tbody>
+                {t.by_subject.map((s) => (
+                  <tr key={s.subject}><td>{s.subject}</td><td className="num">{s.topics}</td><td className="num">{s.answered}</td>
+                    <td className="num">{s.accuracy == null ? '—' : pct01(s.accuracy)}</td><td className="num">{s.skipped}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </Card>
   )
 }
@@ -88,6 +147,7 @@ function Trends() {
           <div style={{ marginTop: 12 }}><Button size="sm" variant="teal" to="/student/insights#revision">Open spaced revision</Button></div>
         </Card>
       </div>
+      <Breakdown t={t} />
       <Card title="Repeated mistakes" subtitle="Questions you have answered wrongly two or more times.">
         {t.repeated_mistakes.length ? (
           <ul className="st-qlist">

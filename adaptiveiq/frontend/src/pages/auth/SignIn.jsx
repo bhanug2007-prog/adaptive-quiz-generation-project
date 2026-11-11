@@ -55,10 +55,10 @@ export default function SignIn() {
         </Field>
         <Button type="submit" variant="primary" block icon={LogIn} loading={isSubmitting}>Sign in</Button>
         <p className="muted" style={{ fontSize: 'var(--fs-sm)', textAlign: 'center' }}>
-          New to AdaptiveIQ? <Link to="/register" className="link">Create an account</Link>
+          <Link to="/forgot-password" className="link">Forgot password?</Link>
         </p>
-        <p className="faint" style={{ fontSize: 'var(--fs-xs)', textAlign: 'center' }}>
-          Forgot your password? Ask your lecturer or the administrator to reset it.
+        <p className="muted" style={{ fontSize: 'var(--fs-sm)', textAlign: 'center' }}>
+          New to AdaptiveIQ? <Link to="/register" className="link">Create an account</Link>
         </p>
       </form>
     </AuthShell>

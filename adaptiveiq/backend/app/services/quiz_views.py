@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.models import (Course, GenerationRun, ModelVersion, Question, Quiz, QuizQuestion, StudentAnswer, Subject)
 from app.models.base import utcnow
 from app.schemas.quizzes import OptionFull, QuestionFull, QuizDetail, QuizItemOut, QuizOut, RunStatus
+from app.services import monitoring_service as mon
 from app.services.grading import weight_used
 from app.services.validation_service import REASONS
 
@@ -19,6 +20,7 @@ def question_full(db: Session, q: Question) -> QuestionFull:
         id=q.id, text=q.text, explanation=q.explanation, difficulty=q.difficulty, subject_label=q.subject_label,
         unit_label=q.unit_label, topic_label=q.topic_label, topic_id=q.topic_id, objective_id=q.objective_id,
         course_id=q.course_id, review_status=q.review_status, source_type=q.source_type, source_excerpt=q.source_excerpt,
+        source_ref=(q.validation or {}).get("source"),
         validation=q.validation or {},
         model=f"{mv.base_model} ({mv.variant}{', ' + mv.quantization if mv.quantization else ''})" if mv else None,
         options=[OptionFull(id=o.id, label=o.label, text=o.text, is_correct=o.is_correct) for o in q.options],
@@ -41,6 +43,9 @@ def quiz_out(db: Session, z: Quiz) -> QuizOut:
         feedback_release=z.feedback_release, feedback_released=z.feedback_released, late_policy=z.late_policy,
         late_penalty_pct=z.late_penalty_pct, contribution_pct=z.contribution_pct,
         confidence_enabled=z.confidence_enabled, target_duration_min=z.target_duration_min, created_at=z.created_at,
+        monitor_tab=z.monitor_tab, monitor_fullscreen=z.monitor_fullscreen, monitor_camera=z.monitor_camera,
+        monitor_microphone=z.monitor_microphone,
+        monitoring_summary=mon.quiz_monitoring_summary(db, z) if z.kind == "assessment" else None,
         published_at=z.published_at, generation_run_id=z.generation_run_id, review_counts=dict(statuses))
 
 
@@ -56,12 +61,16 @@ def quiz_detail(db: Session, z: Quiz) -> QuizDetail:
 def run_status(db: Session, run: GenerationRun, queue_position: int = 0) -> RunStatus:
     end = run.finished_at or utcnow()
     rejected = run.rejected or {}
+    p = run.params or {}
     return RunStatus(run_id=run.id, status=run.status, stage=run.stage, ready=run.ready, total=run.total,
                      attempts=run.attempts, rejected=rejected, rejected_reasons={k: REASONS.get(k, k) for k in rejected},
-                     error=run.error, quiz_id=(run.params or {}).get("quiz_id"), queue_position=queue_position,
+                     error=run.error, quiz_id=p.get("quiz_id"), queue_position=queue_position,
                      elapsed_s=round((end - run.started_at).total_seconds(), 1) if run.started_at else 0.0,
                      avg_question_s=run.avg_question_s, grounded_on=run.grounded_on,
-                     difficulty_note=(run.params or {}).get("difficulty_note"))
+                     source_mode=p.get("source_mode"), document_name=p.get("document_name"),
+                     requested_count=p.get("requested_count"), supported_count=p.get("supported_count"),
+                     insufficient_content_note=p.get("insufficient_content_note"),
+                     difficulty_note=p.get("difficulty_note"), quality=run.quality)
 
 
 def queue_position(db: Session, run: GenerationRun) -> int:

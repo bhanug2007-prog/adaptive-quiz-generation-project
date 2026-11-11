@@ -10,12 +10,13 @@ vi.mock('../../../api/endpoints', () => ({
     start: vi.fn(), practiceQuizzes: vi.fn(), recommendedDifficulty: vi.fn(), generatePractice: vi.fn(), confidence: vi.fn(),
   },
   topicsApi: { choices: vi.fn() },
+  documentsApi: { extract: vi.fn(), remove: vi.fn(() => Promise.resolve()) },
   generationApi: { get: vi.fn(), cancel: vi.fn() },
   healthApi: { get: vi.fn() },
   authApi: {},
 }))
 
-const { studentApi, topicsApi, generationApi, healthApi } = await import('../../../api/endpoints')
+const { studentApi, topicsApi, documentsApi, generationApi, healthApi } = await import('../../../api/endpoints')
 const { default: QuizPlayer } = await import('../QuizPlayer')
 const { default: Result } = await import('../Result')
 const { default: Practice, RUN_KEY } = await import('../Practice')
@@ -129,6 +130,22 @@ describe('Result', () => {
     expect(await screen.findByText(/Your lecturer will release results later/)).toBeInTheDocument()
     expect(screen.queryByText('Raw score')).not.toBeInTheDocument()
   })
+
+  it('shows document source page and section reference in practice result review', async () => {
+    studentApi.result.mockResolvedValue({
+      ...resultBody,
+      kind: 'practice',
+      items: [{
+        ...resultBody.items[0],
+        outcome: 'incorrect',
+        source_excerpt: 'Round robin scheduling rotates the CPU.',
+        source_ref: { document_name: 'os_guide.pdf', file_type: 'pdf', page: 2, section: 'Round Robin' },
+      }],
+    })
+    studentApi.mastery.mockResolvedValue({ topics: [] })
+    renderAt('/student/attempts/1/result', '/student/attempts/:sessionId/result', <Result />)
+    expect(await screen.findByText(/From uploaded document · os_guide\.pdf · p\. 2 · Round Robin/)).toBeInTheDocument()
+  })
 })
 
 describe('TopicMasteryCard', () => {
@@ -173,5 +190,39 @@ describe('Practice', () => {
     renderAt('/student/practice', '/student/practice', <Practice />)
     expect(await screen.findByText('Ready: SQL joins')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Start the quiz \(5 questions\)/ })).toBeInTheDocument()
+  })
+
+  it('supports uploading a file in Practice Upload File mode and rejects invalid extensions', async () => {
+    documentsApi.extract.mockResolvedValue({
+      document_id: 'st-doc-9',
+      filename: 'syllabus.docx',
+      file_type: 'docx',
+      size_bytes: 12000,
+      page_count: null,
+      word_count: 500,
+      chunk_count: 3,
+      sections: ['Normalisation'],
+      headings: ['Normalisation'],
+      recommended_max_questions: 12,
+      warning: null,
+      preview: 'Normalisation eliminates update anomalies.',
+    })
+    studentApi.generatePractice.mockResolvedValue({ ...run, status: 'queued', difficulty_note: null })
+    generationApi.get.mockResolvedValue({ ...run, grounded_on: 'document', document_name: 'syllabus.docx' })
+    renderAt('/student/practice', '/student/practice', <Practice />)
+    fireEvent.click(await screen.findByRole('radio', { name: 'Upload File' }))
+    const input = screen.getByLabelText(/Study material file/i)
+
+    fireEvent.change(input, { target: { files: [new File(['bad'], 'script.exe', { type: 'application/octet-stream' })] } })
+    expect(await screen.findByText(/Unsupported file format/i)).toBeInTheDocument()
+
+    fireEvent.change(input, { target: { files: [new File(['docx bytes'], 'syllabus.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })] } })
+    expect(await screen.findByText('syllabus.docx')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Generate practice quiz/ }))
+    await waitFor(() => expect(studentApi.generatePractice).toHaveBeenCalledWith(expect.objectContaining({
+      source_mode: 'document',
+      document_id: 'st-doc-9',
+      question_count: 5,
+    })))
   })
 })

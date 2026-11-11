@@ -85,6 +85,8 @@ Generated from the code by `python -m scripts.write_api_doc`. Interactive docs: 
 | PATCH | `/api/lecturer/questions/{question_id}` | Edit Question |
 | DELETE | `/api/lecturer/questions/{question_id}` | Delete Question |
 | POST | `/api/lecturer/questions/{question_id}/review` | Review Question |
+| POST | `/api/lecturer/questions/{question_id}/check-quality` | Runs the Python checks and, when available, the AI review again on the question as it is now |
+| GET | `/api/lecturer/questions/{question_id}/evaluations` | The quality-check log of a question, newest first. |
 | POST | `/api/lecturer/questions/{question_id}/duplicate` | Duplicate Question |
 | GET | `/api/lecturer/questions/{question_id}/history` | Review History |
 
@@ -174,3 +176,23 @@ Generated from the code by `python -m scripts.write_api_doc`. Interactive docs: 
 | POST | `/api/lecturer/quizzes/{quiz_id}/google-form` | Export To Google |
 | GET | `/api/lecturer/quizzes/{quiz_id}/google-form/exports` | List Exports |
 | GET | `/api/lecturer/quizzes/{quiz_id}/export` | Plain text to paste into Google Forms (or any LMS) by hand. Includes the answer key. |
+
+## Agents
+
+| Method | Path | What it does |
+|---|---|---|
+| POST | `/api/lecturer/insights/ask` | Ask |
+| GET | `/api/lecturer/insights/history` | History |
+| GET | `/api/lecturer/agent-runs/{run_id}` | Agent Run |
+| GET | `/api/lecturer/generation/{run_id}/agent` | The Question Quality Agent's steps for one generation run of this lecturer. |
+
+## Monitoring
+
+| Method | Path | What it does |
+|---|---|---|
+| POST | `/api/student/attempts/{session_id}/monitoring/devices` | Devices |
+| POST | `/api/student/attempts/{session_id}/monitoring/events` | Upload |
+| GET | `/api/student/attempts/{session_id}/monitoring` | Transparency: the student can see every event recorded about their attempt. |
+| GET | `/api/lecturer/quizzes/{quiz_id}/monitoring` | Quiz Report |
+| GET | `/api/lecturer/monitoring/{monitoring_id}` | Timeline |
+| POST | `/api/lecturer/monitoring/{monitoring_id}/review` | Review |

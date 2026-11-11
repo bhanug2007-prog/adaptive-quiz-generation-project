@@ -1,17 +1,20 @@
 import hmac
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.core.deps import current_user, get_db, get_settings_dep, is_verified, optional_user
 from app.core.security import (burn_password_check, hash_password, make_token, make_verify_token, read_token,
                                verify_password)
-from app.models import LecturerProfile, StudentProfile, User
+from app.models import LecturerProfile, PasswordResetToken, StudentProfile, User
 from app.models.base import utcnow
-from app.schemas.auth import (AuthConfig, ChangePasswordRequest, LoginRequest, ProfileUpdate, RegisterRequest,
-                              UserOut, VerifyEmailRequest)
+from app.schemas.auth import (AuthConfig, ChangePasswordRequest, ForgotPasswordRequest, ForgotPasswordResponse,
+                              LoginRequest, ProfileUpdate, RegisterRequest, ResetPasswordRequest, ResetTokenStatus,
+                              UserOut, VerifyEmailRequest, VerifyResetTokenRequest)
+from app.services.password_reset import (check_reset_token, consume_and_reset_password, deliver_password_reset,
+                                         issue_reset_token)
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -175,7 +178,91 @@ def change_password(body: ChangePasswordRequest, resp: Response, user: User = De
                     db: Session = Depends(get_db), s: Settings = Depends(get_settings_dep)):
     if not verify_password(body.current_password, user.password_hash):
         raise HTTPException(400, "Current password is not correct.")
+    now = utcnow()
     user.password_hash = hash_password(body.new_password)
     user.token_version += 1                         # signs out other devices
+    db.execute(
+        update(PasswordResetToken)
+        .where(PasswordResetToken.user_id == user.id, PasswordResetToken.used_at.is_(None))
+        .values(used_at=now)
+    )
     db.commit()
     _set_session(resp, s, user)
+
+
+_FORGOT_PASSWORD_MSG = "If an account with that email exists, we sent a password reset link."
+
+
+def _client_host(request: Request) -> str:
+    return request.client.host if request.client else "unknown"
+
+
+@router.post("/forgot-password", response_model=ForgotPasswordResponse)
+def forgot_password(body: ForgotPasswordRequest, request: Request, db: Session = Depends(get_db),
+                    s: Settings = Depends(get_settings_dep)):
+    email = body.email.strip().lower()
+    host = _client_host(request)
+    req_key = _client_key(request, email)
+    req_limiter = request.app.state.reset_request_limiter
+    ip_limiter = request.app.state.reset_ip_limiter
+
+    wait = ip_limiter.blocked(host) or req_limiter.blocked(req_key)
+    if wait:
+        raise HTTPException(429, f"Too many password reset requests. Try again in {max(1, wait // 60)} minute(s).")
+
+    # Count every request identically regardless of account existence to prevent timing/rate-limit leaks.
+    req_limiter.fail(req_key)
+    ip_limiter.fail(host)
+
+    u = db.scalar(select(User).where(User.email == email))
+    if u is not None and u.is_active:
+        raw_token, expires_at = issue_reset_token(db, u, s.reset_token_minutes)
+        deliver_password_reset(
+            settings=s,
+            mailer=request.app.state.mailer,
+            outbox=request.app.state.reset_outbox,
+            user=u,
+            raw_token=raw_token,
+            expires_at=expires_at,
+        )
+    return ForgotPasswordResponse(message=_FORGOT_PASSWORD_MSG)
+
+
+def _raise_reset_token_error(status: str) -> None:
+    if status == "expired":
+        raise HTTPException(400, "This password reset link has expired. Request a new one.")
+    raise HTTPException(400, "This password reset link is invalid or has already been used.")
+
+
+@router.post("/reset-password/verify", response_model=ResetTokenStatus)
+def verify_reset_token(body: VerifyResetTokenRequest, request: Request, db: Session = Depends(get_db)):
+    host = _client_host(request)
+    limiter = request.app.state.reset_verify_limiter
+    wait = limiter.blocked(host)
+    if wait:
+        raise HTTPException(429, f"Too many verification attempts. Try again in {max(1, wait // 60)} minute(s).")
+
+    result = check_reset_token(db, body.token)
+    if result.status != "valid":
+        limiter.fail(host)
+        _raise_reset_token_error(result.status)
+    return ResetTokenStatus(valid=True)
+
+
+@router.post("/reset-password", status_code=204)
+def reset_password(body: ResetPasswordRequest, request: Request, resp: Response, db: Session = Depends(get_db),
+                   s: Settings = Depends(get_settings_dep)):
+    host = _client_host(request)
+    limiter = request.app.state.reset_verify_limiter
+    wait = limiter.blocked(host)
+    if wait:
+        raise HTTPException(429, f"Too many password reset attempts. Try again in {max(1, wait // 60)} minute(s).")
+
+    result = consume_and_reset_password(db, body.token, body.new_password)
+    if result.status != "valid" or result.user is None:
+        limiter.fail(host)
+        _raise_reset_token_error(result.status)
+
+    request.app.state.reset_outbox.purge_for_email(result.user.email)
+    request.app.state.login_limiter.reset(_client_key(request, result.user.email))
+    resp.delete_cookie(s.cookie_name, path="/")

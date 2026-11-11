@@ -21,6 +21,7 @@ def make_engine(url: str) -> Engine:
         @event.listens_for(engine, "connect")
         def _fk_on(dbapi_conn, _):                    # SQLite ignores foreign keys unless asked
             dbapi_conn.execute("PRAGMA foreign_keys=ON")
+            dbapi_conn.execute("PRAGMA busy_timeout=5000")
         return engine
     return create_engine(url, pool_pre_ping=True, pool_size=10, max_overflow=10)
 

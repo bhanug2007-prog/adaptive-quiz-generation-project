@@ -5,9 +5,15 @@ Everything in this list is either not built, or built but not verified. Nothing 
 ## Not verified yet
 
 - **Google Forms export** against a real Google account (needs an OAuth client; see `GOOGLE_FORMS.md`).
-- **The real Qwen model inside AdaptiveIQ.** The whole pipeline is tested with a stand-in model server (`tests/fake_model_server.py`). The same prompt code worked with the GGUF model in QuizForge, but AdaptiveIQ itself has not been run end to end against `qwen7b-mcq-Q4_K_M.gguf`.
+- **The real Qwen model inside AdaptiveIQ: automated tests.** The project team ran AdaptiveIQ with `qwen7b-mcq-Q4_K_M.gguf` on the laptop and it generates quizzes, but the automated tests still use the stand-in model server (`tests/fake_model_server.py`), and no measured run (pass rate, time per question) has been recorded yet.
 - **Windows scripts** (`setup_windows.bat`, `start_windows.bat`): written for Windows, not run on Windows in this project.
 - **Docker Compose** files: written, not built (no Docker daemon was available).
+- **The Grok question reviewer against the real xAI API.** It is tested only with a stand-in server
+  (`tests/fake_grok_server.py`); see `QUALITY_REVIEW.md`. How well its judgements, especially difficulty,
+  agree with lecturers has not been measured.
+- **The Lecturer Insights Agent with real Grok.** Tool choice, answer wording and the number check are tested with
+  scripted replies from the stand-in server; how often real Grok answers pass the number check, and how useful
+  lecturers find the answers, has not been measured (`AGENTS.md`).
 - **SMTP email sending**: verification links are tested through the development outbox; real SMTP delivery has not been tried.
 
 ## Evaluation still to run

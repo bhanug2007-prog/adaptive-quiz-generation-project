@@ -1,0 +1,27 @@
+{
+  "method": "POST",
+  "path": "/api/lecturer/insights/ask",
+  "status": 200,
+  "body": {
+    "agent_run_id": 3,
+    "question": "Which students need help?",
+    "answer": "None of the 2 students is currently flagged as needing support.",
+    "findings": [
+      "Lowest averages: Sample Student B 20.0% (1 quiz), Sample Student A 80.0% (1 quiz)."
+    ],
+    "suggestions": [],
+    "caveats": [
+      "Each student has at most one submitted quiz, so these averages rest on little evidence."
+    ],
+    "mode": "rules",
+    "ai_note": "No AI model is set up (GROK_API_KEY is empty).",
+    "tools_used": [
+      {
+        "name": "get_student_performance",
+        "args": {},
+        "ok": true
+      }
+    ],
+    "model": null
+  }
+}

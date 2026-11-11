@@ -1,0 +1,106 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/questions/2",
+  "status": 200,
+  "body": {
+    "id": 2,
+    "text": "Which metric does shortest job first minimise?",
+    "explanation": "Beta 4 is correct because of reason 4.",
+    "difficulty": "hard",
+    "subject_label": "Operating Systems",
+    "unit_label": "Unit 2: Scheduling",
+    "topic_label": "CPU Scheduling",
+    "topic_id": 1,
+    "objective_id": null,
+    "course_id": 1,
+    "review_status": "draft",
+    "source_type": "generated_notes",
+    "source_excerpt": "Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes Notes",
+    "validation": {
+      "math_verified": false,
+      "max_similarity": 0.068,
+      "math_status": "not_math",
+      "quality": {
+        "status": "passed",
+        "evaluator": "grok",
+        "model": "grok-test",
+        "score": 88.0,
+        "reason": null,
+        "reason_text": null,
+        "assessed_difficulty": "hard",
+        "feedback": "Fine for an exam.",
+        "ai": {
+          "quality_score": 88,
+          "correctness": {
+            "note": "The marked answer is right.",
+            "verdict": "correct"
+          },
+          "relevance": {
+            "note": "Tests the topic.",
+            "ok": true
+          },
+          "difficulty": {
+            "note": "Matches the scale.",
+            "assessed": "hard"
+          },
+          "options": {
+            "note": "Distinct distractors.",
+            "ok": true
+          },
+          "multiple_correct": {
+            "note": "",
+            "value": false
+          },
+          "ambiguity": {
+            "note": "",
+            "ambiguous": false
+          },
+          "explanation": {
+            "note": "",
+            "supports_answer": true
+          },
+          "clarity": {
+            "note": "",
+            "ok": true
+          },
+          "passed": true,
+          "feedback": "Fine for an exam.",
+          "regeneration_instructions": ""
+        },
+        "ai_error": null
+      }
+    },
+    "model": "Qwen/Qwen2.5-7B-Instruct (finetuned, GGUF Q4_K_M)",
+    "options": [
+      {
+        "id": 5,
+        "label": "A",
+        "text": "Option alpha 4",
+        "is_correct": false
+      },
+      {
+        "id": 6,
+        "label": "B",
+        "text": "Option beta 4",
+        "is_correct": true
+      },
+      {
+        "id": 7,
+        "label": "C",
+        "text": "Option gamma 4",
+        "is_correct": false
+      },
+      {
+        "id": 8,
+        "label": "D",
+        "text": "Option delta 4",
+        "is_correct": false
+      }
+    ],
+    "created_at": "2026-11-02T09:19:49.190388Z",
+    "updated_at": "2026-11-02T09:19:49.190391Z",
+    "used_in_quizzes": 1,
+    "answered_count": 0,
+    "locked": false
+  }
+}

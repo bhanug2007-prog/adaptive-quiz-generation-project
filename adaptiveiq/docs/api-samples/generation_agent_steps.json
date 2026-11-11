@@ -1,0 +1,763 @@
+{
+  "method": "GET",
+  "path": "/api/lecturer/generation/1/agent",
+  "status": 200,
+  "body": {
+    "id": 1,
+    "agent": "question_quality",
+    "status": "done",
+    "course_id": 1,
+    "generation_run_id": 1,
+    "input": {
+      "purpose": "lecturer_draft",
+      "subject": "Operating Systems",
+      "topic": "CPU Scheduling",
+      "questions": 5,
+      "difficulty": "mixed",
+      "distribution": null,
+      "objectives": [],
+      "reference_material": false,
+      "max_tries_per_question": 3
+    },
+    "output": {
+      "status": "done",
+      "ready": 5,
+      "total": 5,
+      "failed_kept": 0,
+      "ai_review": "not_used"
+    },
+    "llm_calls": 0,
+    "error": null,
+    "created_at": "2026-11-02T10:23:21.560991+00:00",
+    "finished_at": "2026-11-02T10:23:23.153345+00:00",
+    "steps": [
+      {
+        "seq": 1,
+        "kind": "tool",
+        "name": "prepare_contexts",
+        "args": {
+          "reference_material": false
+        },
+        "result": {
+          "passages": 2,
+          "source": "generated_notes"
+        },
+        "ok": true,
+        "duration_ms": 15,
+        "at": "2026-11-02T10:23:21.581440+00:00"
+      },
+      {
+        "seq": 2,
+        "kind": "decision",
+        "name": "plan",
+        "args": {
+          "plan": [
+            "easy",
+            "medium",
+            "hard",
+            "easy",
+            "medium"
+          ]
+        },
+        "result": {
+          "because": "5 questions in this order of difficulty"
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:21.587660+00:00"
+      },
+      {
+        "seq": 3,
+        "kind": "tool",
+        "name": "generate_questions",
+        "args": {
+          "slot": 1,
+          "difficulty": "easy",
+          "try": 1
+        },
+        "result": {
+          "characters": 35
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:21.593474+00:00"
+      },
+      {
+        "seq": 4,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 1,
+          "try": 1
+        },
+        "result": {
+          "passed": false,
+          "reason": "format",
+          "reason_text": "broken format, missing fields or repeated options"
+        },
+        "ok": false,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:21.598686+00:00"
+      },
+      {
+        "seq": 5,
+        "kind": "decision",
+        "name": "retry",
+        "args": {
+          "slot": 1,
+          "tries_left": 2
+        },
+        "result": {
+          "because": "Failed: broken format, missing fields or repeated options. Only this question is generated again."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:21.602062+00:00"
+      },
+      {
+        "seq": 6,
+        "kind": "tool",
+        "name": "regenerate_question",
+        "args": {
+          "slot": 1,
+          "difficulty": "easy",
+          "try": 2
+        },
+        "result": {
+          "characters": 203
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:21.610415+00:00"
+      },
+      {
+        "seq": 7,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 1,
+          "try": 2
+        },
+        "result": {
+          "passed": true,
+          "reason": null,
+          "reason_text": null,
+          "math_status": "not_math"
+        },
+        "ok": true,
+        "duration_ms": 1,
+        "at": "2026-11-02T10:23:21.616632+00:00"
+      },
+      {
+        "seq": 8,
+        "kind": "tool",
+        "name": "check_duplicate_questions",
+        "args": {
+          "slot": 1,
+          "compared_with": 0
+        },
+        "result": {
+          "duplicate": false,
+          "highest_similarity": 0.0
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:21.616636+00:00"
+      },
+      {
+        "seq": 9,
+        "kind": "decision",
+        "name": "accept",
+        "args": {
+          "slot": 1
+        },
+        "result": {
+          "because": "It passed the Python checks."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:21.616637+00:00"
+      },
+      {
+        "seq": 10,
+        "kind": "tool",
+        "name": "save_question_draft",
+        "args": {
+          "slot": 1,
+          "difficulty": "easy"
+        },
+        "result": {
+          "question_id": 1,
+          "review_status": "draft"
+        },
+        "ok": true,
+        "duration_ms": 16,
+        "at": "2026-11-02T10:23:21.631564+00:00"
+      },
+      {
+        "seq": 11,
+        "kind": "tool",
+        "name": "generate_questions",
+        "args": {
+          "slot": 2,
+          "difficulty": "medium",
+          "try": 1
+        },
+        "result": {
+          "characters": 172
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:21.646111+00:00"
+      },
+      {
+        "seq": 12,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 2,
+          "try": 1
+        },
+        "result": {
+          "passed": false,
+          "reason": "math_wrong_key",
+          "reason_text": "Python check found a different correct option",
+          "math_status": "wrong_key"
+        },
+        "ok": false,
+        "duration_ms": 1357,
+        "at": "2026-11-02T10:23:23.006986+00:00"
+      },
+      {
+        "seq": 13,
+        "kind": "tool",
+        "name": "check_duplicate_questions",
+        "args": {
+          "slot": 2,
+          "compared_with": 1
+        },
+        "result": {
+          "duplicate": false,
+          "highest_similarity": 0.0
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.006990+00:00"
+      },
+      {
+        "seq": 14,
+        "kind": "decision",
+        "name": "retry",
+        "args": {
+          "slot": 2,
+          "tries_left": 2
+        },
+        "result": {
+          "because": "Failed: Python check found a different correct option. Only this question is generated again."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.008807+00:00"
+      },
+      {
+        "seq": 15,
+        "kind": "tool",
+        "name": "regenerate_question",
+        "args": {
+          "slot": 2,
+          "difficulty": "medium",
+          "try": 2
+        },
+        "result": {
+          "characters": 202
+        },
+        "ok": true,
+        "duration_ms": 9,
+        "at": "2026-11-02T10:23:23.022252+00:00"
+      },
+      {
+        "seq": 16,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 2,
+          "try": 2
+        },
+        "result": {
+          "passed": true,
+          "reason": null,
+          "reason_text": null,
+          "math_status": "not_math"
+        },
+        "ok": true,
+        "duration_ms": 3,
+        "at": "2026-11-02T10:23:23.029005+00:00"
+      },
+      {
+        "seq": 17,
+        "kind": "tool",
+        "name": "check_duplicate_questions",
+        "args": {
+          "slot": 2,
+          "compared_with": 1
+        },
+        "result": {
+          "duplicate": false,
+          "highest_similarity": 0.0
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.029008+00:00"
+      },
+      {
+        "seq": 18,
+        "kind": "decision",
+        "name": "accept",
+        "args": {
+          "slot": 2
+        },
+        "result": {
+          "because": "It passed the Python checks."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.029009+00:00"
+      },
+      {
+        "seq": 19,
+        "kind": "tool",
+        "name": "save_question_draft",
+        "args": {
+          "slot": 2,
+          "difficulty": "medium"
+        },
+        "result": {
+          "question_id": 2,
+          "review_status": "draft"
+        },
+        "ok": true,
+        "duration_ms": 6,
+        "at": "2026-11-02T10:23:23.035257+00:00"
+      },
+      {
+        "seq": 20,
+        "kind": "tool",
+        "name": "generate_questions",
+        "args": {
+          "slot": 3,
+          "difficulty": "hard",
+          "try": 1
+        },
+        "result": {
+          "characters": 201
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:23.043056+00:00"
+      },
+      {
+        "seq": 21,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 3,
+          "try": 1
+        },
+        "result": {
+          "passed": true,
+          "reason": null,
+          "reason_text": null,
+          "math_status": "not_math"
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:23.048271+00:00"
+      },
+      {
+        "seq": 22,
+        "kind": "tool",
+        "name": "check_duplicate_questions",
+        "args": {
+          "slot": 3,
+          "compared_with": 2
+        },
+        "result": {
+          "duplicate": false,
+          "highest_similarity": 0.0
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.048274+00:00"
+      },
+      {
+        "seq": 23,
+        "kind": "decision",
+        "name": "accept",
+        "args": {
+          "slot": 3
+        },
+        "result": {
+          "because": "It passed the Python checks."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.048275+00:00"
+      },
+      {
+        "seq": 24,
+        "kind": "tool",
+        "name": "save_question_draft",
+        "args": {
+          "slot": 3,
+          "difficulty": "hard"
+        },
+        "result": {
+          "question_id": 3,
+          "review_status": "draft"
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:23.050032+00:00"
+      },
+      {
+        "seq": 25,
+        "kind": "tool",
+        "name": "generate_questions",
+        "args": {
+          "slot": 4,
+          "difficulty": "easy",
+          "try": 1
+        },
+        "result": {
+          "characters": 35
+        },
+        "ok": true,
+        "duration_ms": 3,
+        "at": "2026-11-02T10:23:23.057696+00:00"
+      },
+      {
+        "seq": 26,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 4,
+          "try": 1
+        },
+        "result": {
+          "passed": false,
+          "reason": "format",
+          "reason_text": "broken format, missing fields or repeated options"
+        },
+        "ok": false,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.060017+00:00"
+      },
+      {
+        "seq": 27,
+        "kind": "decision",
+        "name": "retry",
+        "args": {
+          "slot": 4,
+          "tries_left": 2
+        },
+        "result": {
+          "because": "Failed: broken format, missing fields or repeated options. Only this question is generated again."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.060840+00:00"
+      },
+      {
+        "seq": 28,
+        "kind": "tool",
+        "name": "regenerate_question",
+        "args": {
+          "slot": 4,
+          "difficulty": "easy",
+          "try": 2
+        },
+        "result": {
+          "characters": 204
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:23.066037+00:00"
+      },
+      {
+        "seq": 29,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 4,
+          "try": 2
+        },
+        "result": {
+          "passed": true,
+          "reason": null,
+          "reason_text": null,
+          "math_status": "not_math"
+        },
+        "ok": true,
+        "duration_ms": 2,
+        "at": "2026-11-02T10:23:23.071159+00:00"
+      },
+      {
+        "seq": 30,
+        "kind": "tool",
+        "name": "check_duplicate_questions",
+        "args": {
+          "slot": 4,
+          "compared_with": 3
+        },
+        "result": {
+          "duplicate": false,
+          "highest_similarity": 0.0
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.071162+00:00"
+      },
+      {
+        "seq": 31,
+        "kind": "decision",
+        "name": "accept",
+        "args": {
+          "slot": 4
+        },
+        "result": {
+          "because": "It passed the Python checks."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.071163+00:00"
+      },
+      {
+        "seq": 32,
+        "kind": "tool",
+        "name": "save_question_draft",
+        "args": {
+          "slot": 4,
+          "difficulty": "easy"
+        },
+        "result": {
+          "question_id": 4,
+          "review_status": "draft"
+        },
+        "ok": true,
+        "duration_ms": 1,
+        "at": "2026-11-02T10:23:23.072719+00:00"
+      },
+      {
+        "seq": 33,
+        "kind": "tool",
+        "name": "generate_questions",
+        "args": {
+          "slot": 5,
+          "difficulty": "medium",
+          "try": 1
+        },
+        "result": {
+          "characters": 172
+        },
+        "ok": true,
+        "duration_ms": 1,
+        "at": "2026-11-02T10:23:23.079940+00:00"
+      },
+      {
+        "seq": 34,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 5,
+          "try": 1
+        },
+        "result": {
+          "passed": false,
+          "reason": "math_wrong_key",
+          "reason_text": "Python check found a different correct option",
+          "math_status": "wrong_key"
+        },
+        "ok": false,
+        "duration_ms": 42,
+        "at": "2026-11-02T10:23:23.125553+00:00"
+      },
+      {
+        "seq": 35,
+        "kind": "tool",
+        "name": "check_duplicate_questions",
+        "args": {
+          "slot": 5,
+          "compared_with": 4
+        },
+        "result": {
+          "duplicate": false,
+          "highest_similarity": 0.0
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.125558+00:00"
+      },
+      {
+        "seq": 36,
+        "kind": "decision",
+        "name": "retry",
+        "args": {
+          "slot": 5,
+          "tries_left": 2
+        },
+        "result": {
+          "because": "Failed: Python check found a different correct option. Only this question is generated again."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.126991+00:00"
+      },
+      {
+        "seq": 37,
+        "kind": "tool",
+        "name": "regenerate_question",
+        "args": {
+          "slot": 5,
+          "difficulty": "medium",
+          "try": 2
+        },
+        "result": {
+          "characters": 199
+        },
+        "ok": true,
+        "duration_ms": 3,
+        "at": "2026-11-02T10:23:23.134469+00:00"
+      },
+      {
+        "seq": 38,
+        "kind": "tool",
+        "name": "validate_question",
+        "args": {
+          "slot": 5,
+          "try": 2
+        },
+        "result": {
+          "passed": true,
+          "reason": null,
+          "reason_text": null,
+          "math_status": "not_math"
+        },
+        "ok": true,
+        "duration_ms": 3,
+        "at": "2026-11-02T10:23:23.140901+00:00"
+      },
+      {
+        "seq": 39,
+        "kind": "tool",
+        "name": "check_duplicate_questions",
+        "args": {
+          "slot": 5,
+          "compared_with": 4
+        },
+        "result": {
+          "duplicate": false,
+          "highest_similarity": 0.075
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.140905+00:00"
+      },
+      {
+        "seq": 40,
+        "kind": "decision",
+        "name": "accept",
+        "args": {
+          "slot": 5
+        },
+        "result": {
+          "because": "It passed the Python checks."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.140906+00:00"
+      },
+      {
+        "seq": 41,
+        "kind": "tool",
+        "name": "save_question_draft",
+        "args": {
+          "slot": 5,
+          "difficulty": "medium"
+        },
+        "result": {
+          "question_id": 5,
+          "review_status": "draft"
+        },
+        "ok": true,
+        "duration_ms": 3,
+        "at": "2026-11-02T10:23:23.144320+00:00"
+      },
+      {
+        "seq": 42,
+        "kind": "tool",
+        "name": "check_difficulty_distribution",
+        "args": {
+          "requested": {
+            "easy": 2,
+            "medium": 2,
+            "hard": 1
+          }
+        },
+        "result": {
+          "requested": {
+            "easy": 2,
+            "medium": 2,
+            "hard": 1
+          },
+          "judged": {},
+          "matches": null,
+          "differs": []
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.154941+00:00"
+      },
+      {
+        "seq": 43,
+        "kind": "decision",
+        "name": "report_mix",
+        "args": {},
+        "result": {
+          "because": "The difficulty mix could not be fully checked (no AI judgement for every question); labels are the requested ones."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.154944+00:00"
+      },
+      {
+        "seq": 44,
+        "kind": "tool",
+        "name": "get_generation_status",
+        "args": {
+          "run_id": 1
+        },
+        "result": {
+          "status": "done",
+          "ready": 5,
+          "total": 5,
+          "failed_kept": 0
+        },
+        "ok": true,
+        "duration_ms": 0,
+        "at": "2026-11-02T10:23:23.154945+00:00"
+      },
+      {
+        "seq": 45,
+        "kind": "decision",
+        "name": "await_lecturer_approval",
+        "args": {},
+        "result": {
+          "because": "The questions are saved as a draft. The agent never approves or publishes; the lecturer reviews every question."
+        },
+        "ok": true,
+        "duration_ms": null,
+        "at": "2026-11-02T10:23:23.154945+00:00"
+      }
+    ]
+  }
+}

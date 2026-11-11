@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   AlertTriangle, Archive, ArrowDown, ArrowLeft, ArrowUp, BookOpen, CheckCircle2, Clock, Eye, Library, MinusCircle, Plus,
-  Rocket, Send, Sparkles, Trash2, Undo2,
+  Rocket, Send, ShieldCheck, Sparkles, Trash2, Undo2,
 } from 'lucide-react'
 import { lecturerApi, topicsApi } from '../../api/endpoints'
 import { useApi } from '../../api/useApi'
@@ -16,7 +16,9 @@ import { DIFFICULTY_TEXT, dateTime, plural } from '../../utils/format'
 import QuestionReview from '../../components/lecturer/QuestionReview'
 import QuizSettingsForm from '../../components/lecturer/QuizSettingsForm'
 import QuizExport from '../../components/lecturer/QuizExport'
+import MonitoringReport from '../../components/lecturer/MonitoringReport'
 import Stepper from '../../components/lecturer/Stepper'
+import AgentLog, { generationLog } from '../../components/lecturer/AgentSteps'
 import { FEEDBACK_TEXT, LATE_TEXT, QUIZ_STATUS, errText } from '../../components/lecturer/util'
 
 const TABS = [
@@ -24,6 +26,7 @@ const TABS = [
   { id: 'settings', label: 'Settings' },
   { id: 'publish', label: 'Preview & publish' },
   { id: 'export', label: 'Reports & export' },
+  { id: 'monitoring', label: 'Monitoring & activity' },
 ]
 const STEP_OF = { review: 2, settings: 3, publish: 4 }
 const TAB_OF = { 2: 'review', 3: 'settings', 4: 'publish' }
@@ -63,6 +66,16 @@ export default function QuizDetail() {
     }
   }
   const releasable = quiz.status === 'published' && !quiz.feedback_released && quiz.feedback_release !== 'immediate'
+  const monSummary = quiz.monitoring_summary
+  const monEnabled = monSummary ? monSummary.enabled : Boolean(
+    quiz.monitor_tab || (quiz.monitor_fullscreen && quiz.monitor_fullscreen !== 'off') || quiz.monitor_camera || quiz.monitor_microphone,
+  )
+  const showMonBanner = tab !== 'monitoring' && (
+    monEnabled || quiz.status === 'published' || quiz.status === 'archived' || (monSummary?.attempt_count || 0) > 0
+  )
+  const tabs = TABS.map((t) => (t.id === 'monitoring' && monSummary?.awaiting_review > 0
+    ? { ...t, label: `Monitoring & activity (${monSummary.awaiting_review} awaiting review)` }
+    : t))
 
   return (
     <div className="lc-page">
@@ -89,8 +102,30 @@ export default function QuizDetail() {
           <ProgressBar value={approved} max={quiz.question_count || 1} label="Questions approved" />
         </div>
       )}
+      {showMonBanner && (
+        <div className="lc-mon-banner" role="region" aria-label="Monitoring and assessment activity">
+          <div className="lc-mon-banner__info">
+            <ShieldCheck size={18} aria-hidden="true" />
+            <div>
+              <strong>Monitoring &amp; assessment activity</strong>
+              <p className="muted lc-small">
+                {monEnabled
+                  ? (monSummary
+                    ? `${plural(monSummary.monitored_count, 'monitored attempt')} · ${monSummary.with_events} with recorded events · ${monSummary.awaiting_review} awaiting review.`
+                    : 'Monitoring is active for student attempts on this quiz.')
+                  : (monSummary?.monitored_count > 0
+                    ? `Monitoring is currently off, with ${plural(monSummary.monitored_count, 'earlier monitored attempt')}.`
+                    : 'Monitoring is currently off for this quiz. Enable it in Settings or inspect attempt records.')}
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant={monSummary?.awaiting_review > 0 ? 'primary' : 'secondary'} onClick={() => setTab('monitoring')}>
+            Open monitoring &amp; activity
+          </Button>
+        </div>
+      )}
 
-      <Tabs label="Quiz sections" value={tab} onChange={setTab} tabs={TABS} />
+      <Tabs label="Quiz sections" value={tab} onChange={setTab} tabs={tabs} />
       <div className="lc-tabpanel" role="tabpanel" key={tab}>
         {tab === 'review' && <ItemsPanel quiz={quiz} setQuiz={d.setData} reload={d.reload} onNext={() => setTab('settings')} />}
         {tab === 'settings' && (
@@ -102,7 +137,8 @@ export default function QuizDetail() {
           }} />
         )}
         {tab === 'publish' && <PublishPanel quiz={quiz} setQuiz={d.setData} goTo={setTab} />}
-        {tab === 'export' && <QuizExport quiz={quiz} />}
+        {tab === 'export' && <QuizExport quiz={quiz} goTo={setTab} />}
+        {tab === 'monitoring' && <MonitoringReport quiz={quiz} goTo={setTab} onChanged={d.reload} />}
       </div>
 
       <ConfirmDialog open={confirm === 'unpublish'} onClose={() => setConfirm(null)} loading={busy} confirmLabel="Unpublish" title="Unpublish this quiz?"
@@ -343,6 +379,8 @@ function PublishPanel({ quiz, setQuiz, goTo }) {
               </li>
             ))}
           </ul>
+          {quiz.generation_run_id && <AgentLog load={generationLog(quiz.generation_run_id)} title="How these questions were generated"
+            summary="The Question Quality Agent's tools and decisions for this quiz. It only saves drafts; publishing is your action." />}
           {error && <Alert tone="error" title="The quiz was not published">{error}</Alert>}
           {draft ? (
             <div className="stack" style={{ marginTop: 'var(--space-4)' }}>

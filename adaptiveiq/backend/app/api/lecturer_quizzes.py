@@ -3,7 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.deps import get_db, require_lecturer, verified_lecturer
+from app.api.questions import math_block_reason
+from app.core.config import Settings
+from app.core.deps import get_db, get_settings_dep, require_lecturer, verified_lecturer
 from app.models import Quiz, QuizAssignment, QuizQuestion, QuizSession, Subject, User
 from app.models.base import utcnow
 from app.schemas.quizzes import ItemsUpdate, QuizDetail, QuizOut, QuizSettings
@@ -24,13 +26,23 @@ def _renumber(z: Quiz):
     z.max_marks = float(sum(i.marks for i in z.items))
 
 
-def validate_for_publish(db: Session, z: Quiz) -> list[str]:
+def validate_for_publish(db: Session, z: Quiz, math_check_enabled: bool = True) -> list[str]:
     problems = []
     if not z.items:
         problems.append("The quiz has no questions.")
-    not_ok = [i.position + 1 for i in z.items if i.question.review_status != "approved"]
+    not_ok = [
+        i.position + 1
+        for i in z.items
+        if i.question.review_status != "approved"
+        or (i.question.validation or {}).get("quarantined")
+        or (i.question.validation or {}).get("quarantine_recheck_required")
+    ]
     if not_ok:
         problems.append(f"Approve or remove question(s) {', '.join(map(str, not_ok))} first.")
+    bad_math = [i.position + 1 for i in z.items if math_block_reason(i.question, math_check_enabled)]
+    if bad_math:
+        problems.append(f"Question(s) {', '.join(map(str, bad_math))} have failed or unchecked mathematical verification; "
+                        "fix and re-check them before publishing.")
     if z.course_id is None:
         problems.append("Choose a course.")
     if z.opens_at and z.due_at and z.opens_at >= z.due_at:
@@ -68,7 +80,8 @@ def get_quiz(quiz_id: int, user: User = Depends(require_lecturer), db: Session =
 
 
 @router.patch("/{quiz_id}", response_model=QuizDetail)
-def update_settings(quiz_id: int, body: QuizSettings, user: User = Depends(require_lecturer), db: Session = Depends(get_db)):
+def update_settings(quiz_id: int, body: QuizSettings, user: User = Depends(require_lecturer),
+                    db: Session = Depends(get_db), s: Settings = Depends(get_settings_dep)):
     z = perm.own_quiz(db, user, quiz_id)
     if z.status not in ("draft", "published"):
         raise HTTPException(409, "This quiz can no longer be changed.")
@@ -85,7 +98,7 @@ def update_settings(quiz_id: int, body: QuizSettings, user: User = Depends(requi
     if z.late_policy == "none":
         z.closes_at = None
     if z.status == "published":
-        problems = validate_for_publish(db, z)
+        problems = validate_for_publish(db, z, s.math_check)
         if problems:
             db.rollback()
             raise HTTPException(422, " ".join(problems))
@@ -109,6 +122,8 @@ def update_items(quiz_id: int, body: ItemsUpdate, user: User = Depends(require_l
         q = perm.own_question(db, user, qid)
         if q.review_status == "personal":
             raise HTTPException(422, "Personal practice questions cannot be added to an assessment.")
+        if q.review_status == "rejected" or (q.validation or {}).get("quarantined"):
+            raise HTTPException(422, "Rejected or quarantined questions cannot be added to a quiz.")
         if any(i.question_id == q.id for i in z.items):
             continue
         z.items.append(QuizQuestion(question_id=q.id, position=len(z.items) + 1000, marks=1.0))
@@ -125,13 +140,14 @@ def update_items(quiz_id: int, body: ItemsUpdate, user: User = Depends(require_l
 
 
 @router.post("/{quiz_id}/publish", response_model=QuizDetail)
-def publish(quiz_id: int, user: User = Depends(verified_lecturer), db: Session = Depends(get_db)):
+def publish(quiz_id: int, user: User = Depends(verified_lecturer), db: Session = Depends(get_db),
+            s: Settings = Depends(get_settings_dep)):
     z = perm.own_quiz(db, user, quiz_id)
     if z.status != "draft":
         raise HTTPException(409, f"Only a draft can be published (this quiz is {z.status}).")
     if z.course_id:
         perm.own_course(db, user, z.course_id)
-    problems = validate_for_publish(db, z)
+    problems = validate_for_publish(db, z, s.math_check)
     if problems:
         raise HTTPException(422, " ".join(problems))
     z.status, z.published_at = "published", utcnow()

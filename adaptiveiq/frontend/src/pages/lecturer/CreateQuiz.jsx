@@ -5,6 +5,7 @@ import { lecturerApi } from '../../api/endpoints'
 import { useApi } from '../../api/useApi'
 import { useGenerationRun } from '../../hooks/useGenerationRun'
 import { useModelHealth } from '../../hooks/useModelHealth'
+import DocumentSourcePicker from '../../components/quiz/DocumentSourcePicker'
 import GenerationProgress from '../../components/quiz/GenerationProgress'
 import {
   Alert, Button, Card, Checkbox, EmptyState, ErrorState, Field, Input, LoadingBlock, PageHeader, Segmented, Select, Textarea, useToast,
@@ -33,7 +34,7 @@ export default function CreateQuiz() {
   return (
     <div className="lc-page">
       <PageHeader eyebrow="AI quiz builder" title="Create a quiz"
-        subtitle="Pick a topic, let the model draft questions, then review every one before it can be published." />
+        subtitle="Pick a topic or upload study material, let the model draft questions, then review every one before it can be published." />
       <Stepper current={stored ? 1 : 0} />
       {stored ? (
         <GenerateStep stored={stored} onReset={() => save(null)}
@@ -57,8 +58,11 @@ function SetupStep({ courses, onStarted }) {
   const { notify } = useToast()
   const [v, setV] = useState({
     subject: '', unit: '', topic: '', objectives: [], title: '', count: '10', mode: 'mixed',
-    dist: { easy: '3', medium: '4', hard: '3' }, reference: '', duration: '', marks: '1',
+    dist: { easy: '3', medium: '4', hard: '3' }, sourceMode: 'topic', reference: '', focusTopic: '', duration: '', marks: '1',
   })
+  const [doc, setDoc] = useState(null)
+  const [docSection, setDocSection] = useState('')
+  const [docBusy, setDocBusy] = useState(false)
   const [touched, setTouched] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
@@ -94,30 +98,40 @@ function SetupStep({ courses, onStarted }) {
     if (v.title.trim().length < 2) p.title = 'Give the quiz a title.'
     if (!(Number.isInteger(count) && count >= 1 && count <= 30)) p.count = 'Choose 1 to 30 questions.'
     if (v.mode === 'custom' && distTotal !== count) p.dist = `The mix adds up to ${distTotal}, not ${v.count || 0}.`
-    if (v.reference.trim() && refWords < REF_MIN_WORDS) p.reference = `Reference material needs at least ${REF_MIN_WORDS} words (now ${refWords}), or leave it empty.`
+    if (v.sourceMode === 'document') {
+      if (!doc?.document_id) p.document = 'Upload a PDF, DOCX, or TXT file first.'
+    } else if (v.reference.trim() && refWords < REF_MIN_WORDS) {
+      p.reference = `Reference material needs at least ${REF_MIN_WORDS} words (now ${refWords}), or leave it empty.`
+    }
     if (v.duration && !(Number(v.duration) >= 1 && Number(v.duration) <= 300)) p.duration = 'Use 1 to 300 minutes.'
     if (!(Number(v.marks) > 0 && Number(v.marks) <= 100)) p.marks = 'Use a number above 0, up to 100.'
     return p
-  }, [topic, v, count, distTotal, refWords])
+  }, [topic, v, count, distTotal, refWords, doc])
   const show = touched ? problems : {}
 
   const submit = async (e) => {
     e.preventDefault()
     setTouched(true)
     setError(null)
-    if (Object.keys(problems).length) return
+    if (docBusy || Object.keys(problems).length) return
+    const isDoc = v.sourceMode === 'document'
     const body = {
       course_id: Number(courseId), subject_id: Number(v.subject), topic_id: Number(v.topic), title: v.title.trim(),
       question_count: count, difficulty: v.mode === 'custom' ? 'mixed' : v.mode,
       distribution: v.mode === 'custom' ? { easy: Number(v.dist.easy) || 0, medium: Number(v.dist.medium) || 0, hard: Number(v.dist.hard) || 0 } : null,
-      reference_text: v.reference.trim() || null, objective_ids: v.objectives.map(Number),
+      source_mode: v.sourceMode,
+      reference_text: isDoc ? null : (v.reference.trim() || null),
+      document_id: isDoc ? doc.document_id : null,
+      document_section: isDoc ? (docSection || null) : null,
+      focus_topic: isDoc ? (v.focusTopic.trim() || null) : null,
+      objective_ids: v.objectives.map(Number),
       target_duration_min: v.duration ? Number(v.duration) : null, marks_each: Number(v.marks),
     }
     setBusy(true)
     try {
       const run = await lecturerApi.generate(body)
       notify('Generation started')
-      onStarted({ runId: run.run_id, quizId: run.quiz_id, title: body.title, topic: topic.name })
+      onStarted({ runId: run.run_id, quizId: run.quiz_id, title: body.title, topic: topic.name, docName: isDoc ? doc.filename : null })
     } catch (err) {
       setError(errText(err))
     } finally {
@@ -224,12 +238,66 @@ function SetupStep({ courses, onStarted }) {
           )}
           {v.mode === 'mixed' && <p className="faint lc-small">A balanced spread of easy, medium and hard questions.</p>}
         </div>
-        <div style={{ marginTop: 'var(--space-4)' }}>
-          <Field label="Reference material (optional)" error={show.reference}
-            hint={`Paste lecture notes or a textbook passage (at least ${REF_MIN_WORDS} words). Questions are then checked against it. ${v.reference.length.toLocaleString()} / ${REF_MAX.toLocaleString()} characters.`}>
-            {(a) => <Textarea {...a} rows={6} maxLength={REF_MAX} value={v.reference} onChange={(e) => set('reference', e.target.value)}
-              placeholder="Without reference material the model first writes short study notes on the topic and grounds the questions in them." />}
-          </Field>
+
+        <div className="stack" style={{ marginTop: 'var(--space-5)', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--border)' }}>
+          <div className="field">
+            <span className="field__label">Generation mode</span>
+            <Segmented
+              name="sourceMode"
+              label="Generation mode"
+              value={v.sourceMode}
+              onChange={(m) => set('sourceMode', m)}
+              options={[
+                { value: 'topic', label: 'Topic / Text' },
+                { value: 'document', label: 'Upload File' },
+              ]}
+            />
+            <p className="field__hint">
+              {v.sourceMode === 'document'
+                ? 'Generate MCQs grounded strictly in an uploaded PDF, DOCX, or TXT document.'
+                : 'Generate from the selected topic, optionally with pasted lecture notes or textbook excerpts.'}
+            </p>
+          </div>
+
+          {v.sourceMode === 'topic' ? (
+            <Field label="Reference material (optional)" error={show.reference}
+              hint={`Paste lecture notes or a textbook passage (at least ${REF_MIN_WORDS} words). Questions are then checked against it. ${v.reference.length.toLocaleString()} / ${REF_MAX.toLocaleString()} characters.`}>
+              {(a) => <Textarea {...a} rows={6} maxLength={REF_MAX} value={v.reference} onChange={(e) => set('reference', e.target.value)}
+                placeholder="Without reference material the model first writes short study notes on the topic and grounds the questions in them." />}
+            </Field>
+          ) : (
+            <div className="stack">
+              <DocumentSourcePicker
+                doc={doc}
+                onDocChange={setDoc}
+                section={docSection}
+                onSectionChange={setDocSection}
+                busy={docBusy}
+                onBusyChange={setDocBusy}
+                externalError={show.document}
+              />
+              <Field
+                label="Topic or chapter focus (optional)"
+                hint="Optional keywords to prioritise matching passages inside the uploaded document."
+              >
+                {(a) => (
+                  <Input
+                    {...a}
+                    value={v.focusTopic}
+                    onChange={(e) => set('focusTopic', e.target.value)}
+                    maxLength={200}
+                    placeholder={topic ? `e.g. ${topic.name}` : 'Optional focus topic'}
+                  />
+                )}
+              </Field>
+              {doc && Number.isInteger(count) && count > doc.recommended_max_questions && (
+                <Alert tone="warning" title="More questions requested than document size">
+                  This document supports up to about {doc.recommended_max_questions} grounded questions ({doc.word_count.toLocaleString()} words).
+                  The generator may produce fewer than {count} questions if the document lacks enough supported material.
+                </Alert>
+              )}
+            </div>
+          )}
         </div>
       </Card>
 
@@ -241,7 +309,7 @@ function SetupStep({ courses, onStarted }) {
       {error && <Alert tone="error" title="Could not start generation">{error}</Alert>}
       {touched && Object.keys(problems).length > 0 && <Alert tone="error">Fix the highlighted fields first.</Alert>}
       <div className="row" style={{ justifyContent: 'flex-end' }}>
-        <Button type="submit" variant="primary" size="lg" icon={Sparkles} loading={busy} disabled={noTopics}>Generate questions</Button>
+        <Button type="submit" variant="primary" size="lg" icon={Sparkles} loading={busy} disabled={noTopics || docBusy}>Generate questions</Button>
       </div>
     </form>
   )
@@ -258,7 +326,8 @@ function GenerateStep({ stored, onReset, onReview }) {
     try { await cancel() } catch (e) { notify(errText(e), 'error') } finally { setCancelling(false) }
   }
   return (
-    <Card className="appear" title={`Generating “${stored.title}”`} subtitle={`${stored.topic}. Every question goes through format, duplicate and answer checks; failed outputs are retried automatically. You can leave this page and come back.`}>
+    <Card className="appear" title={`Generating “${stored.title}”`}
+      subtitle={`${stored.topic}${stored.docName ? ` · ${stored.docName}` : ''}. Every question goes through format, duplicate, grounding and answer checks; failed outputs are retried automatically. You can leave this page and come back.`}>
       {!run && !error && <LoadingBlock rows={2} label="Connecting to the generation run" />}
       {error && !run && (
         <ErrorState error={error} title="Could not load the generation run"

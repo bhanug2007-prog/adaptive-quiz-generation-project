@@ -1879,6 +1879,90 @@
     }
    }
   },
+  "/api/lecturer/questions/{question_id}/check-quality": {
+   "post": {
+    "tags": [
+     "question bank"
+    ],
+    "summary": "Check Quality",
+    "description": "Runs the Python checks and, when available, the AI review again on the question as it is now\n(for example after an edit). Clears \"Failed checks\" only when the check that failed now passes.",
+    "operationId": "check_quality_api_lecturer_questions__question_id__check_quality_post",
+    "parameters": [
+     {
+      "name": "question_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Question Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/QuestionFull"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/lecturer/questions/{question_id}/evaluations": {
+   "get": {
+    "tags": [
+     "question bank"
+    ],
+    "summary": "Evaluations",
+    "description": "The quality-check log of a question, newest first.",
+    "operationId": "evaluations_api_lecturer_questions__question_id__evaluations_get",
+    "parameters": [
+     {
+      "name": "question_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Question Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/lecturer/questions/{question_id}/duplicate": {
    "post": {
     "tags": [
@@ -2585,6 +2669,23 @@
       }
      }
     ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "anyOf": [
+         {
+          "$ref": "#/components/schemas/StartRequest"
+         },
+         {
+          "type": "null"
+         }
+        ],
+        "title": "Body"
+       }
+      }
+     }
+    },
     "responses": {
      "200": {
       "description": "Successful Response",
@@ -4293,6 +4394,437 @@
      }
     }
    }
+  },
+  "/api/lecturer/insights/ask": {
+   "post": {
+    "tags": [
+     "agents"
+    ],
+    "summary": "Ask",
+    "operationId": "ask_api_lecturer_insights_ask_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AskRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/lecturer/insights/history": {
+   "get": {
+    "tags": [
+     "agents"
+    ],
+    "summary": "History",
+    "operationId": "history_api_lecturer_insights_history_get",
+    "parameters": [
+     {
+      "name": "course_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Course Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/lecturer/agent-runs/{run_id}": {
+   "get": {
+    "tags": [
+     "agents"
+    ],
+    "summary": "Agent Run",
+    "operationId": "agent_run_api_lecturer_agent_runs__run_id__get",
+    "parameters": [
+     {
+      "name": "run_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Run Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/lecturer/generation/{run_id}/agent": {
+   "get": {
+    "tags": [
+     "agents"
+    ],
+    "summary": "Generation Agent",
+    "description": "The Question Quality Agent's steps for one generation run of this lecturer.",
+    "operationId": "generation_agent_api_lecturer_generation__run_id__agent_get",
+    "parameters": [
+     {
+      "name": "run_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Run Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/student/attempts/{session_id}/monitoring/devices": {
+   "post": {
+    "tags": [
+     "monitoring"
+    ],
+    "summary": "Devices",
+    "operationId": "devices_api_student_attempts__session_id__monitoring_devices_post",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DevicesIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/student/attempts/{session_id}/monitoring/events": {
+   "post": {
+    "tags": [
+     "monitoring"
+    ],
+    "summary": "Upload",
+    "operationId": "upload_api_student_attempts__session_id__monitoring_events_post",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EventsIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/student/attempts/{session_id}/monitoring": {
+   "get": {
+    "tags": [
+     "monitoring"
+    ],
+    "summary": "My Record",
+    "description": "Transparency: the student can see every event recorded about their attempt.",
+    "operationId": "my_record_api_student_attempts__session_id__monitoring_get",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/lecturer/quizzes/{quiz_id}/monitoring": {
+   "get": {
+    "tags": [
+     "monitoring"
+    ],
+    "summary": "Quiz Report",
+    "operationId": "quiz_report_api_lecturer_quizzes__quiz_id__monitoring_get",
+    "parameters": [
+     {
+      "name": "quiz_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Quiz Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/lecturer/monitoring/{monitoring_id}": {
+   "get": {
+    "tags": [
+     "monitoring"
+    ],
+    "summary": "Timeline",
+    "operationId": "timeline_api_lecturer_monitoring__monitoring_id__get",
+    "parameters": [
+     {
+      "name": "monitoring_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Monitoring Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/lecturer/monitoring/{monitoring_id}/review": {
+   "post": {
+    "tags": [
+     "monitoring"
+    ],
+    "summary": "Review",
+    "operationId": "review_api_lecturer_monitoring__monitoring_id__review_post",
+    "parameters": [
+     {
+      "name": "monitoring_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Monitoring Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ReviewIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
   }
  },
  "components": {
@@ -4338,6 +4870,37 @@
     },
     "type": "object",
     "title": "AnswerSave"
+   },
+   "AskRequest": {
+    "properties": {
+     "course_id": {
+      "type": "integer",
+      "title": "Course Id"
+     },
+     "quiz_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quiz Id"
+     },
+     "question": {
+      "type": "string",
+      "maxLength": 500,
+      "minLength": 3,
+      "title": "Question"
+     }
+    },
+    "type": "object",
+    "required": [
+     "course_id",
+     "question"
+    ],
+    "title": "AskRequest"
    },
    "AttemptOption": {
     "properties": {
@@ -4428,6 +4991,18 @@
      "can_check_answers": {
       "type": "boolean",
       "title": "Can Check Answers"
+     },
+     "monitoring": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Monitoring"
      },
      "questions": {
       "items": {
@@ -4965,6 +5540,34 @@
     "type": "object",
     "title": "CourseUpdate"
    },
+   "DevicesIn": {
+    "properties": {
+     "camera": {
+      "type": "string",
+      "enum": [
+       "granted",
+       "denied",
+       "unavailable",
+       "not_requested"
+      ],
+      "title": "Camera",
+      "default": "not_requested"
+     },
+     "microphone": {
+      "type": "string",
+      "enum": [
+       "granted",
+       "denied",
+       "unavailable",
+       "not_requested"
+      ],
+      "title": "Microphone",
+      "default": "not_requested"
+     }
+    },
+    "type": "object",
+    "title": "DevicesIn"
+   },
    "Distribution": {
     "properties": {
      "easy": {
@@ -5142,6 +5745,69 @@
      "not_found"
     ],
     "title": "EnrollResult"
+   },
+   "EventIn": {
+    "properties": {
+     "seq": {
+      "type": "integer",
+      "maximum": 1000000.0,
+      "minimum": 0.0,
+      "title": "Seq"
+     },
+     "kind": {
+      "type": "string",
+      "maxLength": 30,
+      "title": "Kind"
+     },
+     "at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "At"
+     },
+     "duration_ms": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 86400000.0,
+        "minimum": 0.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration Ms"
+     },
+     "details": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Details"
+     }
+    },
+    "type": "object",
+    "required": [
+     "seq",
+     "kind",
+     "at"
+    ],
+    "title": "EventIn"
+   },
+   "EventsIn": {
+    "properties": {
+     "events": {
+      "items": {
+       "$ref": "#/components/schemas/EventIn"
+      },
+      "type": "array",
+      "maxItems": 200,
+      "minItems": 1,
+      "title": "Events"
+     }
+    },
+    "type": "object",
+    "required": [
+     "events"
+    ],
+    "title": "EventsIn"
    },
    "HTTPValidationError": {
     "properties": {
@@ -6214,6 +6880,26 @@
       ],
       "title": "Target Duration Min"
      },
+     "monitor_tab": {
+      "type": "boolean",
+      "title": "Monitor Tab",
+      "default": false
+     },
+     "monitor_fullscreen": {
+      "type": "string",
+      "title": "Monitor Fullscreen",
+      "default": "off"
+     },
+     "monitor_camera": {
+      "type": "boolean",
+      "title": "Monitor Camera",
+      "default": false
+     },
+     "monitor_microphone": {
+      "type": "boolean",
+      "title": "Monitor Microphone",
+      "default": false
+     },
      "created_at": {
       "type": "string",
       "format": "date-time",
@@ -6527,6 +7213,26 @@
       ],
       "title": "Target Duration Min"
      },
+     "monitor_tab": {
+      "type": "boolean",
+      "title": "Monitor Tab",
+      "default": false
+     },
+     "monitor_fullscreen": {
+      "type": "string",
+      "title": "Monitor Fullscreen",
+      "default": "off"
+     },
+     "monitor_camera": {
+      "type": "boolean",
+      "title": "Monitor Camera",
+      "default": false
+     },
+     "monitor_microphone": {
+      "type": "boolean",
+      "title": "Monitor Microphone",
+      "default": false
+     },
      "created_at": {
       "type": "string",
       "format": "date-time",
@@ -6799,6 +7505,55 @@
        }
       ],
       "title": "Target Duration Min"
+     },
+     "monitor_tab": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Monitor Tab"
+     },
+     "monitor_fullscreen": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "off",
+         "record",
+         "required"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Monitor Fullscreen"
+     },
+     "monitor_camera": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Monitor Camera"
+     },
+     "monitor_microphone": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Monitor Microphone"
      }
     },
     "type": "object",
@@ -7166,6 +7921,39 @@
     ],
     "title": "ReviewAction"
    },
+   "ReviewIn": {
+    "properties": {
+     "review": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "no_concern",
+         "follow_up"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Review"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 1000
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     }
+    },
+    "type": "object",
+    "title": "ReviewIn"
+   },
    "ReviewItem": {
     "properties": {
      "question_id": {
@@ -7456,6 +8244,18 @@
        }
       ],
       "title": "Difficulty Note"
+     },
+     "quality": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quality"
      }
     },
     "type": "object",
@@ -7524,6 +8324,17 @@
      "checked"
     ],
     "title": "SavedAnswer"
+   },
+   "StartRequest": {
+    "properties": {
+     "monitoring_consent": {
+      "type": "boolean",
+      "title": "Monitoring Consent",
+      "default": false
+     }
+    },
+    "type": "object",
+    "title": "StartRequest"
    },
    "StudentQuizCard": {
     "properties": {
@@ -7691,6 +8502,18 @@
       "type": "string",
       "format": "date-time",
       "title": "Created At"
+     },
+     "monitoring": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Monitoring"
      }
     },
     "type": "object",

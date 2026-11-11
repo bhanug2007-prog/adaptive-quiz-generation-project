@@ -1,8 +1,12 @@
 import { defineConfig, devices } from '@playwright/test'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 // End-to-end test against a real backend that uses the TEST-ONLY fake model and an empty SQLite file.
 const BACKEND = 8190
 const WEB = 5190
+const venvPython = resolve('../backend/.venv', process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python')
+const python = process.env.PLAYWRIGHT_PYTHON || (existsSync(venvPython) ? venvPython : 'python')
 
 export default defineConfig({
   testDir: './e2e',
@@ -20,7 +24,8 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      command: `bash ../backend/scripts/dev_fake_stack.sh ${BACKEND} ${BACKEND + 1} http://localhost:${WEB}`,
+      command: `"${python}" -m scripts.monitoring_test_server ${BACKEND} ${BACKEND + 1} http://localhost:${WEB}`,
+      cwd: resolve('../backend'),
       env: { SEED: '0' },
       url: `http://127.0.0.1:${BACKEND}/api/health`,
       timeout: 60_000,

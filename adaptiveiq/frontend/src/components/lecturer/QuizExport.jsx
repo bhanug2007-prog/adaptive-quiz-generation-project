@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ClipboardCopy, Download, ExternalLink, FileText } from 'lucide-react'
+import { ClipboardCopy, Download, ExternalLink, FileText, ShieldCheck } from 'lucide-react'
 import { lecturerApi } from '../../api/endpoints'
 import { useApi } from '../../api/useApi'
 import { Alert, Badge, Button, Card, LoadingBlock, Textarea, useToast } from '../ui'
@@ -134,10 +134,27 @@ function GoogleForms({ quiz, allApproved }) {
   )
 }
 
-export default function QuizExport({ quiz }) {
+export default function QuizExport({ quiz, goTo }) {
   const allApproved = quiz.question_count > 0 && (quiz.review_counts?.approved || 0) === quiz.question_count
   return (
     <div className="stack-lg">
+      <Card title="Monitoring & assessment activity"
+        subtitle="Tab/window leaves, camera face checks, microphone audio activity, device permission status, and manual review notes.">
+        <div className="row-between" style={{ flexWrap: 'wrap', gap: 12 }}>
+          <p className="muted lc-small">
+            Inspect student-wise monitoring counts, chronological event timelines, and record manual review outcomes.
+          </p>
+          {goTo ? (
+            <Button icon={ShieldCheck} variant="secondary" onClick={() => goTo('monitoring')}>
+              Open monitoring &amp; activity
+            </Button>
+          ) : (
+            <Button icon={ShieldCheck} variant="secondary" to={`/lecturer/quizzes/${quiz.id}?step=monitoring`}>
+              Open monitoring &amp; activity
+            </Button>
+          )}
+        </div>
+      </Card>
       <Card title="CSV reports" subtitle="Only students and results you are allowed to see. Files open in Excel or Google Sheets.">
         <CsvButtons quiz={quiz} />
       </Card>

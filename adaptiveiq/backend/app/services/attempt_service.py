@@ -55,6 +55,11 @@ def start_attempt(db: Session, student: User, z: Quiz, s: Settings) -> QuizSessi
             return sess
     if z.status != "published":
         raise HTTPException(409, "This quiz is not available.")
+    if z.kind == "assessment" and any(
+        i.question.review_status != "approved" or (i.question.validation or {}).get("quarantined")
+        for i in z.items
+    ):
+        raise HTTPException(409, "This quiz is unavailable while invalid or unapproved questions remain.")
     state = quiz_state(z, existing, now)
     if state == "upcoming":
         raise HTTPException(409, "This quiz has not opened yet.")

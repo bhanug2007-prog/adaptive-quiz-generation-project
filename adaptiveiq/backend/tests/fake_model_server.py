@@ -5,13 +5,20 @@ import re
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-STATE = {"n": 0, "mode": "normal"}
+STATE = {"n": 0, "mode": "normal"}     # modes: normal, clean, varied, down
 
 
 def mcq(i):
-    if i % 5 == 1:   # broken format: should be rejected
+    clean = STATE["mode"] in ("clean", "varied")   # "clean": every question passes the Python checks
+    if STATE["mode"] == "varied":        # "varied": clean, and every stem is made of different made-up words,
+        import random                    # so many quizzes on one topic never trip the duplicate check
+        rng = random.Random(i)
+        words = ["".join(rng.choice("bcdfghklmnprstvz") + rng.choice("aeiou") for _ in range(3)) for _ in range(6)]
+        return (f"question: Which {' '.join(words)}? options: (A) Option alpha {i} (B) Option beta {i} "
+                f"(C) Option gamma {i} (D) Option delta {i} answer: B explanation: Beta {i} is correct because of reason {i}.")
+    if i % 5 == 1 and not clean:   # broken format: should be rejected
         return "Here is a question about the topic."
-    if i % 5 == 3:   # wrong maths key: radar range keyed 150 km, correct 15 km
+    if i % 5 == 3 and not clean:   # wrong maths key: radar range keyed 150 km, correct 15 km
         return ("question: A radar has PRF 10 kHz. What is its maximum unambiguous range? options: (A) 1.5 km (B) 15 km "
                 "(C) 150 km (D) 1500 km answer: C explanation: R = c/(2 PRF) = 150 km.")
     stems = ["Which scheduler can starve long jobs", "What does a larger time quantum turn round robin into",

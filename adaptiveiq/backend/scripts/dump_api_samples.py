@@ -207,6 +207,127 @@ def main():
         sys.exit(1)
 
 
+def quality_samples():
+    """Only the AI-review samples (python -m scripts.dump_api_samples --quality), using the TEST-ONLY fake
+    model and fake Grok server: a 1 easy + 1 hard request where the fake reviewer judges everything hard."""
+    from tests import fake_grok_server
+    mp, gp = port(), port()
+    fake_model_server.start(mp)
+    fake_grok_server.start(gp)
+    tmp = tempfile.mkdtemp()
+    s = Settings(_env_file=None, environment="test", database_url=f"sqlite:///{tmp}/samples.db",
+                 model_base_url=f"http://127.0.0.1:{mp}", lecturer_invite_code=INVITE, secret_key="sample-" + "x" * 40,
+                 require_email_verification=False, grok_api_key="sample-key", grok_base_url=f"http://127.0.0.1:{gp}",
+                 grok_model="grok-test")
+    app = create_app(s)
+    Base.metadata.create_all(app.state.db.engine)
+    with TestClient(app) as c:
+        c.headers.update({"X-Requested-With": "AdaptiveIQ"})
+        c.post("/api/auth/register", json={"email": "lecturer@example.edu", "password": "Passw0rd1",
+                                           "full_name": "Sample Lecturer", "role": "lecturer", "invite_code": INVITE})
+        course = c.post("/api/lecturer/courses", json={"code": "CS301", "title": "Operating Systems"}).json()
+        subj = c.post(f"/api/lecturer/courses/{course['id']}/subjects", json={"name": "Operating Systems"}).json()
+        unit = c.post(f"/api/lecturer/subjects/{subj['id']}/units", json={"name": "Unit 2: Scheduling"}).json()
+        topic = c.post(f"/api/lecturer/units/{unit['id']}/topics", json={"name": "CPU Scheduling"}).json()
+        fake_model_server.STATE.update(mode="clean", n=0)
+        fake_grok_server.reset("hard")
+        r = c.post("/api/lecturer/generate", json={
+            "course_id": course["id"], "subject_id": subj["id"], "topic_id": topic["id"], "title": "Scheduling quiz",
+            "question_count": 2, "difficulty": "mixed", "distribution": {"easy": 1, "medium": 0, "hard": 1}})
+        run_id = r.json()["run_id"]
+        wait(c, run_id)
+        saved = {}
+        path = f"/api/generation/{run_id}"
+        resp = c.get(path)
+        saved["generation_status_quality_mismatch"] = {"method": "GET", "path": path, "status": resp.status_code,
+                                                       "body": resp.json()}
+        items = c.get(f"/api/lecturer/quizzes/{resp.json()['quiz_id']}").json()["items"]
+        for it in items:
+            q = it["question"]
+            name = "lecturer_question_failed_checks" if q["validation"].get("failed_validation") else "lecturer_question_ai_passed"
+            path = f"/api/lecturer/questions/{q['id']}"
+            r = c.get(path)
+            saved[name] = {"method": "GET", "path": path, "status": r.status_code, "body": r.json()}
+    for name, data in saved.items():
+        (OUT / f"{name}.json").write_text(json.dumps(data, indent=2, default=str) + "\n", encoding="utf-8")
+        print("wrote", name)
+
+
+def agents_samples():
+    """Only the agent samples (python -m scripts.dump_api_samples --agents), using the TEST-ONLY fake model
+    and fake Grok server: a generation step log, and one "Ask about your class" answer with and without the AI."""
+    from tests import fake_grok_server
+    mp, gp = port(), port()
+    fake_model_server.start(mp)
+    fake_grok_server.start(gp)
+    tmp = tempfile.mkdtemp()
+    s = Settings(_env_file=None, environment="test", database_url=f"sqlite:///{tmp}/samples.db",
+                 model_base_url=f"http://127.0.0.1:{mp}", lecturer_invite_code=INVITE, secret_key="sample-" + "x" * 40,
+                 require_email_verification=False, quality_check=False, grok_api_key="sample-key",
+                 grok_base_url=f"http://127.0.0.1:{gp}", grok_model="grok-test")
+    app = create_app(s)
+    Base.metadata.create_all(app.state.db.engine)
+    saved = {}
+
+    def keep(name, c, method, path, **kw):
+        r = c.request(method, path, **kw)
+        saved[name] = {"method": method, "path": path, "status": r.status_code, "body": r.json()}
+        return r.json()
+
+    with TestClient(app) as c, TestClient(app) as s1, TestClient(app) as s2:
+        for x in (c, s1, s2):
+            x.headers.update({"X-Requested-With": "AdaptiveIQ"})
+        c.post("/api/auth/register", json={"email": "lecturer@example.edu", "password": "Passw0rd1",
+                                           "full_name": "Sample Lecturer", "role": "lecturer", "invite_code": INVITE})
+        course = c.post("/api/lecturer/courses", json={"code": "CS301", "title": "Operating Systems"}).json()
+        subj = c.post(f"/api/lecturer/courses/{course['id']}/subjects", json={"name": "Operating Systems"}).json()
+        unit = c.post(f"/api/lecturer/subjects/{subj['id']}/units", json={"name": "Unit 2: Scheduling"}).json()
+        topic = c.post(f"/api/lecturer/units/{unit['id']}/topics", json={"name": "CPU Scheduling"}).json()
+        fake_model_server.STATE.update(mode="normal", n=0)        # includes a broken reply, so a retry is logged
+        r = c.post("/api/lecturer/generate", json={
+            "course_id": course["id"], "subject_id": subj["id"], "topic_id": topic["id"], "title": "Scheduling quiz",
+            "question_count": 5, "difficulty": "mixed"})
+        run_id = r.json()["run_id"]
+        wait(c, run_id)
+        keep("generation_agent_steps", c, "GET", f"/api/lecturer/generation/{run_id}/agent")
+        quiz_id = c.get(f"/api/generation/{run_id}").json()["quiz_id"]
+        full = c.get(f"/api/lecturer/quizzes/{quiz_id}").json()["items"]
+        for it in full:
+            c.post(f"/api/lecturer/questions/{it['question']['id']}/review", json={"action": "approve"})
+        c.patch(f"/api/lecturer/quizzes/{quiz_id}", json={"contribution_pct": 10})
+        c.post(f"/api/lecturer/quizzes/{quiz_id}/publish")
+        key = {it["question"]["id"]: it["question"] for it in full}
+        for st, name, right in ((s1, "Sample Student A", 4), (s2, "Sample Student B", 1)):
+            st.post("/api/auth/register", json={"email": f"{name[-1].lower()}@example.edu", "password": "Passw0rd1",
+                                                "full_name": name, "role": "student"})
+            st.post("/api/student/courses/join", json={"join_code": course["join_code"]})
+            att = st.post(f"/api/student/quizzes/{quiz_id}/start").json()
+            for i, q in enumerate(att["questions"]):
+                oid = next(o["id"] for o in key[q["question_id"]]["options"] if o["is_correct"] == (i < right))
+                st.put(f"/api/student/attempts/{att['session_id']}/answers/{q['question_id']}",
+                       json={"option_id": oid, "time_spent_s": 20})
+            st.post(f"/api/student/attempts/{att['session_id']}/submit")
+        fake_grok_server.reset("pass")
+        fake_grok_server.STATE["script"] = [
+            json.dumps({"tools": [{"name": "get_student_performance", "args": {}},
+                                  {"name": "get_class_analytics", "args": {}}],
+                        "reason": "The question is about individual students and the class as a whole."}),
+            json.dumps({"answer": "Student 2 scored lowest on Scheduling quiz; Student 1 did well.",
+                        "findings": ["2 students submitted the quiz."],
+                        "suggestions": ["Check in with Student 2 about CPU Scheduling."],
+                        "caveats": ["Each student has one submission, so this is little evidence."]}),
+        ]
+        body = {"course_id": course["id"], "question": "Which students need help?"}
+        ai = keep("insights_answer_ai", c, "POST", "/api/lecturer/insights/ask", json=body)
+        keep("insights_agent_run", c, "GET", f"/api/lecturer/agent-runs/{ai['agent_run_id']}")
+        app.state.quality.client = None                            # as with an empty GROK_API_KEY
+        keep("insights_answer_rules", c, "POST", "/api/lecturer/insights/ask", json=body)
+    for name, data in saved.items():
+        assert data["status"] == 200, (name, data)
+        (OUT / f"{name}.json").write_text(json.dumps(data, indent=2, default=str) + "\n", encoding="utf-8")
+        print("wrote", name)
+
+
 def live(base_url, invite):
     """Fills a running backend (started with the TEST-ONLY fake model) so the UI has something to show.
     That backend must run with REQUIRE_EMAIL_VERIFICATION=false, since nobody can open the email links."""
@@ -223,5 +344,12 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--live", help="base URL of a running backend that uses the fake model, e.g. http://127.0.0.1:8000")
     ap.add_argument("--invite", default=INVITE, help="LECTURER_INVITE_CODE of that backend")
+    ap.add_argument("--quality", action="store_true", help="write only the AI-review samples")
+    ap.add_argument("--agents", action="store_true", help="write only the agent samples")
     a = ap.parse_args()
-    live(a.live, a.invite) if a.live else main()
+    if a.agents:
+        agents_samples()
+    elif a.quality:
+        quality_samples()
+    else:
+        live(a.live, a.invite) if a.live else main()
