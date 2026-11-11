@@ -1,86 +1,6 @@
-# AdaptiveIQ
+# AdaptiveIQ — local setup and development
 
-AdaptiveIQ is an AI-assisted adaptive assessment platform. Lecturers build quizzes with a fine-tuned **Qwen2.5-7B** model, review and publish them, and see where their class is struggling. Students take assigned quizzes, generate their own practice, and get an explainable picture of what they know, with recommendations and spaced revision.
-
-A DSAI team project at IIIT Dharwad, guided by Dr. Utkarsh Mahadeo Khaire.
-
-```
-Browser (React 19 + Vite)  --/api-->  FastAPI backend  -->  PostgreSQL
-  landing page, portals                auth, permissions, quizzes, scoring,
-  never sees answer keys early         adaptive engine (app/ml), analytics
-                                            |
-                                            | question generation only
-                                            v
-                                     llama.cpp llama-server
-                                     qwen7b-mcq-Q4_K_M.gguf (OpenAI-compatible API)
-```
-
-The language model only writes questions. Mastery, weak areas, difficulty and recommendations come from a separate, explainable engine that never calls the model. More in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-## Demo
-
-**Video:** _add your demo video link here_ (2 to 3 minutes: lecturer generates and reviews a quiz, a student takes it,
-then progress, analytics and the monitoring report).
-
-| Lecturer | Student |
-|---|---|
-| ![Generating questions](docs/screenshots/generate.png) | ![Taking a quiz](docs/screenshots/quiz.png) |
-| ![Reviewing questions](docs/screenshots/review.png) | ![My Progress](docs/screenshots/progress.png) |
-| ![Class analytics](docs/screenshots/analytics.png) | ![Monitoring consent](docs/screenshots/monitoring_consent.png) |
-| ![Monitoring report](docs/screenshots/monitoring_report.png) | ![Recommendations](docs/screenshots/recommendations.png) |
-
-Screenshots go in `docs/screenshots/` with these names. The site was demonstrated locally and is not deployed: the
-7B model needs a GPU or a long CPU wait, so the project is shown through this video and the code.
-
-## Highlights
-
-- **Fine-tuned LLM for MCQ generation:** Qwen2.5-7B-Instruct fine-tuned with LoRA, quantised to GGUF (Q4_K_M,
-  4.7 GB) and served with llama.cpp through an OpenAI-compatible API.
-- **Question Quality Agent:** generates, validates (answer format, duplicates, a Python maths check), has an AI
-  reviewer (Grok) score each question, regenerates failures within a retry limit, and logs every decision. It never
-  publishes; a lecturer approves every question.
-- **Explainable adaptive engine** (no LLM): topic mastery with recency weighting, trend, weak areas, difficulty
-  adaptation, recommendations and spaced revision.
-- **Lecturer Insights Agent:** answers questions like "Which topics are hardest for my class?" from read-only database
-  tools, with the numbers checked against the data and students anonymised.
-- **Optional integrity monitoring** with consent: page leaves, full screen, face count with MediaPipe in the browser,
-  speech-like sound. Neutral wording, never labels anyone as cheating, no video or audio stored.
-- **Security:** roles and permissions on every route (checked by an automated sweep of all API routes), answer keys
-  never sent before submission, CSRF protection, rate limits, request size limits.
-
-## Tech stack
-
-React 19 + Vite · FastAPI · SQLAlchemy + Alembic · PostgreSQL 16 (or SQLite) · llama.cpp · Qwen2.5-7B (LoRA, GGUF) ·
-xAI Grok (question review) · MediaPipe · Docker Compose · pytest, Vitest, Playwright
-
-## Key results
-
-| What | Result |
-|---|---|
-| Real end-to-end run with the fine-tuned model (laptop CPU, 2 Nov 2026) | 54 of 54 checks passed; 10 questions with the requested 3/4/3 difficulty mix in 994 s (about 54 s per question) |
-| Hand check of those 10 questions | 7 fine, 2 with a wrong answer key, 1 duplicate in different words. This is why there is an AI reviewer and lecturer approval ([docs/QA_REPORT.md](docs/QA_REPORT.md)) |
-| Pilot model comparison (30 items, AI-assisted grading, preliminary) | 1.5B: 16/30 · 3B: 18/30 · 7B: 25/30 · fine-tuned 7B: 24/30. The 7B models are far ahead; the pilot cannot separate the 7B variants ([docs/ML_EVALUATION.md](docs/ML_EVALUATION.md)) |
-| Automated tests | 180 backend (SQLite and PostgreSQL), 97 frontend, 5 browser tests |
-| Performance (150 synthetic students) | Lecturer insights 0.43 s after removing an N+1 query problem (was 3.5 s) |
-
-## 1. What works, and how it was checked
-
-| Part | Status |
-|---|---|
-| Backend API (auth, courses, generation, review, quizzes, attempts, scoring, analytics, reports) | Done. 180 automated tests pass on PostgreSQL 16 and SQLite (`backend/tests`), including edge cases, simultaneous submits and sandbox escape attempts |
-| Adaptive engine: mastery, trend, weak areas, difficulty policy, recommendations, spaced revision, confidence, question statistics | Done. Unit tests plus simulations with synthetic students ([docs/ML_EVALUATION.md](docs/ML_EVALUATION.md)) |
-| Landing page, student portal, lecturer portal | Done. Build passes, 97 component tests, and two end-to-end browser tests (lecturer builds and publishes a quiz, student joins and takes it; a monitored quiz) pass with the stand-in model |
-| Email + password sign-in, email verification, lecturer invite code | Done and tested. Real SMTP delivery not tried yet |
-| AI question review (Grok) after the Python checks, with retries, kept failures, difficulty-mix check and a Python-only fallback | Done and tested with a stand-in Grok server, on SQLite and PostgreSQL; **not yet run with a real xAI key** ([docs/QUALITY_REVIEW.md](docs/QUALITY_REVIEW.md)) |
-| Two AI agents: the Question Quality Agent (runs generation with fixed tools and rule-based retry decisions, every step logged) and the Lecturer Insights Agent ("Ask about your class": read-only analytics tools, Grok optional, numbers checked against the data, students anonymised) | Done and tested with the stand-in model and a stand-in Grok server, on SQLite and PostgreSQL; **the Insights Agent is not yet run with a real xAI key** ([docs/AGENTS.md](docs/AGENTS.md)) |
-| Assessment integrity monitoring (optional per quiz): page leaves, full screen, camera face count with MediaPipe in the browser, speech-like sound; consent screen; neutral lecturer report and timeline; no video or audio stored | Done and tested (API on SQLite and PostgreSQL, components, and real Chromium with its fake camera and microphone); **not tried with real webcams and real people yet** ([docs/MONITORING.md](docs/MONITORING.md)) |
-| Model evaluation pipeline (base vs fine-tuned, blind human grading, McNemar test) | Done and tested with a stand-in model; **not yet run on the real models** |
-| Google Forms export | Code written; **not tested against Google** (needs an OAuth client). Manual export works |
-| Real Qwen model inside AdaptiveIQ | Run on the laptop with the GGUF model (November 2026): the full 20-step check passed (54/54), about 54 s per question on CPU. `python -m scripts.real_model_check` and `python -m scripts.full_flow_check` (section 4) do it in one command |
-| Docker Compose (database, backend, website) | Built and run on Linux Docker; the browser test passes against it ([docs/DOCKER.md](docs/DOCKER.md)) |
-| Qwen model container, Docker Desktop on Windows, Windows .bat scripts | Written; **not run yet** |
-
-The full list of what is missing is in [docs/ROADMAP.md](docs/ROADMAP.md).
+For the project overview, architecture diagram, and model-training links, see the [main README](../README.md). This guide covers local setup, configuration, and tests. Verification reports are historical records; test counts are not presented as current CI results.
 
 ## 2. Run it on Windows
 
@@ -192,10 +112,9 @@ All settings are in `backend/.env`; every one is listed with a comment in [backe
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Services, data model, user journeys, security |
 | [docs/ML_EVALUATION.md](docs/ML_EVALUATION.md) | How the model and the adaptive engine are evaluated, and results so far |
 | [docs/API.md](docs/API.md) | Every endpoint (generated from the code); `docs/openapi.json`; `docs/api-samples/` |
-| [docs/DOCKER.md](docs/DOCKER.md) | Run everything in Docker (nothing else installed on the laptop) |
 | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Production checklist, Docker Compose, Linux server, model hosting |
 | [docs/GOOGLE_FORMS.md](docs/GOOGLE_FORMS.md) | Google Forms setup and test plan |
-| [docs/AGENTS.md](docs/AGENTS.md) | The two agents: their tools, decisions, logs, privacy rules and fallbacks |
+| [docs/AGENTS.md](docs/AGENTS.md) | Question-quality and lecturer-insights agents: tools, decisions, logs and fallbacks |
 | [docs/MONITORING.md](docs/MONITORING.md) | Integrity monitoring: what is recorded, consent, review statuses, retention and limits |
 | [docs/QUALITY_REVIEW.md](docs/QUALITY_REVIEW.md) | How generated questions are checked: Python checks, the Grok reviewer, retries and the fallback |
 | [docs/QA_REPORT.md](docs/QA_REPORT.md) | Phase 7 test results, bugs fixed, security and performance checks |
@@ -209,7 +128,7 @@ backend/
   app/api/            HTTP endpoints, one file per area
   app/services/       generation, validation, attempts, grading, analytics, permissions, mail
   app/ml/             adaptive engine (pure functions, unit tested)
-  app/models/         SQLAlchemy tables;  alembic/  migrations
+  alembic/            database migrations (under backend/)
   app/validators/     answer-format, number and Python maths checks
   app/integrations/   Google Forms
   evaluation/         simulations and the model evaluation pipeline
