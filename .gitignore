@@ -1,5 +1,5 @@
 # Large files that live outside the repo
-models/
+/models/
 llama/
 *.zip
 !btech_mcq_dataset_clean.zip
