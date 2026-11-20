@@ -1,9 +1,4 @@
-"""Adapter for the Qwen-7B model behind an OpenAI-compatible chat endpoint.
-
-On the laptop this is llama.cpp's llama-server running the GGUF file. A hosted GPU server (vLLM, or
-llama-server on Kaggle/Colab behind an authenticated tunnel) works the same way: set MODEL_BASE_URL and
-MODEL_API_KEY. The React app never talks to the model directly.
-"""
+"""Qwen inference through an OpenAI-compatible server or a Gradio Space."""
 import json
 import re
 from pathlib import Path
@@ -65,6 +60,8 @@ class ModelService:
                 "temperature": self.s.temperature if temperature is None else temperature,
                 "top_p": self.s.top_p, "max_tokens": max_tokens or self.s.max_tokens}
         try:
+            if self.s.model_provider == "gradio":
+                return self._gradio_chat(body)
             r = self.client.post("/v1/chat/completions", json=body)
         except httpx.TimeoutException as e:
             raise ModelTimeout(f"The model did not answer within {self.s.model_timeout_s:.0f} seconds.") from e
@@ -79,10 +76,48 @@ class ModelService:
         except (ValueError, KeyError, IndexError, TypeError) as e:
             raise ModelBadResponse("The model service sent a response in an unexpected format.") from e
 
-    def health(self) -> tuple[str, str | None]:
+    def _gradio_chat(self, body: dict) -> str:
+        endpoint = "/gradio_api/call/generate"
+        response = self.client.post(endpoint, json={"data": [json.dumps(body, ensure_ascii=False)]})
+        if response.status_code in (401, 403):
+            raise ModelUnavailable("The Space refused access. Check MODEL_API_KEY and Space visibility.")
+        if response.status_code in (429, 503):
+            raise ModelUnavailable("The Space is loading or its usage limit was reached. Try again later.")
+        if response.is_error:
+            raise ModelBadResponse(f"The Space returned HTTP {response.status_code}.")
         try:
-            r = self.client.get("/health", timeout=5.0)
+            event_id = response.json()["event_id"]
+            if not isinstance(event_id, str) or not re.fullmatch(r"[a-zA-Z0-9_-]+", event_id):
+                raise ValueError
+        except (ValueError, KeyError, TypeError) as e:
+            raise ModelBadResponse("The Space returned an invalid generation job ID.") from e
+
+        with self.client.stream("GET", f"{endpoint}/{event_id}") as stream:
+            if stream.is_error:
+                raise ModelUnavailable(f"Could not read the Space's generation result (HTTP {stream.status_code}).")
+            event = ""
+            for line in stream.iter_lines():
+                if line.startswith("event:"):
+                    event = line[6:].strip()
+                elif line.startswith("data:") and event == "error":
+                    raise ModelUnavailable("The Space could not generate a response. Check its logs and GPU quota.")
+                elif line.startswith("data:") and event == "complete":
+                    try:
+                        outputs = json.loads(line[5:])
+                        if isinstance(outputs, list) and outputs and isinstance(outputs[0], str):
+                            return outputs[0]
+                    except ValueError:
+                        pass
+                    raise ModelBadResponse("The Space returned an unexpected generation result.")
+        raise ModelBadResponse("The Space closed the connection before returning a result.")
+
+    def health(self) -> tuple[str, str | None]:
+        gradio = self.s.model_provider == "gradio"
+        try:
+            r = self.client.get("/gradio_api/openapi.json" if gradio else "/health", timeout=5.0)
         except httpx.HTTPError:
+            if gradio:
+                return "unreachable", "Cannot reach the Gradio Space. Check its URL and runtime status."
             return "unreachable", f"No model service at {self.s.model_base_url}. Start llama-server with the GGUF model (see README)."
         if r.status_code == 200:
             return "ok", None

@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: adaptiveiq-demo
+    runtime: docker
+    plan: free
+    region: singapore
+    rootDir: adaptiveiq
+    dockerfilePath: ./deploy/render/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: adaptiveiq-demo-db
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: REQUIRE_EMAIL_VERIFICATION
+        value: "false"
+      - key: LECTURER_INVITE_CODE
+        sync: false
+      - key: MODEL_PROVIDER
+        value: gradio
+      - key: MODEL_BASE_URL
+        value: https://banureddy-adaptiveiq-mcq.hf.space
+      - key: MODEL_QUANTIZATION
+        value: BF16
+
+databases:
+  - name: adaptiveiq-demo-db
+    plan: free
+    region: singapore
+    databaseName: adaptiveiq
+    ipAllowList: []

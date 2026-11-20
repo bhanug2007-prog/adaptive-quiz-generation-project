@@ -46,6 +46,7 @@ class Settings(BaseSettings):
 
     # Model inference service: any OpenAI-compatible chat endpoint (llama.cpp llama-server, vLLM, ...)
     model_base_url: str = "http://127.0.0.1:8080"
+    model_provider: Literal["openai", "gradio"] = "openai"
     model_api_key: str = ""
     model_name: str = "qwen7b-mcq"
     model_variant: Literal["finetuned", "base"] = "finetuned"

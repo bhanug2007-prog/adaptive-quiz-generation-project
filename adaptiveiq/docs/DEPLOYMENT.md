@@ -1,5 +1,18 @@
 # Deployment
 
+## Render Free portfolio demo
+
+From the Render dashboard, select **New > Blueprint** and connect the GitHub branch
+containing the root `render.yaml`. Confirm both the web service and PostgreSQL
+database are on **Free**, then enter a private `LECTURER_INVITE_CODE` when prompted.
+The deployment runs migrations and serves React and FastAPI on the same HTTPS
+origin. PostgreSQL starts empty. Email verification is disabled for this demo.
+
+Once Render marks the service live, open its public URL, register a lecturer
+account using the invite code, and generate one question. Open the same URL in
+incognito to check public access. The Hugging Face Space handles inference and is
+subject to its shared GPU quota. Render's free database expires after 30 days.
+
 AdaptiveIQ is three services: the React site, the FastAPI backend with PostgreSQL, and the model server (llama.cpp `llama-server` with the GGUF model). The browser only ever talks to the site and the backend.
 
 ## Production checklist
@@ -52,3 +65,24 @@ llama-server -m qwen7b-mcq-Q4_K_M.gguf -c 4096 --host 0.0.0.0 --port 8080 --api-
 If the model runs on another machine, give it an API key, put it behind HTTPS or a private network, and set `MODEL_BASE_URL` and `MODEL_API_KEY` in the backend. The key never reaches the browser. A temporary notebook tunnel (Colab, Kaggle) is for development only: it stops after a few hours.
 
 Without the model the site still works (courses, quizzes, attempts, analytics); only generation is unavailable, and the portal shows the model as offline.
+
+### Hugging Face Gradio Space
+
+Replace the Space's `app.py` with [deploy/huggingface/app.py](../deploy/huggingface/app.py).
+It uses the existing `ADAPTER_REPO` variable and `HF_TOKEN` secret. The Space's Python requirements
+are Transformers, PEFT 0.20.0 or newer, Accelerate, and Safetensors.
+
+Set the following in the FastAPI environment:
+
+```dotenv
+MODEL_PROVIDER=gradio
+MODEL_BASE_URL=https://banureddy-adaptiveiq-mcq.hf.space
+MODEL_QUANTIZATION=BF16
+```
+
+Use the Space's live `hf.space` address from **Use via API** if it differs. Leave
+`MODEL_API_KEY` blank for anonymous access to a public Space, or supply a separate
+Hugging Face token with access to the Space. The private adapter token belongs in the
+Space. Authenticated API requests consume the calling account's ZeroGPU quota.
+`/api/health` checks whether the Space's API responds. Generate a question to test
+actual GPU availability and quota.
