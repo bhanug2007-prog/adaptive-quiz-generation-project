@@ -10,13 +10,29 @@ AdaptiveIQ connects **LLM question generation**, **lecturer review**, and **expl
 
 **[Open the live AdaptiveIQ demo](https://adaptiveiq-demo.onrender.com)**
 
+### Try the lecturer demo
+
+1. Open the live demo and click **Get started** to sign up.
+2. Under **I am a**, select **Lecturer**. Enter `AdaptiveIQ-Demo-Local-Only` in the **Lecturer invite code** field, then click **Create account**.
+3. Create a demo course and topic, then open **Create a quiz**. Generate one question, review or edit it, and publish the quiz.
+
+This is a shared portfolio demo. Use sample course names and reference material. To see the student side, create a separate **Student** account and join the demo course with its join code.
+
 The demo runs React, FastAPI, and PostgreSQL on Render. The fine-tuned Qwen model runs on Hugging Face ZeroGPU. The first visit after inactivity may take about a minute while Render starts, and live generation is subject to the Space's GPU quota.
 
 Model weights are supplied separately. This repository contains the application, training notebooks, evaluation artifacts, and deployment configuration.
 
-## The problem
+## The problem we identified
 
-Creating useful quizzes takes more than generating text: questions need valid answers, appropriate difficulty, review, and a feedback loop. AdaptiveIQ combines those steps so assessment results can guide what a student practices next.
+Lecturers spend time turning course material into quiz questions, checking answers, and judging difficulty. After a quiz, a total score can show how a student performed overall, but it gives limited guidance on which concepts the student should practice next. That leaves lecturers to connect results to follow-up work by hand.
+
+## How AdaptiveIQ solves it
+
+**For lecturers**, AdaptiveIQ drafts multiple-choice questions from a topic or uploaded study material. It checks question format, duplicates, and supported mathematical answers. Lecturers can edit, approve, or reject drafts before publishing a quiz.
+
+**For students**, AdaptiveIQ uses quiz attempts to update mastery by topic. It recommends what to practice next based on weaker topics, appropriate difficulty, and when a topic is due for review. Lecturers can also use class analytics to see which topics need more attention.
+
+For example, a data structures lecturer can create a quiz from notes on searching and sorting. A student who answers sorting questions correctly but misses binary-search questions can get a targeted recommendation to practice binary search.
 
 ## What the platform does
 
