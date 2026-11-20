@@ -8,7 +8,11 @@ AdaptiveIQ connects **LLM question generation**, **lecturer review**, and **expl
 
 [Architecture](adaptiveiq/docs/ARCHITECTURE.md) · [Local setup](adaptiveiq/README.md) · [Training notebook](code/finetune_qwen7b_unsloth.ipynb) · [Evaluation](adaptiveiq/docs/ML_EVALUATION.md) · [API reference](adaptiveiq/docs/API.md)
 
-> **Project status:** Developed and demonstrated locally. Cloud deployment is not yet verified. Model weights are supplied separately; this repository contains the application, training notebooks, evaluation artifacts, and deployment configuration.
+**[Open the live AdaptiveIQ demo](https://adaptiveiq-demo.onrender.com)**
+
+The demo runs React, FastAPI, and PostgreSQL on Render. The fine-tuned Qwen model runs on Hugging Face ZeroGPU. The first visit after inactivity may take about a minute while Render starts, and live generation is subject to the Space's GPU quota.
+
+Model weights are supplied separately. This repository contains the application, training notebooks, evaluation artifacts, and deployment configuration.
 
 ## The problem
 
@@ -151,7 +155,7 @@ The repository includes pytest, Vitest, and Playwright suites for API behavior, 
 - CPU generation can be slow. Hosting the 7B model requires separate compute planning.
 - Monitoring signals support lecturer review and do not establish misconduct.
 - Document extraction supports text-based PDFs; scanned documents require OCR, which is not implemented.
-- Deployment configuration and Google Forms integration require environment-specific validation.
+- Google Forms integration requires environment-specific validation.
 
 ## Documentation
 
