@@ -2,7 +2,7 @@
 
 ### AI-assisted assessment and personalized learning
 
-AdaptiveIQ connects **LLM question generation**, **lecturer review**, and **explainable learning recommendations** in one full-stack application. Lecturers create assessments from topics or study material; students complete quizzes, track topic mastery, and follow personalized practice plans.
+AdaptiveIQ is a full-stack assessment and personalized learning platform. Lecturers turn study material into reviewed quizzes, see which students left the quiz window during monitored attempts, and find topics the class struggled with. Students take quizzes, see their topic-level progress, and approve personalized practice plans that they can resume later.
 
 **Python · FastAPI · React · Qwen2.5-7B · LoRA · llama.cpp · LangGraph · SQLAlchemy**
 
@@ -14,9 +14,11 @@ AdaptiveIQ connects **LLM question generation**, **lecturer review**, and **expl
 
 1. Open the live demo and click **Get started** to sign up.
 2. Under **I am a**, select **Lecturer**. Enter `AdaptiveIQ-Demo-Local-Only` in the **Lecturer invite code** field, then click **Create account**.
-3. Create a demo course and topic, then open **Create a quiz**. Generate one question, review or edit it, and publish the quiz.
+3. Create a demo course and topic, then open **Create a quiz**. Generate and review one question. In **Settings**, enable **Integrity monitoring** and turn on recording when students leave the quiz page, then publish the quiz.
+4. In a separate browser profile or incognito window, register as a **Student** and join the course using its join code. Start the quiz after reading the monitoring notice, switch tabs briefly, return, and submit.
+5. Back in the lecturer account, open **Quiz → Monitoring → Timeline** for that student's attempt. In the student account, explore **Learning Insights** to see topic evidence and the practice plan workflow. A single question gives you only a small amount of mastery evidence.
 
-This is a shared portfolio demo. Use sample course names and reference material. To see the student side, create a separate **Student** account and join the demo course with its join code.
+This is a shared portfolio demo. Use sample course names and reference material.
 
 The demo runs React, FastAPI, and PostgreSQL on Render. The fine-tuned Qwen model runs on Hugging Face ZeroGPU. The first visit after inactivity may take about a minute while Render starts, and live generation is subject to the Space's GPU quota.
 
@@ -24,7 +26,7 @@ Model weights are supplied separately. This repository contains the application,
 
 ## The problem we identified
 
-Lecturers spend time turning course material into quiz questions, checking answers, and judging difficulty. After a quiz, a total score can show how a student performed overall, but it gives limited guidance on which concepts the student should practice next. That leaves lecturers to connect results to follow-up work by hand.
+Lecturers spend time turning course material into quiz questions, checking answers, and judging difficulty. During a remote assessment, they also have limited visibility into when a student leaves the quiz page. After submission, a total score gives students little guidance on which concepts to practice next. AdaptiveIQ connects quiz preparation, attempt review, and follow-up practice in the same course.
 
 ## How AdaptiveIQ solves it
 
@@ -33,6 +35,26 @@ Lecturers spend time turning course material into quiz questions, checking answe
 **For students**, AdaptiveIQ uses quiz attempts to update mastery by topic. It recommends what to practice next based on weaker topics, appropriate difficulty, and when a topic is due for review. Lecturers can also use class analytics to see which topics need more attention.
 
 For example, a data structures lecturer can create a quiz from notes on searching and sorting. A student who answers sorting questions correctly but misses binary-search questions can get a targeted recommendation to practice binary search.
+
+## Quiz monitoring and lecturer review
+
+Lecturers can enable monitoring per assigned quiz. Before starting, the student sees what will be recorded and agrees to it. Practice quizzes run without monitoring.
+
+- **Tab and window changes.** If the quiz tab becomes hidden or the quiz window loses focus, AdaptiveIQ records the departure and return. For example, switching to another tab or browser window can create a timeline entry with the time and duration.
+- **Fullscreen, camera, and microphone.** Lecturers can record fullscreen exits and optionally enable camera or microphone signals. MediaPipe counts faces in the student's browser, and Web Audio measures speech-like activity there. The server receives event metadata such as timestamps, durations, and face counts. Images, video, and audio stay on the device.
+- **Per-student timeline.** The lecturer who owns the quiz can open **Monitoring**, see which student's attempt recorded events, inspect the timeline, and mark it for follow-up or record no concern. Thresholds help prioritize review. The browser cannot identify which website or application the student opened, and monitoring events do not automatically change marks.
+
+[Monitoring design and tests](adaptiveiq/docs/MONITORING.md)
+
+## How I used LangGraph
+
+I used **LangGraph** to manage the student practice workflow across visits. After a student submits a quiz, FastAPI scores the attempt and the adaptive engine updates mastery by topic. The learning graph uses that evidence, difficulty rules, and spaced revision to propose a practice plan and explain the recommended steps.
+
+1. **Build the plan.** Choose practice actions from the student's topic evidence and revision schedule.
+2. **Pause for approval.** Save the plan to a SQLAlchemy-backed checkpoint so the student can leave and return later.
+3. **Resume and hand off.** When the student approves a step, resume the workflow, recheck access, and hand the approved action to the practice service. When the action calls for a new quiz, Qwen generates the questions.
+
+The mastery and planning rules are deterministic. Qwen handles question generation, and LangGraph handles the plan's state, approval, and handoff. [Learning workflow diagram](adaptiveiq/docs/ARCHITECTURE.md#learning-feedback-and-persistent-plans) · [LangGraph implementation](adaptiveiq/backend/app/agents/personalized_learning.py)
 
 ## What the platform does
 
@@ -47,7 +69,7 @@ For example, a data structures lecturer can create a quiz from notes on searchin
 
 ## System architecture
 
-The backend coordinates assessment and learning workflows. Qwen generates content; the adaptive engine computes mastery and recommendations separately.
+The backend coordinates assessment and learning workflows. Qwen generates content, and the adaptive engine computes mastery and recommendations. The diagram shows the local llama.cpp inference path. The live demo calls the Hugging Face ZeroGPU Space from the same backend model service.
 
 ```mermaid
 flowchart TB
